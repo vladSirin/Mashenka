@@ -12,6 +12,6 @@
     #else
         #define MASHENKA_API __declspec(dllimport)
     #endif
-#else
+#else 
     #error Mashenka only support Windows!
 #endif

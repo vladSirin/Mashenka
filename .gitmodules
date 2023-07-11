@@ -1,0 +1,3 @@
+[submodule "Mashenka/vendor/spdlog"]
+	path = Mashenka/vendor/spdlog
+	url = https://github.com/gabime/spdlog

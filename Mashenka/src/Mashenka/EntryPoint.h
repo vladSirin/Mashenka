@@ -15,7 +15,11 @@ extern Mashenka::Application* Mashenka::CreateApplication();
 
 inline int main(int argc, char** argv)
 {
-    printf("Welcome to mashenka engine!\n");
+    Mashenka::Log::Init();
+    MK_CORE_WARN("Initialized Log!");
+    auto a = "Client";
+    MK_CORE_INFO("Hello {0}, Welcome to Mashenka!", a);
+    
     auto app = Mashenka::CreateApplication();
     app->Run();
     delete app;

@@ -1,5 +1,4 @@
 ﻿#include "Application.h"
-#include <cstdio>
 
 namespace Mashenka
 {
@@ -16,12 +15,10 @@ namespace Mashenka
      * The application is run by calling the `run` function on the application instance.
      * This initiates a while loop that keeps the application running.
      */
-    void Mashenka::Application::Run()
+    void Application::Run()
     {
         while (true)
         {
-
         }
     }
 }
-
