@@ -12,14 +12,3 @@
 /dataSources/
 /dataSources.local.xml
 
-# User set ignored files
-# Binaries
-**/bin/
-bin-int/
-Intermediates/
-
-# Log files
-*.log
-
-# Directories
-
