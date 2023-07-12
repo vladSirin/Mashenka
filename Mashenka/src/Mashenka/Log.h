@@ -3,6 +3,21 @@
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 
+/*
+ * 1. **Introduction to SPDLOG**: SPDLOG is a fast, header-only/compiled, C++ logging library.
+ * It is used for logging messages in a game engine.
+ * It is a third-party library that can be integrated into the game engine.
+ * 
+ * 2. **Adding SPDLOG to the Project**: The SPDLOG library can be added to the project as a Git submodule.
+ * This allows the library to be updated easily when new changes are made to the library.
+ * The library is stored in a folder called 'vendor' inside the Hazel project.
+ *
+ * 3. **Setting Up the Logger**: The logger is set up by including the SPDLOG library in the project and
+ * creating a wrapper class called 'Log'.
+ * This class contains two static shared pointers to SPDLOG loggers,
+ * one for the core engine (coreLogger) and one for the client (clientLogger).
+ * An initialization function (Init) is also created to set up these loggers.
+ */
 namespace Mashenka
 {
     class MASHENKA_API Log
@@ -21,6 +36,16 @@ namespace Mashenka
 
 }
 
+/*
+ *4. **Creating Log Macros**: Macros are created for different log levels (trace, info, warn, error, fatal)
+ *for both the core engine and the client.
+ *These macros make it easier to log messages at different levels.
+ *They also allow for the possibility of stripping out log messages in distribution builds for performance reasons.
+ *
+ * 5. **Using the Logger**: The logger can be used by calling the log macros with the message to be logged.
+ * For example, HZ_CORE_WARN("Initialized Log") would log a warning message saying "Initialized Log"
+ * from the core engine.
+ */
 //Core Log Macros
 #define MK_CORE_FATAL(...)   ::Mashenka::Log::GetCoreLogger()->fatal(__VA_ARGS__)
 #define MK_CORE_ERROR(...)   ::Mashenka::Log::GetCoreLogger()->error(__VA_ARGS__)

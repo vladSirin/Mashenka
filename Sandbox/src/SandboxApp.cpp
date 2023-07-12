@@ -22,5 +22,6 @@ public:
 
 Mashenka::Application* Mashenka::CreateApplication()
 {
-     return new Sandbox();
+    printf("Sandbox is not on!");
+    return new Sandbox();
 }
