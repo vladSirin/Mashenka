@@ -8,10 +8,11 @@ Intermediates/
 
 # Directories
 
-# Visual Studio files and folder
+# IDE files and folder
 .vs/
 **.sln
 **.vcxproj
 **.vcxproj.filters
 **.vcxproj.user
 **.csproj
+*.DotSettings.user
