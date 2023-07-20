@@ -15,3 +15,18 @@
 #else 
     #error Mashenka only support Windows!
 #endif
+
+/*
+* The macro BIT(x) is defined as (1 << (x)). This is a bit shift operation.
+Here's what it does:
+1 is a binary number. In binary, 1 is represented as 0001 (for a 4-bit system for simplicity).
+<< is the left shift operator. It shifts the bits of the number on the left x places to the left.
+For example, if x is 2, then 1 << 2 would shift the bits of 1 two places to the left, resulting in 0100
+(or 4 in decimal).
+So, BIT(x) essentially creates a number that has its xth bit set (counting from 0).
+This can be useful for creating bitmasks, which are often used in programming to
+manipulate specific bits of a number.
+For example, BIT(0) would be 1 (binary 0001), BIT(1) would be 2 (binary 0010),
+BIT(2) would be 4 (binary 0100), and so on.
+ */
+#define BIT(x) (1 << (x))

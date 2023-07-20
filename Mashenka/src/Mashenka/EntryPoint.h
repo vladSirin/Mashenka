@@ -17,7 +17,7 @@ inline int main(int argc, char** argv)
 {
     Mashenka::Log::Init();
     MK_CORE_WARN("Initialized Log!");
-    auto a = "Mary";
+    auto a = "User";
     MK_CORE_INFO("Hello {0}, Welcome to Mashenka!", a);
     
     auto app = Mashenka::CreateApplication();
