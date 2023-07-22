@@ -1,10 +1,10 @@
 ﻿#pragma once
 
-#include "Mashenka/src/Mashenka/Core.h"
+#include "Mashenka/Core.h"
 #include <string>
 #include <functional>
 
-#include "Mashenka/src/Mashenka/Log.h"
+#include "Mashenka/Log.h"
 
 namespace Mashenka
 {
@@ -36,7 +36,7 @@ namespace Mashenka
 
     // define common functions in event classes, they help to reduce code redundancy
 #define EVENT_CLASS_TYPE(type) static EventType GetStaticType() {return EventType::##type;}\
-                               virtual EventType GetEventType() cosnt override {return GetStaticType();}\
+                               virtual EventType GetEventType() const override {return GetStaticType();}\
                                virtual const char* GetName() const override {return #type;}
 
 #define EVENT_CLASS_CATEGORY(category) virtual int GetCategoryFlags() const override {return category;}
@@ -57,6 +57,8 @@ namespace Mashenka
         // Check if an event belongs to a certain category
         inline bool IsInCategory(EventCategory category)
         {
+            // This is a bitwise operation to check if the two categories match by comparing
+            // every bit number for the two int
             return GetCategoryFlags() & category;
         }
     protected:

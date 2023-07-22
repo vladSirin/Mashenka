@@ -1,4 +1,6 @@
 ﻿#include "Application.h"
+#include "Mashenka/Events/ApplicationEvent.h"
+#include "Mashenka/Log.h"
 
 namespace Mashenka
 {
@@ -17,8 +19,18 @@ namespace Mashenka
      */
     void Application::Run()
     {
-        while (true)
         {
+            WindowResizeEvent e(1280, 270);
+            if(e.IsInCategory(EventCategoryApplication))
+            {
+                MK_TRACE(e);
+            }
+
+            if(e.IsInCategory(EventCategoryInput))
+            {
+                MK_TRACE(e);
+            }
         }
+        while (true);
     }
 }
