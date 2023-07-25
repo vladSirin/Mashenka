@@ -1,4 +1,5 @@
-﻿#include "Log.h"
+﻿#include "mkpch.h"
+#include "Log.h"
 
 namespace Mashenka
 {

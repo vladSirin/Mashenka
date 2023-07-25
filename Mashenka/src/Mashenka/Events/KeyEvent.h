@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 #include "Event.h"
-#include "sstream"
 
 // For key events, there should be key pressed and releases as major public classes
 // As the normal logic for applications are based on those too

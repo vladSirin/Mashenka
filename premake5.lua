@@ -18,6 +18,9 @@ project "Mashenka"
     targetdir ("bin/" ..outputdir.. "/%{prj.name}")
     objdir ("bin-int/" ..outputdir.. "/%{prj.name}")
 
+    pchheader "mkpch.h"
+    pchsource "Mashenka/src/mkpch.cpp"
+
     files
     {
         "%{prj.name}/src/**.h",

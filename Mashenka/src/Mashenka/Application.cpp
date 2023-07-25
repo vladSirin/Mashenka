@@ -1,4 +1,5 @@
-﻿#include "Application.h"
+﻿#include "mkpch.h"
+#include "Application.h"
 #include "Mashenka/Events/ApplicationEvent.h"
 #include "Mashenka/Log.h"
 
