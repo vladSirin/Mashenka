@@ -2,11 +2,14 @@
 #include "Application.h"
 #include "Mashenka/Events/ApplicationEvent.h"
 #include "Mashenka/Log.h"
+#include "GLFW/glfw3.h"
+#include "Platform/Windows/WindowsWindow.h"
 
 namespace Mashenka
 {
     Application::Application()
     {
+        m_Window = std::unique_ptr<Window>(WindowsWindow::Create());
     }
 
     Application::~Application()
@@ -20,18 +23,11 @@ namespace Mashenka
      */
     void Application::Run()
     {
+        while (m_Running)
         {
-            WindowResizeEvent e(1280, 270);
-            if(e.IsInCategory(EventCategoryApplication))
-            {
-                MK_TRACE(e);
-            }
-
-            if(e.IsInCategory(EventCategoryInput))
-            {
-                MK_TRACE(e);
-            }
+            glClearColor(1,0.42,0.5,0.5);
+            glClear(GL_COLOR_BUFFER_BIT);
+            m_Window->OnUpdate();
         }
-        while (true);
     }
 }

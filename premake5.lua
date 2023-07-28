@@ -10,6 +10,13 @@ workspace "Mashenka"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
+-- Include directories relative to root folder (solution directory) --
+IncludeDir = {}
+IncludeDir["GLFW"] = "Mashenka/vendor/GLFW/include"
+
+-- Include the premake config for GLFW from the submodule, which contains how to build it --
+include "Mashenka/vendor/GLFW"
+
 project "Mashenka"
     location "Mashenka"
     kind "SharedLib"
@@ -30,7 +37,15 @@ project "Mashenka"
     includedirs
     {
         "%{prj.name}/vendor/spdlog/include",
-        "%{prj.name}/src"
+        "%{prj.name}/src",
+        "%{IncludeDir.GLFW}"
+    }
+
+-- Links the GLFW and opengl lib --
+    links
+    {
+        "GLFW",
+        "opengl32.lib"
     }
 
     filter "system:windows"

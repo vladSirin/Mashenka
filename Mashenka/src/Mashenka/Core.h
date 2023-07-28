@@ -16,6 +16,13 @@
     #error Mashenka only support Windows!
 #endif
 
+#ifdef MK_ENABLE_ASSERTS
+    #define MK_ASSERT(x, ...) {if (!(x)) {MK_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); }}
+    #define MK_CORE_ASSERT(x, ...) {if(!(x)) {MK_CORE_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); }}
+#else
+#define MK_ASSERT(x, ...)
+#define MK_CORE_ASSERT(x, ...)
+#endif
 /*
 * The macro BIT(x) is defined as (1 << (x)). This is a bit shift operation.
 Here's what it does:
