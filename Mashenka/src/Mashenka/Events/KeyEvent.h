@@ -56,5 +56,7 @@ namespace Mashenka
             return ss.str();
         }
 
+        EVENT_CLASS_TYPE(KeyReleased)
+
     };
 }

@@ -31,6 +31,11 @@ namespace Mashenka
         using EventCallbackFn = std::function<void(Event&)>;
 
         // Window base functions, in the actual implementation will be platform specific
+        /*= 0: This syntax makes the function a pure virtual function,
+         *meaning that it has no implementation in the base class and must be overridden
+         *in any non-abstract derived class.
+         *A class with one or more pure virtual functions is considered an abstract class,
+         *and you cannot create instances of it directly.*/
         virtual ~Window() {}
         virtual void OnUpdate() = 0;
         virtual unsigned int GetWidth() const = 0;

@@ -41,6 +41,7 @@ namespace Mashenka
     // base event class for all events in the engine
     class MASHENKA_API Event
     {
+        // The friend class can access the private and protected data from this
         friend class EventDispatcher;
     public:
 
