@@ -42,8 +42,9 @@ namespace Mashenka
     class MASHENKA_API Event
     {
         // The friend class can access the private and protected data from this
-        friend class EventDispatcher;
+        // friend class EventDispatcher;
     public:
+        bool Handled = false;
 
         // virtual functions that must be overriden by derived classes
         // Those functions are macro-ed so that it can easily created
@@ -62,7 +63,7 @@ namespace Mashenka
     protected:
 
         // indicate that if the event has been handled or not
-        bool m_Handled = false;
+        // bool m_Handled = false;
     };
 
     // This class is to dispatch events
@@ -97,7 +98,7 @@ namespace Mashenka
             if (m_Event.GetEventType() == T::GetStaticType())
             {
                 // calls 'func' with the event and sets m_handled to the result
-                m_Event.m_Handled = func(*(T*)&m_Event);
+                m_Event.Handled = func(*(T*)&m_Event);
                 return true;
             }
             return false;

@@ -7,12 +7,11 @@
 
 namespace Mashenka
 {
-
     /*The resulting callable object can be called with one argument,
      *and when it is called, it will invoke the x member function of the Application object,
      *passing along the given argument.*/
 #define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
-    
+
     Application::Application()
     {
         m_Window = std::unique_ptr<Window>(WindowsWindow::Create());
@@ -25,7 +24,7 @@ namespace Mashenka
     Application::~Application()
     {
     }
-    
+
     // Define the OnEvent function
     void Application::OnEvent(Event& e)
     {
@@ -36,7 +35,31 @@ namespace Mashenka
         // If so, the bound event will be called (which is the Application.OnWindowClose functions)
         dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
 
+        /*
+         * The purpose of this loop seems to be to process an event e in reverse order of the layers in the m_LayerStack
+         * until one of the layers handles the event. Once the event is handled, the loop stops,
+         * ensuring that layers earlier in the stack don't process an already-handled event.
+         * This is a common pattern in event-driven systems
+         * where events can be consumed by layers or components in a specific order of priority.
+         */
+        for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();)
+        {
+            (*--it)->OnEvent(e);
+            if (e.Handled)
+                break;
+        }
+
         MK_CORE_TRACE("{0}", e);
+    }
+
+    void Application::PushLayer(Layer* layer)
+    {
+        m_LayerStack.PushLayer(layer);
+    }
+
+    void Application::PushOverlay(Layer* layer)
+    {
+        m_LayerStack.PushOverlay(layer);
     }
 
 
@@ -49,8 +72,12 @@ namespace Mashenka
     {
         while (m_Running)
         {
-            glClearColor(1,0.42,0.5,0.5);
+            glClearColor(1, 0.42, 0.5, 0.5);
             glClear(GL_COLOR_BUFFER_BIT);
+
+            for (Layer* layer : m_LayerStack)
+                layer->OnUpdate();
+
             m_Window->OnUpdate();
         }
     }
@@ -61,5 +88,4 @@ namespace Mashenka
         m_Running = false;
         return true;
     }
-
 }
