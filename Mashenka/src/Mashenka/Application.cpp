@@ -2,7 +2,7 @@
 #include "Application.h"
 #include "Mashenka/Events/ApplicationEvent.h"
 #include "Mashenka/Log.h"
-#include "GLFW/glfw3.h"
+#include <glad/glad.h>
 #include "Platform/Windows/WindowsWindow.h"
 
 namespace Mashenka

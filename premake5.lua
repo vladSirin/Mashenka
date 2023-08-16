@@ -13,9 +13,13 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 -- Include directories relative to root folder (solution directory) --
 IncludeDir = {}
 IncludeDir["GLFW"] = "Mashenka/vendor/GLFW/include"
+IncludeDir["Glad"] = "Mashenka/vendor/Glad/include"
+IncludeDir["ImGui"] = "Mashenka/vendor/imgui"
 
 -- Include the premake config for GLFW from the submodule, which contains how to build it --
 include "Mashenka/vendor/GLFW"
+include "Mashenka/vendor/Glad"
+include "Mashenka/vendor/imgui"
 
 project "Mashenka"
     location "Mashenka"
@@ -38,14 +42,18 @@ project "Mashenka"
     {
         "%{prj.name}/vendor/spdlog/include",
         "%{prj.name}/src",
-        "%{IncludeDir.GLFW}"
+        "%{IncludeDir.GLFW}",
+        "%{IncludeDir.Glad}",
+        "%{IncludeDir.ImGui}"
     }
 
 -- Links the GLFW and opengl lib --
     links
     {
         "GLFW",
-        "opengl32.lib"
+        "Glad",
+        "opengl32.lib",
+        "ImGui"
     }
 
     filter "system:windows"
