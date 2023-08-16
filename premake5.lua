@@ -1,5 +1,6 @@
 workspace "Mashenka"
     architecture "x64"
+    startproject "Sandbox"
 
     configurations
     {
@@ -20,6 +21,8 @@ IncludeDir["ImGui"] = "Mashenka/vendor/imgui"
 include "Mashenka/vendor/GLFW"
 include "Mashenka/vendor/Glad"
 include "Mashenka/vendor/imgui"
+
+
 
 project "Mashenka"
     location "Mashenka"
