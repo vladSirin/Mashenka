@@ -1,8 +1,12 @@
 ﻿#pragma once
 #include "Mashenka/Layer.h"
 
-class ImGuiLayer
+namespace Mashenka
 {
-public:
+    class ImGuiLayer
+    {
+    public:
     
-};
+    };
+}
+
