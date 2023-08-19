@@ -4,6 +4,3 @@
 [submodule "Mashenka/vendor/GLFW"]
 	path = Mashenka/vendor/GLFW
 	url = https://github.com/vladimirSirin/glfw
-[submodule "Mashenka/vendor/imgui"]
-	path = Mashenka/vendor/imgui
-	url = https://github.com/ocornut/imgui
