@@ -1,4 +1,5 @@
 ﻿#include "Mashenka.h"
+#include "ImGui/ImGuiLayer.h"
 
 /*
  * 3. **Creating a Sandbox Class**:
@@ -30,7 +31,8 @@ class Sandbox : public Mashenka::Application
 public:
      Sandbox()
      {
-          PushLayer(new ExampleLayer);
+         PushLayer(new ExampleLayer);
+         PushOverlay(new Mashenka::ImGuiLayer);
      }
 
      ~Sandbox()

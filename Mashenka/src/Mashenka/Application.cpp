@@ -10,10 +10,16 @@ namespace Mashenka
     /*The resulting callable object can be called with one argument,
      *and when it is called, it will invoke the x member function of the Application object,
      *passing along the given argument.*/
-#define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
+    #define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
+
+    //TODO Explain this
+    Application* Application::s_Instance = nullptr;
 
     Application::Application()
     {
+        MK_CORE_ASSERT(!s_Instance, "Application Alreay Exists!");
+        s_Instance = this;
+
         m_Window = std::unique_ptr<Window>(WindowsWindow::Create());
 
         // using bind to call the member function of application when needed in Window layer
@@ -55,11 +61,13 @@ namespace Mashenka
     void Application::PushLayer(Layer* layer)
     {
         m_LayerStack.PushLayer(layer);
+        layer->OnAttach();
     }
 
     void Application::PushOverlay(Layer* layer)
     {
         m_LayerStack.PushOverlay(layer);
+        layer->OnAttach();
     }
 
 

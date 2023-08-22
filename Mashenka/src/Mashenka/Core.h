@@ -1,9 +1,10 @@
 ﻿#pragma once
 
+
 /*
- * 1. **Setting up the Hazel API Macro**:
- * The Hazel API Macro is set up to either export or import symbols based on
- * whether the Hazel library is being built or used.
+ * 1. **Setting up the Mashenka API Macro**:
+ * The Mashenka API Macro is set up to either export or import symbols based on
+ * whether the Mashenka library is being built or used.
  * This is achieved by defining a macro that changes based on the build context. 
  */
 #ifdef MK_PLATFORM_WINDOWS
@@ -37,3 +38,5 @@ For example, BIT(0) would be 1 (binary 0001), BIT(1) would be 2 (binary 0010),
 BIT(2) would be 4 (binary 0100), and so on.
  */
 #define BIT(x) (1 << (x))
+
+
