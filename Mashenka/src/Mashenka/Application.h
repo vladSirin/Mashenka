@@ -4,6 +4,10 @@
 #include "Mashenka/Events/ApplicationEvent.h"
 #include "LayerStack.h"
 
+/*
+ * implement a form of the Singleton pattern for the Application class.
+ * The Singleton pattern ensures that a class has only one instance and provides a global point of access to that instance.
+ */
 namespace Mashenka
 {
     class MASHENKA_API Application
@@ -20,7 +24,7 @@ namespace Mashenka
         void PushLayer(Layer* layer);
         void PushOverlay(Layer* layer);
 
-        //TODO Explain this
+        //Using a static function to get the sole instance of the application
         inline Window& GetWindow() {return *m_Window;}
         inline static Application& Get() {return *s_Instance;}
 
@@ -31,6 +35,7 @@ namespace Mashenka
         bool m_Running = true;
         LayerStack m_LayerStack;
 
+        // declare a static global single instance to access
         static Application* s_Instance;
     };
 

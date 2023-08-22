@@ -18,14 +18,21 @@ namespace Mashenka
 
     void Mashenka::ImGuiLayer::OnAttach()
     {
-        //TODO Explain this
+        // call original class func
         Layer::OnAttach();
+
+        // ImGui uses contexts to store data, essentially initialize imgui
         ImGui::CreateContext();
+
+        // Default color theme
         ImGui::StyleColorsDark();
 
+        // Gets a reference to the "ImGuiIO" structure
         ImGuiIO& io = ImGui::GetIO();
-        io.BackendFlags != ImGuiBackendFlags_HasMouseCursors;
-        io.BackendFlags != ImGuiBackendFlags_HasSetMousePos;
+
+        // Bitwise OR assignment
+        io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
+        io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
 
         // TEMPORARY: should eventually use Mashenka key codes
         io.KeyMap[ImGuiKey_Tab] = GLFW_KEY_TAB;
@@ -50,6 +57,7 @@ namespace Mashenka
         io.KeyMap[ImGuiKey_Y] = GLFW_KEY_Y;
         io.KeyMap[ImGuiKey_Z] = GLFW_KEY_Z;
 
+        // Init the opengl version 3
         ImGui_ImplOpenGL3_Init("#version 410");
     }
 
@@ -62,22 +70,28 @@ namespace Mashenka
     {
         Layer::OnUpdate();
 
-        //TODO Explain this
         ImGuiIO& io = ImGui::GetIO();
         Application& app = Application::Get();
+
+        // Sets the display size in ImGuiIO to the application window
         io.DisplaySize = ImVec2(app.GetWindow().GetWidth(), app.GetWindow().GetHeight());
 
+        // Calculate delta time, if first frame which m_Time is 0, set to for 60 fps
         float time = (float)glfwGetTime();
         io.DeltaTime = m_Time > 0.0f ? (time - m_Time) : (1.0f/60.0f);
         m_Time = time;
 
+        // Signal the new frame is starting
         ImGui_ImplOpenGL3_NewFrame();
         ImGui::NewFrame();
 
+        // show var to control the display of the demo window for debug
         static bool show = true;
         ImGui::ShowDemoWindow(&show);
 
+        // Generates the draw command
         ImGui::Render();
+        // send to GPU to render
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     }
 

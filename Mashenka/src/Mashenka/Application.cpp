@@ -12,11 +12,12 @@ namespace Mashenka
      *passing along the given argument.*/
     #define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
 
-    //TODO Explain this
+    // initialize the singleton instance of application as null
     Application* Application::s_Instance = nullptr;
 
     Application::Application()
     {
+        // Make sure there is only one instance
         MK_CORE_ASSERT(!s_Instance, "Application Alreay Exists!");
         s_Instance = this;
 
