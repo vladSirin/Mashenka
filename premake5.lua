@@ -18,16 +18,20 @@ IncludeDir["Glad"] = "Mashenka/vendor/Glad/include"
 IncludeDir["ImGui"] = "Mashenka/vendor/imgui"
 
 -- Include the premake config for GLFW from the submodule, which contains how to build it --
-include "Mashenka/vendor/GLFW"
-include "Mashenka/vendor/Glad"
-include "Mashenka/vendor/imgui"
+-- Group Dependencies
+group "Dependencies"
+    include "Mashenka/vendor/GLFW"
+    include "Mashenka/vendor/Glad"
+    include "Mashenka/vendor/imgui"
 
+group ""
 
 
 project "Mashenka"
     location "Mashenka"
     kind "SharedLib"
     language "C++"
+    staticruntime "off" -- using a dynamic runtime, using extra DLL, thus changes will be reflected when building sandbox
 
     targetdir ("bin/" ..outputdir.. "/%{prj.name}")
     objdir ("bin-int/" ..outputdir.. "/%{prj.name}")
@@ -61,7 +65,6 @@ project "Mashenka"
 
     filter "system:windows"
         cppdialect "C++17"
-        staticruntime = "On"
         systemversion "latest"
 
         defines
@@ -70,30 +73,32 @@ project "Mashenka"
             "MK_BUILD_DLL",
         }
 
+-- using \" to enclose the argument in case special characters in the path --
         postbuildcommands
         {
-            ("{COPY} %{cfg.buildtarget.relpath} ../bin/" ..outputdir.. "/Sandbox")
+            ("{COPY} %{cfg.buildtarget.relpath} \"../bin/" ..outputdir.. "/Sandbox/\"")
         }
     
     filter "configurations:Debug"
         defines "MK_DEBUG"
-        buildoptions "/MDd"
+        runtime "Debug"
         symbols "On"
 
     filter "configurations:Release"             
         defines "MK_RELEASE"
-        buildoptions "/MD"
+        runtime "Release"
         optimize "On"
 
     filter "configurations:Dist"  
         defines "MK_DIST"
-        buildoptions "/MD"
+        runtime "Release"
         optimize "On"
 
 project "Sandbox"
     location "Sandbox"
     kind "ConsoleApp"
     language "C++"
+    staticruntime "off"
 
     targetdir ("bin/" ..outputdir.. "/%{prj.name}")
     objdir ("bin-int/" ..outputdir.. "/%{prj.name}")
@@ -117,7 +122,6 @@ project "Sandbox"
 
     filter "system:windows"
         cppdialect "C++17"
-        staticruntime = "On"
         systemversion "latest"
 
         defines
@@ -127,15 +131,15 @@ project "Sandbox"
     
     filter "configurations:Debug"
         defines "MK_DEBUG"
-        buildoptions "/MDd"
+        runtime "Debug"
         symbols "On"
 
     filter "configurations:Release"             
         defines "MK_RELEASE"
-        buildoptions "/MD"
+        runtime "Release"
         optimize "On"
 
     filter "configurations:Dist"  
         defines "MK_DIST"
-        buildoptions "/MD"
+        runtime "Release"
         optimize "On"
