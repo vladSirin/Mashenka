@@ -39,4 +39,10 @@ BIT(2) would be 4 (binary 0100), and so on.
  */
 #define BIT(x) (1 << (x))
 
+/*The resulting callable object can be called with one argument,
+ *and when it is called, it will invoke the fn member function of the parent object,
+ *passing along the given argument.*/
+#define BIND_EVENT_FN(fn) std::bind(&fn, this, std::placeholders::_1)
+
+
 

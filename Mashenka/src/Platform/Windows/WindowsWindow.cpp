@@ -33,6 +33,7 @@ namespace Mashenka
         Shutdown();
     }
 
+    // Initialize glfw and create the window
     void WindowsWindow::Init(const WindowProps& props)
     {
         m_Data.Title = props.Title;
@@ -73,6 +74,9 @@ namespace Mashenka
         // But the callback functions might happen at a different time as they are on different layers
         glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
         {
+            // In summary, this line retrieves a void* pointer from the GLFW window, casts it to a WindowData* pointer,
+            // dereferences it to get the WindowData object,
+            // and then creates a reference to this object for easier access and manipulation.
             WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
             data.Width = width;
             data.Height = height;
@@ -115,6 +119,20 @@ namespace Mashenka
             }
         });
 
+        //Set the character typing callbacks
+        glfwSetCharCallback(m_Window, [](GLFWwindow* window,unsigned int keycode)
+        {
+            WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+
+            // define an corresponding event with the keycode
+            KeyTypedEvent event(keycode);
+
+            // wrapping a callable event
+            data.EventCallback(event);
+            
+        });
+
+        // Callbacks
         glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button, int action, int mods)
         {
             WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);

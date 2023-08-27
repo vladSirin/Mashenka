@@ -7,10 +7,6 @@
 
 namespace Mashenka
 {
-    /*The resulting callable object can be called with one argument,
-     *and when it is called, it will invoke the x member function of the Application object,
-     *passing along the given argument.*/
-    #define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
 
     // initialize the singleton instance of application as null
     Application* Application::s_Instance = nullptr;
@@ -21,18 +17,21 @@ namespace Mashenka
         MK_CORE_ASSERT(!s_Instance, "Application Alreay Exists!");
         s_Instance = this;
 
+        // Create the window
         m_Window = std::unique_ptr<Window>(WindowsWindow::Create());
+        
 
         // using bind to call the member function of application when needed in Window layer
         // set the application OnEvent function to the window layer as a callback
-        m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
+        m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
     }
 
     Application::~Application()
     {
     }
 
-    // Define the OnEvent function
+    // Define the OnEvent function, this works similar to all OnEvent functions
+    // Basically it creates a dispatcher and bind the function to it
     void Application::OnEvent(Event& e)
     {
         // Create a dispatcher
@@ -40,7 +39,7 @@ namespace Mashenka
 
         // Dispatch (which takes a template func as input), will check if the input matches the type
         // If so, the bound event will be called (which is the Application.OnWindowClose functions)
-        dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
+        dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::OnWindowClose));
 
         /*
          * The purpose of this loop seems to be to process an event e in reverse order of the layers in the m_LayerStack
