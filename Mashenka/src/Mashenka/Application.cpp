@@ -3,6 +3,9 @@
 #include "Mashenka/Events/ApplicationEvent.h"
 #include "Mashenka/Log.h"
 #include <glad/glad.h>
+
+#include "Input.h"
+#include "WindowsInput.h"
 #include "Platform/Windows/WindowsWindow.h"
 
 namespace Mashenka
@@ -80,6 +83,9 @@ namespace Mashenka
     {
         while (m_Running)
         {
+            // Poll Input
+            Input::Poll();
+            
             glClearColor(1, 0.42, 0.5, 0.5);
             glClear(GL_COLOR_BUFFER_BIT);
 
