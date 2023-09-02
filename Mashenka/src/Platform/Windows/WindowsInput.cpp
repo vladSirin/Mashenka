@@ -4,6 +4,9 @@
 #include <map>
 
 #include "Mashenka/Application.h"
+#include "Mashenka/KeyCodes.h"
+#include "Mashenka/MouseButtonCodes.h"
+
 
 namespace Mashenka
 {
@@ -15,13 +18,13 @@ namespace Mashenka
         auto m_window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
 
         // POll Keyboard state
-        for (int key = 0; key <= GLFW_KEY_LAST; ++key)
+        for (int key = MK_KEY_SPACE; key <= MK_KEY_LAST; ++key)
         {
             keyState[key] = glfwGetKey(m_window, key) == GLFW_PRESS;
         }
 
         // Poll mouse state
-        for (int button = 0; button <= GLFW_MOUSE_BUTTON_LAST; ++button)
+        for (int button = 0; button <= MK_MOUSE_BUTTON_LAST; ++button)
         {
             mouseState[button] = glfwGetMouseButton(m_window, button) == GLFW_PRESS;
         }

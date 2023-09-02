@@ -17,12 +17,25 @@ public:
 
     void OnUpdate() override
     {
-        MK_INFO("ExampleLayer::Update");
+        // MK_INFO("ExampleLayer::Update");
+        if (Mashenka::Input::IsKeyPressed(MK_KEY_TAB))
+        {
+            MK_TRACE("Tab Key is Pressed (poll)!");
+        }
     }
 
     void OnEvent(Mashenka::Event& event) override
     {
-        MK_TRACE("{0}", event);
+        // MK_TRACE("{0}", event);
+        if (event.GetEventType() == Mashenka::EventType::KeyPressed)
+        {
+            const auto& e = dynamic_cast<Mashenka::KeyPressedEvent&>(event);
+            if (e.GetKeyCode() == MK_KEY_TAB)
+            {
+                MK_TRACE("Tab Key is Pressed (event)!");
+            }
+            MK_TRACE("{0}", static_cast<char>(e.GetKeyCode()));
+        }
     }
 };
 
