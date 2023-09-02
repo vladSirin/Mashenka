@@ -5,7 +5,6 @@
 #include <glad/glad.h>
 
 #include "Input.h"
-#include "WindowsInput.h"
 #include "Platform/Windows/WindowsWindow.h"
 
 namespace Mashenka

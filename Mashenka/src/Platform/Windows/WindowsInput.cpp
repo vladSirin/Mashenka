@@ -3,8 +3,7 @@
 #include <GLFW/glfw3.h>
 #include <map>
 
-#include "Application.h"
-#include "Window.h"
+#include "Mashenka/Application.h"
 
 namespace Mashenka
 {
