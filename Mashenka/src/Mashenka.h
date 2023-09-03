@@ -10,6 +10,7 @@
 #include "Mashenka/ControllerCodes.h"
 #include "Mashenka/KeyCodes.h"
 #include "Mashenka/MouseButtonCodes.h"
+#include "glm/glm.hpp"
 
 // -- Entry Point---
 #include "Mashenka/EntryPoint.h"
