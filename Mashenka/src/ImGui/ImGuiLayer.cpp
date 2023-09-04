@@ -2,7 +2,7 @@
 #include "ImGuiLayer.h"
 #include "imgui.h"
 #include "Mashenka/Application.h"
-#include "Platform/OpenGL/imgui_impl_opengl3.h"
+#include "backends/imgui_impl_opengl3.h"
 
 // TEMP
 #include <GLFW/glfw3.h>

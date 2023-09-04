@@ -117,7 +117,8 @@ project "Sandbox"
     {
         "Mashenka/vendor/spdlog/include",
         "Mashenka/src",
-        "%{IncludeDir.glm}"
+        "%{IncludeDir.glm}",
+        "Mashenka/vendor"
     }
 
     links
