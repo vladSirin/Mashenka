@@ -18,6 +18,7 @@ namespace Mashenka
         virtual void OnAttach(){}
         virtual void OnDetach(){}
         virtual void OnUpdate(){}
+        virtual void OnImGuiRender(){} // Every layer could have its own thing to render
         virtual void OnEvent(Event& event){}
 
         inline const std::string& GetName() const {return m_DebugName;}

@@ -3,190 +3,112 @@
 #include "imgui.h"
 #include "Mashenka/Application.h"
 #include "backends/imgui_impl_opengl3.h"
+#include <backends/imgui_impl_glfw.h>
 
-// TEMP
-#include <GLFW/glfw3.h>
+#include "GLFW/glfw3.h"
 
 namespace Mashenka
 {
-    Mashenka::ImGuiLayer::ImGuiLayer()
-        :Layer("ImGuiLayer")
+    ImGuiLayer::ImGuiLayer()
+        : Layer("ImGuiLayer")
     {
     }
 
-    Mashenka::ImGuiLayer::~ImGuiLayer()
+    ImGuiLayer::~ImGuiLayer()
     {
     }
 
-    void Mashenka::ImGuiLayer::OnAttach()
+    void ImGuiLayer::OnAttach()
     {
         // call original class func
         Layer::OnAttach();
 
         // ImGui uses contexts to store data, essentially initialize imgui
+        IMGUI_CHECKVERSION();
         ImGui::CreateContext();
 
         // Default color theme
         ImGui::StyleColorsDark();
 
         // Gets a reference to the "ImGuiIO" structure
+        // IO data includes (display size, input events, time etc.)
         ImGuiIO& io = ImGui::GetIO();
+        (void)io; // suppress any unused variable warnings.
 
-        // Bitwise OR assignment
-        io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
-        io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
+        // Bitwise Or Assignment for flags
+        io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
+        io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad; // Enable Controllers
+        io.ConfigFlags |= ImGuiConfigFlags_DockingEnable; // Enable Docking
+        io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // Enable Multi-Viewport / Platform Windows
 
-        // TEMPORARY: should eventually use Mashenka key codes
-        io.KeyMap[ImGuiKey_Tab] = GLFW_KEY_TAB;
-        io.KeyMap[ImGuiKey_LeftArrow] = GLFW_KEY_LEFT;
-        io.KeyMap[ImGuiKey_RightArrow] = GLFW_KEY_RIGHT;
-        io.KeyMap[ImGuiKey_UpArrow] = GLFW_KEY_UP;
-        io.KeyMap[ImGuiKey_DownArrow] = GLFW_KEY_DOWN;
-        io.KeyMap[ImGuiKey_PageUp] = GLFW_KEY_PAGE_UP;
-        io.KeyMap[ImGuiKey_PageDown] = GLFW_KEY_PAGE_DOWN;
-        io.KeyMap[ImGuiKey_Home] = GLFW_KEY_HOME;
-        io.KeyMap[ImGuiKey_End] = GLFW_KEY_END;
-        io.KeyMap[ImGuiKey_Insert] = GLFW_KEY_INSERT;
-        io.KeyMap[ImGuiKey_Delete] = GLFW_KEY_DELETE;
-        io.KeyMap[ImGuiKey_Backspace] = GLFW_KEY_BACKSPACE;
-        io.KeyMap[ImGuiKey_Space] = GLFW_KEY_SPACE;
-        io.KeyMap[ImGuiKey_Enter] = GLFW_KEY_ENTER;
-        io.KeyMap[ImGuiKey_Escape] = GLFW_KEY_ESCAPE;
-        io.KeyMap[ImGuiKey_A] = GLFW_KEY_A;
-        io.KeyMap[ImGuiKey_C] = GLFW_KEY_C;
-        io.KeyMap[ImGuiKey_V] = GLFW_KEY_V;
-        io.KeyMap[ImGuiKey_X] = GLFW_KEY_X;
-        io.KeyMap[ImGuiKey_Y] = GLFW_KEY_Y;
-        io.KeyMap[ImGuiKey_Z] = GLFW_KEY_Z;
+        // When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones
+        ImGuiStyle& style = ImGui::GetStyle();
+        if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+        {
+            style.WindowRounding = 0.0f;
+            style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+        }
 
-        // Init the opengl version 3
-        ImGui_ImplOpenGL3_Init("#version 410");
+        Application& app = Application::Get();
+        auto window = static_cast<GLFWwindow*>(app.GetWindow().GetNativeWindow());
+
+        // Setup Platform/Renderer bindings
+        ImGui_ImplGlfw_InitForOpenGL(window, true);
+        ImGui_ImplOpenGL3_Init("#version 410"); // Initialize the back end
+        // backend is the bridge between ImGui high level commands and low level rendering, input
+        // and platform or graphic APIs used.
     }
 
-    void Mashenka::ImGuiLayer::OnDetach()
+    void ImGuiLayer::OnDetach()
     {
         Layer::OnDetach();
+
+        ImGui_ImplOpenGL3_Shutdown(); //Shutdown rendering backend
+        ImGui_ImplGlfw_Shutdown(); //Shutdown input and window backend
+        ImGui::DestroyContext(); // free up the ImGui context, which is used for state track
     }
 
-    void Mashenka::ImGuiLayer::OnUpdate()
+    void ImGuiLayer::Begin()
     {
-        Layer::OnUpdate();
+        // Prepare the rendering and input/window glfw for new frame
+        ImGui_ImplOpenGL3_NewFrame(); // setup state, clear butters.
+        ImGui_ImplGlfw_NewFrame(); // handle input events and update mouse etc.
+        ImGui::NewFrame(); // signal a new frame is starting, allow usage of commands to create GUI elements
+    }
 
+    void ImGuiLayer::End()
+    {
         ImGuiIO& io = ImGui::GetIO();
         Application& app = Application::Get();
 
-        // Sets the display size in ImGuiIO to the application window
-        io.DisplaySize = ImVec2(app.GetWindow().GetWidth(), app.GetWindow().GetHeight());
+        // Setup the display size by making up a ImVec2 data which is tailored for ImGui
+        io.DisplaySize = ImVec2((float)app.GetWindow().GetWidth(), (float)app.GetWindow().GetHeight());
 
-        // Calculate delta time, if first frame which m_Time is 0, set to for 60 fps
-        float time = (float)glfwGetTime();
-        io.DeltaTime = m_Time > 0.0f ? (time - m_Time) : (1.0f/60.0f);
-        m_Time = time;
+        // Rendering
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-        // Signal the new frame is starting
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui::NewFrame();
+        // if multi viewport enabled
+        if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+        {
+            // in graphic programming, glfw contexts are container for resources and states for rendering
+            // This includes texture, shaders and state settings, Each window has its own context
+            // When working with multiple windows or rendering targets, you might need to switch
+            GLFWwindow* backup_current_context = glfwGetCurrentContext();
 
-        // show var to control the display of the demo window for debug
+            // As it needs to update multiple windows on OS level, thus it needs to be restored afterwards
+            // This makes sure later inputs are processed in the original window user is on now.
+            ImGui::UpdatePlatformWindows();
+            ImGui::RenderPlatformWindowsDefault();
+            glfwMakeContextCurrent(backup_current_context);
+        }
+    }
+
+    void ImGuiLayer::OnImGuiRender()
+    {
         static bool show = true;
         ImGui::ShowDemoWindow(&show);
-
-        // Generates the draw command
-        ImGui::Render();
-        // send to GPU to render
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     }
 
-    void Mashenka::ImGuiLayer::OnEvent(Event& event)
-    {
-        Layer::OnEvent(event);
 
-        EventDispatcher dispatcher(event);
-
-        dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FN(ImGuiLayer::OnKeyPressedEvent));
-        dispatcher.Dispatch<KeyReleasedEvent>(BIND_EVENT_FN(ImGuiLayer::OnKeyReleasedEvent));
-        dispatcher.Dispatch<KeyTypedEvent>(BIND_EVENT_FN(ImGuiLayer::OnKeyTypedEvent));
-        dispatcher.Dispatch<MouseMovedEvent>(BIND_EVENT_FN(ImGuiLayer::OnMouseMovedEvent));
-        dispatcher.Dispatch<MouseScrolledEvent>(BIND_EVENT_FN(ImGuiLayer::OnMouseScrolledEvent));
-        dispatcher.Dispatch<MouseButtonReleasedEvent>(BIND_EVENT_FN(ImGuiLayer::OnMouseButtonRleasedEvent));
-        dispatcher.Dispatch<MouseButtonPressedEvent>(BIND_EVENT_FN(ImGuiLayer::OnMouseButtonPressedEvent));
-        dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(ImGuiLayer::OnWindowResizedEvent));
-    }
-
-    // definition on different events
-    bool ImGuiLayer::OnKeyPressedEvent(KeyPressedEvent& e)
-    {
-        ImGuiIO& io = ImGui::GetIO();
-        io.KeysDown[e.GetKeyCode()] = true;
-
-        io.KeyCtrl = io.KeysDown[GLFW_KEY_LEFT_CONTROL] || io.KeysDown[GLFW_KEY_RIGHT_CONTROL];
-        io.KeyShift = io.KeysDown[GLFW_KEY_LEFT_SHIFT] || io.KeysDown[GLFW_KEY_RIGHT_SHIFT];
-        io.KeyAlt = io.KeysDown[GLFW_KEY_LEFT_ALT] || io.KeysDown[GLFW_KEY_RIGHT_ALT];
-        io.KeySuper = io.KeysDown[GLFW_KEY_LEFT_SUPER] || io.KeysDown[GLFW_KEY_LEFT_SUPER];
-
-        // Returns false we might need other layers to handle this too
-        return false;
-    }
-
-    bool ImGuiLayer::OnKeyReleasedEvent(KeyReleasedEvent& e)
-    {
-        ImGuiIO& io = ImGui::GetIO();
-        io.KeysDown[e.GetKeyCode()] = false;
-
-        return false;
-    }
-
-    bool ImGuiLayer::OnKeyTypedEvent(KeyTypedEvent& e)
-    {
-        ImGuiIO& io = ImGui::GetIO();
-        int keycode = e.GetKeyCode();
-        if (keycode > 0 && keycode < 0x1000)
-            io.AddInputCharacter((unsigned short)keycode);
-
-        return false;
-    }
-
-    bool ImGuiLayer::OnMouseMovedEvent(MouseMovedEvent& e)
-    {
-        ImGuiIO& io = ImGui::GetIO();
-        io.MousePos = ImVec2(e.GetX(), e.GetY());
-
-        return false;
-    }
-
-    bool ImGuiLayer::OnMouseScrolledEvent(MouseScrolledEvent& e)
-    {
-        ImGuiIO& io = ImGui::GetIO();
-        io.MouseWheelH += e.GetXOffset();
-        io.MouseWheel += e.GetYOffset();
-
-        return false;
-    }
-
-    bool ImGuiLayer::OnMouseButtonRleasedEvent(MouseButtonReleasedEvent& e)
-    {
-        ImGuiIO& io = ImGui::GetIO();
-        io.MouseDown[e.GetMouseButton()] = false;
-
-        return false;
-    }
-
-    bool ImGuiLayer::OnMouseButtonPressedEvent(MouseButtonPressedEvent& e)
-    {
-        ImGuiIO& io = ImGui::GetIO();
-        io.MouseDown[e.GetMouseButton()] = true;
-
-        return false;
-    }
-
-    bool ImGuiLayer::OnWindowResizedEvent(WindowResizeEvent& e)
-    {
-        ImGuiIO& io = ImGui::GetIO();
-        io.DisplaySize = ImVec2(e.GetWidth(), e.GetHeight());
-        io.DisplayFramebufferScale = ImVec2(1.0f, 1.0f);
-        glViewport(0, 0, e.GetWidth(), e.GetHeight());
-
-        return false;
-    }
 }
-

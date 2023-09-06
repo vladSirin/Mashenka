@@ -14,21 +14,14 @@ namespace Mashenka
 
         void OnAttach() override;
         void OnDetach() override;
-        void OnUpdate() override;
-        void OnEvent(Event& event) override;
+        void OnImGuiRender() override; // for render specific things and debugging UI
+
+        // Begin and End for the rendering prepare and execution.
+        void Begin();
+        void End();
 
     private:
         float m_Time = 0.0f;
-    private:
-        // Those events will be called layer by layer in the application class
-        bool OnKeyPressedEvent(KeyPressedEvent& e);
-        bool OnKeyReleasedEvent(KeyReleasedEvent& e);
-        bool OnKeyTypedEvent(KeyTypedEvent& e);
-        bool OnMouseMovedEvent(MouseMovedEvent& e);
-        bool OnMouseScrolledEvent(MouseScrolledEvent& e);
-        bool OnMouseButtonRleasedEvent(MouseButtonReleasedEvent& e);
-        bool OnMouseButtonPressedEvent(MouseButtonPressedEvent& e);
-        bool OnWindowResizedEvent(WindowResizeEvent& e);
         
     };
 }

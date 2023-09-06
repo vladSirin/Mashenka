@@ -30,9 +30,10 @@ group ""
 
 project "Mashenka"
     location "Mashenka"
-    kind "SharedLib"
+    kind "StaticLib"
     language "C++"
-    staticruntime "off" -- using a dynamic runtime, using extra DLL, thus changes will be reflected when building sandbox
+    cppdialect "C++17"
+    staticruntime "on" -- using a dynamic runtime, using extra DLL, thus changes will be reflected when building sandbox
 
     targetdir ("bin/" ..outputdir.. "/%{prj.name}")
     objdir ("bin-int/" ..outputdir.. "/%{prj.name}")
@@ -46,6 +47,11 @@ project "Mashenka"
         "%{prj.name}/src/**.cpp",
         "%{prj.name}/vendor/glm/glm/**.hpp",
         "%{prj.name}/vendor/glm/glm/**.inl",
+    }
+
+    defines
+    {
+        "_CRT_SECURE_NO_WARNINGS"
     }
     
     includedirs
@@ -67,21 +73,19 @@ project "Mashenka"
         "ImGui"
     }
 
+    -- define the pre-processer definitions --
     filter "system:windows"
-        cppdialect "C++17"
         systemversion "latest"
 
         defines
         {
             "MK_PLATFORM_WINDOWS",
             "MK_BUILD_DLL",
+            "GLFW_INCLUDE_NONE"
         }
 
 -- using \" to enclose the argument in case special characters in the path --
-        postbuildcommands
-        {
-            ("{COPY} %{cfg.buildtarget.relpath} \"../bin/" ..outputdir.. "/Sandbox/\"")
-        }
+
     
     filter "configurations:Debug"
         defines "MK_DEBUG"
@@ -102,7 +106,8 @@ project "Sandbox"
     location "Sandbox"
     kind "ConsoleApp"
     language "C++"
-    staticruntime "off"
+    staticruntime "on"
+    cppdialect "C++17"
 
     targetdir ("bin/" ..outputdir.. "/%{prj.name}")
     objdir ("bin-int/" ..outputdir.. "/%{prj.name}")
@@ -127,7 +132,6 @@ project "Sandbox"
     }
 
     filter "system:windows"
-        cppdialect "C++17"
         systemversion "latest"
 
         defines

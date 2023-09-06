@@ -3,6 +3,7 @@
 #include "Window.h"
 #include "Mashenka/Events/ApplicationEvent.h"
 #include "LayerStack.h"
+#include "ImGui/ImGuiLayer.h"
 
 /*
  * implement a form of the Singleton pattern for the Application class.
@@ -34,6 +35,7 @@ namespace Mashenka
         std::unique_ptr<Window> m_Window;
         bool m_Running = true;
         LayerStack m_LayerStack;
+        ImGuiLayer* m_ImGuiLayer; //adding ImGuiLayer variable for the application as it should be handled inside the engine
 
         // declare a static global single instance to access
         static Application* s_Instance;

@@ -1,5 +1,5 @@
 ﻿#include "Mashenka.h"
-#include "ImGui/ImGuiLayer.h"
+#include "imgui/imgui.h"
 
 /*
  * 3. **Creating a Sandbox Class**:
@@ -24,6 +24,14 @@ public:
         }
     }
 
+    virtual void OnImGuiRender() override
+    {
+        
+        ImGui::Begin("Test");
+        ImGui::Text("Hello World");
+        ImGui::End();
+    }
+
     void OnEvent(Mashenka::Event& event) override
     {
         // MK_TRACE("{0}", event);
@@ -45,7 +53,6 @@ public:
      Sandbox()
      {
          PushLayer(new ExampleLayer);
-         PushOverlay(new Mashenka::ImGuiLayer);
      }
 
      ~Sandbox()

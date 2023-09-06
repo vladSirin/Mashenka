@@ -1,4 +1,13 @@
-﻿#pragma once
+﻿/*
+ * The LayerStack class is a utility to manage layers in an application.
+ * Layers can be thought of as individual "screens" or "panels" in an application.
+ * For example, in a game, you might have a gameplay layer, a UI layer, and a debug info overlay.
+ * By managing these in a stack, it allows for easy organization and
+ * rendering in the correct order.
+ * The distinction between layers and overlays can be thought of
+ * as the difference between background content (layers) and foreground content (overlays).
+ */
+#pragma once
 
 #include "Mashenka/Core.h"
 #include "Layer.h"
@@ -21,6 +30,6 @@ namespace Mashenka
         std::vector<Layer*>::iterator end() {return  m_Layers.end();}
     private:
         std::vector<Layer*> m_Layers;
-        std::vector<Layer*>::iterator m_LayerInsert;
+        unsigned int m_LayerInsertIndex = 0; //using an index instead of iterator
     };
 }

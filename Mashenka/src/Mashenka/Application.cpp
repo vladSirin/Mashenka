@@ -26,6 +26,11 @@ namespace Mashenka
         // using bind to call the member function of application when needed in Window layer
         // set the application OnEvent function to the window layer as a callback
         m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
+
+        // Create and assign the ImGuiLayer, Push it into the stack
+        // This was done by sandbox app, which is not ideal as it should be part of the engine app
+        m_ImGuiLayer = new ImGuiLayer();
+        PushOverlay(m_ImGuiLayer);
     }
 
     Application::~Application()
@@ -60,16 +65,15 @@ namespace Mashenka
         MK_CORE_TRACE("{0}", e);
     }
 
+    // The on attach now is called in LayerStack when Push, which it should be.
     void Application::PushLayer(Layer* layer)
     {
         m_LayerStack.PushLayer(layer);
-        layer->OnAttach();
     }
 
     void Application::PushOverlay(Layer* layer)
     {
         m_LayerStack.PushOverlay(layer);
-        layer->OnAttach();
     }
 
 
@@ -90,6 +94,16 @@ namespace Mashenka
 
             for (Layer* layer : m_LayerStack)
                 layer->OnUpdate();
+
+            // Initialize the ImGui frame, prepare for the rendering, context and input
+            m_ImGuiLayer->Begin();
+
+            // Go through all the layers, as each layer can handle its own ImGui component
+            for (Layer* layer : m_LayerStack)
+                layer->OnImGuiRender(); // Render the needed info
+
+            // finalize the rendering for the current frame, wraps up tasks like draw data
+            m_ImGuiLayer->End();
 
             m_Window->OnUpdate();
         }
