@@ -6,6 +6,8 @@
  * A sandbox class is created as an instance of the Hazel application.
  * This class is defined in the client and returned by the `create application` function. 
  */
+
+// Test layer
 class ExampleLayer : public Mashenka::Layer
 {
 public:
