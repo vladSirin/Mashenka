@@ -89,7 +89,7 @@ namespace Mashenka
             // Poll Input
             Input::Poll();
             
-            glClearColor(1, 0.42, 0.5, 0.5);
+            glClearColor(1, 0.42f, 0.5f, 0.5f);
             glClear(GL_COLOR_BUFFER_BIT);
 
             for (Layer* layer : m_LayerStack)

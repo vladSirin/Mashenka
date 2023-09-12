@@ -13,7 +13,7 @@
 
 extern Mashenka::Application* Mashenka::CreateApplication();
 
-inline int main(int argc, char** argv)
+int main(int argc, char** argv) //main cannot be inline
 {
     Mashenka::Log::Init();
     MK_CORE_WARN("Initialized Log!");
