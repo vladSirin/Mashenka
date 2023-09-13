@@ -16,7 +16,7 @@ namespace Mashenka
     Application::Application()
     {
         // Make sure there is only one instance
-        MK_CORE_ASSERT(!s_Instance, "Application Alreay Exists!");
+        MK_CORE_ASSERT(!s_Instance, "Application Alreay Exists!")
         s_Instance = this;
 
         // Create the window

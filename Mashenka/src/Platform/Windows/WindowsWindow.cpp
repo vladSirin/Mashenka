@@ -3,6 +3,7 @@
 #include "Mashenka/Events/ApplicationEvent.h"
 #include "Mashenka/Events/MouseEvent.h"
 #include "Mashenka/Events/KeyEvent.h"
+#include "Platform/OpenGL/OpenGLContext.h"
 
 namespace Mashenka
 {
@@ -54,19 +55,12 @@ namespace Mashenka
         }
 
         m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
-        glfwMakeContextCurrent(m_Window);
 
-        /*
-         * gladLoadGLLoader is a function provided by GLAD,
-         * a loader-generator for OpenGL. It's used to load and initialize the OpenGL function pointers for the context
-         * that's currently bound. In simpler terms, it sets up all the OpenGL functions so that
-         * they can be used in your application.
-         * glfwGetProcAddress is a function provided by GLFW that retrieves the address of an OpenGL function.
-         * By casting it to GLADloadproc, you're telling GLAD to use this function to
-         * load all the required OpenGL function addresses.
-         */
-        int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-        MK_CORE_ASSERT(status, "Failed to initialize Glad!");
+        // Create Context and Init it
+        m_Context = new OpenGLContext(m_Window);
+        m_Context->Init();
+        
+
         glfwSetWindowUserPointer(m_Window, &m_Data);
         SetVSync(true);
 
@@ -182,7 +176,7 @@ namespace Mashenka
         glfwPollEvents();
 
         // Swap the back buffer with the front buffer as openGL normally render to off-screen buffer to avoid flickering
-        glfwSwapBuffers(m_Window);
+        m_Context->SwapBuffers();
     }
 
     // Setup Vertical Sync for the GPU

@@ -2,6 +2,7 @@
 #include "Mashenka/Window.h"
 #include <glad/glad.h>
 #include "GLFW/glfw3.h"
+#include "Mashenka/Renderer/GraphicsContext.h"
 
 namespace Mashenka
 {
@@ -32,6 +33,7 @@ namespace Mashenka
         virtual void Shutdown();
         
         GLFWwindow* m_Window;
+        GraphicsContext* m_Context;
 
         // WindowData is for holding the properties on runtime, while WindowProp is for creation/init
         struct WindowData
