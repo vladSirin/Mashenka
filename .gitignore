@@ -8,6 +8,9 @@ Intermediates/
 
 # Directories
 
+# Imgui ini
+imgui.ini
+
 # IDE files and folder
 .vs/
 **.sln
