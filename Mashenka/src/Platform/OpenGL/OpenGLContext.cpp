@@ -1,8 +1,9 @@
 ﻿#include "mkpch.h"
 #include "OpenGLContext.h"
 
-#include "glad/glad.h"
-#include "GLFW/glfw3.h"
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+#include <gl/GL.h>
 
 namespace Mashenka
 {
@@ -25,7 +26,13 @@ namespace Mashenka
         */
         glfwMakeContextCurrent(m_WindowHandle); // Associate the context with current window, crucial step for next
         int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-        MK_CORE_ASSERT(status, "Failed to initialize Glad!");
+        MK_CORE_ASSERT(status, "Failed to initialize Glad!")
+
+        // Logging the rendering info
+        MK_CORE_INFO("OpenGL Info:");
+        MK_CORE_INFO(" Vendor: {0}", reinterpret_cast<const char*>(glGetString(GL_VENDOR))); //eg: Intel
+        MK_CORE_INFO(" Renderer: {0}", reinterpret_cast<const char*>(glGetString(GL_RENDERER))); //eg: RTX 4060
+        MK_CORE_INFO(" Version: {0}", reinterpret_cast<const char*>(glGetString(GL_VERSION))); //eg: OPENGL Version
     }
 
     void Mashenka::OpenGLContext::SwapBuffers()

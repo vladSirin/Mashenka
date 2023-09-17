@@ -24,6 +24,7 @@ namespace Mashenka
 
         void PushLayer(Layer* layer);
         void PushOverlay(Layer* layer);
+        
 
         //Using a static function to get the sole instance of the application
         inline Window& GetWindow() {return *m_Window;}
@@ -36,6 +37,19 @@ namespace Mashenka
         bool m_Running = true;
         LayerStack m_LayerStack;
         ImGuiLayer* m_ImGuiLayer; //adding ImGuiLayer variable for the application as it should be handled inside the engine
+
+        /*m_VertexArray: This is the ID of the Vertex Array Object (VAO).
+         *A VAO encapsulates all of the state needed to specify per-vertex attribute data to the OpenGL pipeline.
+         *It essentially serves as a container for VBOs and EBOs.
+         
+        m_VertexBuffer: This is the ID of the Vertex Buffer Object (VBO).
+        A VBO is a memory buffer in the high-speed memory of your video card designed to hold information about vertices.
+        In a 3D application, these could include coordinates, normals, and texture coordinates.
+        
+        m_IndexBuffer: This is the ID of the Element Buffer Object (EBO), also known as the Index Buffer Object (IBO).
+        It stores the indices that OpenGL uses to decide which vertices to draw,
+        allowing for the reuse of vertex data and thus more efficient rendering.*/
+        unsigned int m_VertexArray, m_VertexBuffer, m_IndexBuffer;
 
         // declare a static global single instance to access
         static Application* s_Instance;
