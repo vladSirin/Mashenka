@@ -83,7 +83,39 @@ namespace Mashenka
         unsigned int indices[3] = {0, 1, 2};
         // populate the bound EBO with index data
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-        
+
+        // Create the Vertex and Fragment shaders
+        std::string vertexSrc = R"(
+            #version 330 core
+            
+            layout(location = 0) in vec3 a_Position;
+
+            out vec3 v_Position;
+            
+            void main()
+            {
+                v_Position = a_Position;
+                gl_Position = vec4(a_Position, 1.0);
+            }
+        )";
+
+        // The fragment shader is responsible for determining the color output of the fragment.
+        std::string fragmentSrc = R"(
+            #version 330 core
+            
+            layout(location = 0) out vec4 color;
+
+            in vec3 v_Position;
+            
+            void main()
+            {
+                color = vec4(v_Position * 0.5 + 0.5, 1.0);
+            }
+        )";
+
+        // new shader object with the vertex and fragment shader source code
+        // using reset to reset the m_Shader pointer to the new shader object
+        m_Shader.reset(new Shader(vertexSrc, fragmentSrc));
         
     }
 
@@ -145,6 +177,9 @@ namespace Mashenka
             
             glClearColor(0.1f, 0.1f, 0.1f, 1);
             glClear(GL_COLOR_BUFFER_BIT);
+
+            // Bind the shader
+            m_Shader->Bind();
 
             //The VAO contains pointers to the vertex buffers (VBOs) and their layout specifications,
             //as well as references to the index buffers (EBOs) if any.

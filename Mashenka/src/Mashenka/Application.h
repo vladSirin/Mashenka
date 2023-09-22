@@ -4,6 +4,7 @@
 #include "Mashenka/Events/ApplicationEvent.h"
 #include "LayerStack.h"
 #include "ImGui/ImGuiLayer.h"
+#include "Renderer/Shader.h"
 
 /*
  * implement a form of the Singleton pattern for the Application class.
@@ -50,6 +51,12 @@ namespace Mashenka
         It stores the indices that OpenGL uses to decide which vertices to draw,
         allowing for the reuse of vertex data and thus more efficient rendering.*/
         unsigned int m_VertexArray, m_VertexBuffer, m_IndexBuffer;
+
+        // Explanation: https://www.khronos.org/opengl/wiki/Shader_Compilation
+        // The shader program is the final linked version of multiple shaders combined.
+        // The shader program is the one that is used in the rendering process.
+        // The shader program is the one that is stored in the OpenGL state machine.
+        std::unique_ptr<Shader> m_Shader;
 
         // declare a static global single instance to access
         static Application* s_Instance;
