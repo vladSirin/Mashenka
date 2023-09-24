@@ -49,14 +49,14 @@ namespace Mashenka
  */
 // __VA_ARGS__ is a special identifier that represents all arguments passed to the macro.
 //Core Log Macros
-#define MK_CORE_FATAL(...)   ::Mashenka::Log::GetCoreLogger()->fatal(__VA_ARGS__)
+#define MK_CORE_FATAL(...)   ::Mashenka::Log::GetCoreLogger()->critical(__VA_ARGS__)
 #define MK_CORE_ERROR(...)   ::Mashenka::Log::GetCoreLogger()->error(__VA_ARGS__)
 #define MK_CORE_WARN(...)    ::Mashenka::Log::GetCoreLogger()->warn(__VA_ARGS__)
 #define MK_CORE_INFO(...)    ::Mashenka::Log::GetCoreLogger()->info(__VA_ARGS__)
 #define MK_CORE_TRACE(...)   ::Mashenka::Log::GetCoreLogger()->trace(__VA_ARGS__)
 
 //Client Log Macros
-#define MK_FATAL(...)        ::Mashenka::Log::GetClientLogger()->fatal(__VA_ARGS__)
+#define MK_FATAL(...)        ::Mashenka::Log::GetClientLogger()->critical(__VA_ARGS__)
 #define MK_ERROR(...)        ::Mashenka::Log::GetClientLogger()->error(__VA_ARGS__)
 #define MK_WARN(...)         ::Mashenka::Log::GetClientLogger()->warn(__VA_ARGS__)
 #define MK_INFO(...)         ::Mashenka::Log::GetClientLogger()->info(__VA_ARGS__)
