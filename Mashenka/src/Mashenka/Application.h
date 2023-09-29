@@ -4,6 +4,7 @@
 #include "Mashenka/Events/ApplicationEvent.h"
 #include "LayerStack.h"
 #include "ImGui/ImGuiLayer.h"
+#include "Renderer/Buffer.h"
 #include "Renderer/Shader.h"
 
 /*
@@ -50,7 +51,9 @@ namespace Mashenka
         m_IndexBuffer: This is the ID of the Element Buffer Object (EBO), also known as the Index Buffer Object (IBO).
         It stores the indices that OpenGL uses to decide which vertices to draw,
         allowing for the reuse of vertex data and thus more efficient rendering.*/
-        unsigned int m_VertexArray, m_VertexBuffer, m_IndexBuffer;
+        unsigned int m_VertexArray;
+        std::unique_ptr<VertexBuffer> m_VertexBuffer;
+        std::unique_ptr<IndexBuffer> m_IndexBuffer;
 
         // Explanation: https://www.khronos.org/opengl/wiki/Shader_Compilation
         // The shader program is the final linked version of multiple shaders combined.

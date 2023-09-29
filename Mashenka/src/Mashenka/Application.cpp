@@ -3,7 +3,6 @@
 #include "Mashenka/Events/ApplicationEvent.h"
 #include "Mashenka/Log.h"
 #include <glad/glad.h>
-
 #include "Input.h"
 #include "Platform/Windows/WindowsWindow.h"
 
@@ -13,8 +12,10 @@ namespace Mashenka
     // initialize the singleton instance of application as null
     Application* Application::s_Instance = nullptr;
 
+    // this is the constructor of the application class
     Application::Application()
     {
+        // ==================== Make sure Singleton and setup Window ====================
         // Make sure there is only one instance
         MK_CORE_ASSERT(!s_Instance, "Application Alreay Exists!")
         s_Instance = this;
@@ -32,32 +33,13 @@ namespace Mashenka
         m_ImGuiLayer = new ImGuiLayer();
         PushOverlay(m_ImGuiLayer);
 
-        // Generates a unique identifier for a new VAO and stores it in 'm_VertexArray'
+
+        // ==================== OpenGL ====================
+        // Generates a unique identifier for a new VAO [Vertex Array Object] and stores it in 'm_VertexArray'
         // At this point the VAO is created but not active
         glGenVertexArrays(1, &m_VertexArray);
         // This line activate VAO meaning that all subsequence calls related to vertex arrays will be stored here
         glBindVertexArray(m_VertexArray);
-
-        /*When you first bind a VAO using glBindVertexArray,
-         *it becomes the active VAO. Any subsequent calls to glBindBuffer with GL_ARRAY_BUFFER or
-         *GL_ELEMENT_ARRAY_BUFFER will associate the VBO or EBO with the currently active VAO.
-         *This is how OpenGL knows to link these buffer objects with the VAO.*/
-
-        /*When you later generate and bind a VBO, the VAO will keep track of that VBO as part of its state.
-         *This is crucial because it allows you to switch between different sets of vertex data and
-         *configurations by simply binding different VAOs.
-         *The VAO encapsulates all the state needed to specify per-vertex attribute data,
-         *including which VBOs to use and how to interpret the raw vertex data for each attribute.*/
-
-        // Generate a unique identifier to a new Vertex Buffer Object(s) and stores it in the variable
-        // the number of buffers created can be specify by argument 1
-        glGenBuffers(1, &m_VertexBuffer);
-        
-        // binds a buffer object to a specified buffer binding target.
-        // This function call makes the VBO represented 'm_VertexBuffer' the active array buffer
-        // Any OpenGL function that deals with array buffer will affect this VBO
-        glBindBuffer(GL_ARRAY_BUFFER, m_VertexBuffer);
-        // GL_ARRAY_BUFFER is constant that represents the array buffer binding point in the OpenGL state machine
 
         // Example data for a simple triangle
         float vertices[3 * 3] = {
@@ -65,9 +47,10 @@ namespace Mashenka
             0.5f, -0.5f, 0.0f,
             0.0f, 0.5f, 0.0f
         };
-        
-        // uploading data to GPU for rendering, the usage here means it will be upload once and draw many times
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices,GL_STATIC_DRAW);
+
+        // Create a new vertex buffer, which will hold the vertex data
+        // using reset to reset the m_VertexBuffer pointer to the new vertex buffer object
+        m_VertexBuffer.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
 
         // Specify how OpenGL should interpret the vertex data
         glEnableVertexAttribArray(0);
@@ -75,14 +58,9 @@ namespace Mashenka
         // the offset between each line is 3 times the size of float
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
 
-        // Generate and bind a new EBO (index buffer object), which will hold the index data
-        glGenBuffers(1, &m_IndexBuffer);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IndexBuffer);
-
         // Example data for indices of the triangle
         unsigned int indices[3] = {0, 1, 2};
-        // populate the bound EBO with index data
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+        m_IndexBuffer.reset(IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
 
         // Create the Vertex and Fragment shaders
         std::string vertexSrc = R"(
@@ -186,7 +164,7 @@ namespace Mashenka
             //By binding a VAO, you're effectively binding all these associated resources in one go,
             //making your code more efficient and easier to manage.
             glBindVertexArray(m_VertexArray); // bind Vertex Array Object
-            glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr); // drawing function
+            glDrawElements(GL_TRIANGLES, m_IndexBuffer->GetCount(), GL_UNSIGNED_INT, nullptr); // drawing function
 
             for (Layer* layer : m_LayerStack)
                 layer->OnUpdate();
