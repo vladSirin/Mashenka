@@ -8,9 +8,30 @@
 
 namespace Mashenka
 {
-
     // initialize the singleton instance of application as null
     Application* Application::s_Instance = nullptr;
+
+    // Define the static Create function
+    static GLenum ShaderDataTypeToOpenGLBaseType(ShaderDataType type)
+    {
+        switch (type)
+        {
+        case Mashenka::ShaderDataType::Float: return GL_FLOAT;
+        case Mashenka::ShaderDataType::Float2: return GL_FLOAT;
+        case Mashenka::ShaderDataType::Bool: return GL_BOOL;
+        case Mashenka::ShaderDataType::Float3: return GL_FLOAT;
+        case Mashenka::ShaderDataType::Float4: return GL_FLOAT;
+        case Mashenka::ShaderDataType::Int: return GL_INT;
+        case Mashenka::ShaderDataType::Int2: return GL_INT;
+        case Mashenka::ShaderDataType::Int3: return GL_INT;
+        case Mashenka::ShaderDataType::Int4: return GL_INT;
+        case Mashenka::ShaderDataType::Mat3: return GL_FLOAT;
+        case Mashenka::ShaderDataType::Mat4: return GL_FLOAT;;
+        }
+
+        MK_CORE_ASSERT(false, "Unknown ShaderDataType!");
+        return 0;
+    }
 
     // this is the constructor of the application class
     Application::Application()
@@ -22,7 +43,7 @@ namespace Mashenka
 
         // Create the window
         m_Window = std::unique_ptr<Window>(WindowsWindow::Create());
-        
+
 
         // using bind to call the member function of application when needed in Window layer
         // set the application OnEvent function to the window layer as a callback
@@ -41,25 +62,49 @@ namespace Mashenka
         // This line activate VAO meaning that all subsequence calls related to vertex arrays will be stored here
         glBindVertexArray(m_VertexArray);
 
-        // Example data for a simple triangle
-        float vertices[3 * 3] = {
-            -0.5f, -0.5f, 0.0f,
-            0.5f, -0.5f, 0.0f,
-            0.0f, 0.5f, 0.0f
+        // Example data for the triangle
+        float vertices[3 * 7] = {
+            -0.5f, -0.5f, 0.0f, 0.8f, 0.2f, 0.8f, 1.0f,
+            0.5f, -0.5f, 0.0f, 0.2f, 0.3f, 0.8f, 1.0f,
+            0.0f, 0.5f, 0.0f, 0.8f, 0.8f, 0.2f, 1.0f
         };
 
-        // Create a new vertex buffer, which will hold the vertex data
-        // using reset to reset the m_VertexBuffer pointer to the new vertex buffer object
+        // Create the vertex buffer
         m_VertexBuffer.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
 
-        // Specify how OpenGL should interpret the vertex data
-        glEnableVertexAttribArray(0);
-        // stride is the offset between attributes, as here is a matrix of floats (3*3),
-        // the offset between each line is 3 times the size of float
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+        // Create the layout of the buffer, which is the layout of the vertex buffer
+        {
+            BufferLayout layout = {
+                {ShaderDataType::Float3, "a_Position"},
+                {ShaderDataType::Float4, "a_Color"}
+            };
+
+            m_VertexBuffer->SetLayout(layout);
+        }
+
+        // Bind the vertex buffer, which is the buffer that contains the vertices to be drawn by the GPU
+        uint32_t index = 0;
+        const auto& layout = m_VertexBuffer->GetLayout();
+        for (const auto& element : layout)
+        {
+            // Enable the vertex attribute array
+            glEnableVertexAttribArray(index);
+            // Specify the location and data format of the array of generic vertex attributes at index
+            glVertexAttribPointer(
+                index,
+                element.GetComponentCount(),
+                ShaderDataTypeToOpenGLBaseType(element.Type),
+                element.Normalized ? GL_TRUE : GL_FALSE,
+                layout.GetStride(),
+                (const void*)element.Offset
+            );
+            index++;
+        }
+
 
         // Example data for indices of the triangle
         unsigned int indices[3] = {0, 1, 2};
+        // Create the index buffer, which is the buffer that contains the indices of the vertices to be drawn by the GPU
         m_IndexBuffer.reset(IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
 
         // Create the Vertex and Fragment shaders
@@ -67,12 +112,15 @@ namespace Mashenka
             #version 330 core
             
             layout(location = 0) in vec3 a_Position;
+            layout(location = 1) in vec4 a_Color;
 
             out vec3 v_Position;
+            out vec4 v_Color;
             
             void main()
             {
                 v_Position = a_Position;
+                v_Color = a_Color;
                 gl_Position = vec4(a_Position, 1.0);
             }
         )";
@@ -84,17 +132,18 @@ namespace Mashenka
             layout(location = 0) out vec4 color;
 
             in vec3 v_Position;
+            in vec4 v_Color;
             
             void main()
             {
                 color = vec4(v_Position * 0.5 + 0.5, 1.0);
+                color = v_Color;
             }
         )";
 
         // new shader object with the vertex and fragment shader source code
         // using reset to reset the m_Shader pointer to the new shader object
         m_Shader.reset(new Shader(vertexSrc, fragmentSrc));
-        
     }
 
     Application::~Application()
@@ -152,7 +201,7 @@ namespace Mashenka
         {
             // Poll Input
             Input::Poll();
-            
+
             glClearColor(0.1f, 0.1f, 0.1f, 1);
             glClear(GL_COLOR_BUFFER_BIT);
 

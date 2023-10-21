@@ -2,6 +2,144 @@
 
 namespace Mashenka
 {
+    // the type of the shader data
+    // the size of the data type is used to calculate the offset of the data
+    // for example, if the first element is a float, the offset is 0
+    // if the second element is a float2, the offset is 4
+    enum class ShaderDataType
+    {
+        None = 0,
+        Float,
+        Float2,
+        Float3,
+        Float4,
+        Mat3,
+        Mat4,
+        Int,
+        Int2,
+        Int3,
+        Int4,
+        Bool
+    };
+
+    // get the size of the shader data type
+    static uint32_t ShaderDataTypeSize(ShaderDataType type)
+    {
+        switch (type)
+        {
+        case ShaderDataType::Float: return 4;
+        case ShaderDataType::Float2: return 4 * 2;
+        case ShaderDataType::Bool: return 1;
+        case ShaderDataType::Float3: return 4 * 3;
+        case ShaderDataType::Float4: return 4 * 4;
+        case ShaderDataType::Int: return 4;
+        case ShaderDataType::Int2: return 4 * 2;
+        case ShaderDataType::Int3: return 4 * 3;
+        case ShaderDataType::Int4: return 4 * 4;
+        case ShaderDataType::Mat3: return 4 * 3 * 3;
+        case ShaderDataType::Mat4: return 4 * 4 * 4;
+        case ShaderDataType::None: return 0;
+        }
+
+        MK_CORE_ASSERT(false, "unknown shader data type")
+        return 0;
+    }
+
+    // the layout of the buffer
+    // the buffer is a list of elements, each element has a name, a type, a size and an offset, and whether it is normalized
+    // the offset is the offset of the element in the buffer, the size is the size of the element, the type is the type of the element
+    struct BufferElement
+    {
+        std::string Name;
+        ShaderDataType Type;
+        uint32_t Size;
+        uint32_t Offset;
+        bool Normalized;
+
+        // constructor, destructor and default constructor, the default constructor is used to create an empty buffer element
+        // i.e. without any parameter setup
+        BufferElement() = default;
+
+        // constructor
+        BufferElement(ShaderDataType type, const std::string& name, bool normalized = false)
+            : Name(name), Type(type), Size(ShaderDataTypeSize(type)), Offset(0), Normalized(normalized)
+        {
+        }
+
+        // get the count of the component, for example, float3 has 3 components, float4 has 4 components
+        uint32_t GetComponentCount() const
+        {
+            switch (Type)
+            {
+            case ShaderDataType::Float: return 1;
+            case ShaderDataType::Float2: return 2;
+            case ShaderDataType::Float3: return 3;
+            case ShaderDataType::Float4: return 4;
+            case ShaderDataType::Mat3: return 3 * 3;
+            case ShaderDataType::Mat4: return 4 * 4;
+            case ShaderDataType::Int: return 1;
+            case ShaderDataType::Int2: return 2;
+            case ShaderDataType::Int3: return 3;
+            case ShaderDataType::Int4: return 4;
+            case ShaderDataType::Bool: return 1;
+            }
+
+            MK_CORE_ASSERT(false, "unknown shader data type")
+            return 0;
+        }
+    };
+
+    // the layout of the buffer
+    // the buffer is a list of elements, each element has a name, a type, a size and an offset, and whether it is normalized
+    // the offset is the offset of the element in the buffer, the size is the size of the element, the type is the type of the element
+    // the stride is the size of the buffer, the elements are stored in the buffer one by one.
+    class BufferLayout
+    {
+    public:
+        // constructor, destructor and default constructor, the default constructor is used to create an empty buffer layout
+        BufferLayout() = default;
+
+        // constructor
+        BufferLayout(const std::initializer_list<BufferElement>& elements)
+            : m_Elements(elements)
+        {
+            CalculateOffsetAndStride();
+        }
+
+        // get stride and elements
+        // stride is the size of the buffer, the elements are stored in the buffer one by one.
+        inline uint32_t GetStride() const { return m_Stride; }
+
+        // elements is the list of elements
+        inline const std::vector<BufferElement>& GetElements() const { return m_Elements; }
+
+        // begin and end, used to iterate the elements
+        std::vector<BufferElement>::iterator begin() { return m_Elements.begin(); }
+        std::vector<BufferElement>::iterator end() { return m_Elements.end(); }
+
+        // begin and end, used to iterate the elements, const version for immutable situations
+        std::vector<BufferElement>::const_iterator begin() const { return m_Elements.begin(); }
+        std::vector<BufferElement>::const_iterator end() const { return m_Elements.end(); }
+
+    private:
+        // calculate the offset and stride of the buffer
+        void CalculateOffsetAndStride()
+        {
+            uint32_t offset = 0;
+            m_Stride = 0;
+            for (auto& element : m_Elements)
+            {
+                element.Offset = offset;
+                offset += element.Size;
+                m_Stride += element.Size;
+            }
+        }
+
+    private:
+        std::vector<BufferElement> m_Elements;
+        uint32_t m_Stride = 0;
+    };
+
     // base vertex buffer class
     class VertexBuffer
     {
@@ -11,11 +149,17 @@ namespace Mashenka
         // this is because the derived class is deleted first, then the base class
         // if the destructor is not virtual, the derived class destructor will not be called
         // and the derived class will not be deleted
-        virtual ~VertexBuffer(){}
+        virtual ~VertexBuffer()
+        {
+        }
 
         // bind and unbind
         virtual void Bind() const = 0;
         virtual void Unbind() const = 0;
+
+        // get the layout of the buffer
+        virtual const BufferLayout& GetLayout() const = 0;
+        virtual void SetLayout(const BufferLayout& layout) = 0;
 
         // create a new vertex buffer
         // the size is the size of the vertices
@@ -26,7 +170,9 @@ namespace Mashenka
     class IndexBuffer
     {
     public:
-        virtual ~IndexBuffer(){}
+        virtual ~IndexBuffer()
+        {
+        }
 
         // bind and unbind
         virtual void Bind() const = 0;
@@ -45,7 +191,4 @@ namespace Mashenka
         // this is called a static factory function
         static IndexBuffer* Create(uint32_t* indices, uint32_t count);
     };
-    
-    
 }
-

@@ -28,7 +28,7 @@ namespace Mashenka
             return nullptr;
         case RendererAPI::OpenGL:
             return new OpenGLIndexBuffer(indices, count);
-        };
+        }
     }
 }
 

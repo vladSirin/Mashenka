@@ -25,12 +25,17 @@ namespace Mashenka
         virtual void Bind() const;
         virtual void Unbind() const;
 
+        // Get and Set the layout of the buffer
+        virtual const BufferLayout& GetLayout() const override {return m_Layout; }
+        virtual void SetLayout(const BufferLayout& layout) override { m_Layout = layout; }
+
     private:
         // the id of the vertex buffer
         // what is the id used for?
         // when we want to use the vertex buffer, we need to bind it
         // we need to bind it by its id
         uint32_t m_RendererID;
+        BufferLayout m_Layout;
     };
 
     // OpenGl Index Buffer Class
