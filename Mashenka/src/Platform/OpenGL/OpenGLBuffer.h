@@ -19,11 +19,11 @@ namespace Mashenka
         // why we want to create them at the same time?
         // because we want to use the same function to create different vertex buffers
         OpenGLVertexBuffer(float* vertices, uint32_t size);
-        virtual ~OpenGLVertexBuffer();
+        ~OpenGLVertexBuffer() override;
 
         // Bind & Unbind
-        virtual void Bind() const;
-        virtual void Unbind() const;
+        void Bind() const override;
+        void Unbind() const override;
 
         // Get and Set the layout of the buffer
         virtual const BufferLayout& GetLayout() const override {return m_Layout; }

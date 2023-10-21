@@ -7,7 +7,7 @@ struct GLFWwindow;
 namespace Mashenka
 {
     // the OpenGL implementation of Graphic Context
-    class OpenGLContext : public GraphicsContext
+    class OpenGLContext final : public GraphicsContext
     {
     public:
         OpenGLContext(GLFWwindow* windowHandle);

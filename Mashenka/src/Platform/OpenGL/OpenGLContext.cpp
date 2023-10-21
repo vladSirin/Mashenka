@@ -25,7 +25,7 @@ namespace Mashenka
          * load all the required OpenGL function addresses.
         */
         glfwMakeContextCurrent(m_WindowHandle); // Associate the context with current window, crucial step for next
-        int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+        int status = gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress));
         MK_CORE_ASSERT(status, "Failed to initialize Glad!")
 
         // Logging the rendering info

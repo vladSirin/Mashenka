@@ -16,20 +16,21 @@ namespace Mashenka
     {
         switch (type)
         {
-        case Mashenka::ShaderDataType::Float: return GL_FLOAT;
-        case Mashenka::ShaderDataType::Float2: return GL_FLOAT;
+        case Mashenka::ShaderDataType::Float: 
+        case Mashenka::ShaderDataType::Float2: 
+        case Mashenka::ShaderDataType::Float3: 
+        case Mashenka::ShaderDataType::Float4: 
+        case Mashenka::ShaderDataType::Mat3: 
+        case Mashenka::ShaderDataType::Mat4: return GL_FLOAT;
+        case Mashenka::ShaderDataType::Int: 
+        case Mashenka::ShaderDataType::Int2: 
+        case Mashenka::ShaderDataType::Int3: 
+        case Mashenka::ShaderDataType::Int4: 
         case Mashenka::ShaderDataType::Bool: return GL_BOOL;
-        case Mashenka::ShaderDataType::Float3: return GL_FLOAT;
-        case Mashenka::ShaderDataType::Float4: return GL_FLOAT;
-        case Mashenka::ShaderDataType::Int: return GL_INT;
-        case Mashenka::ShaderDataType::Int2: return GL_INT;
-        case Mashenka::ShaderDataType::Int3: return GL_INT;
-        case Mashenka::ShaderDataType::Int4: return GL_INT;
-        case Mashenka::ShaderDataType::Mat3: return GL_FLOAT;
-        case Mashenka::ShaderDataType::Mat4: return GL_FLOAT;;
+        case Mashenka::ShaderDataType::None: break;
         }
 
-        MK_CORE_ASSERT(false, "Unknown ShaderDataType!");
+        MK_CORE_ASSERT(false, "Unknown ShaderDataType!")
         return 0;
     }
 
@@ -92,11 +93,11 @@ namespace Mashenka
             // Specify the location and data format of the array of generic vertex attributes at index
             glVertexAttribPointer(
                 index,
-                element.GetComponentCount(),
+                static_cast<GLint>(element.GetComponentCount()),
                 ShaderDataTypeToOpenGLBaseType(element.Type),
                 element.Normalized ? GL_TRUE : GL_FALSE,
-                layout.GetStride(),
-                (const void*)element.Offset
+                static_cast<GLsizei>(layout.GetStride()),
+                reinterpret_cast<const void*>(static_cast<uintptr_t>(element.Offset))  // NOLINT(performance-no-int-to-ptr)
             );
             index++;
         }
@@ -213,7 +214,7 @@ namespace Mashenka
             //By binding a VAO, you're effectively binding all these associated resources in one go,
             //making your code more efficient and easier to manage.
             glBindVertexArray(m_VertexArray); // bind Vertex Array Object
-            glDrawElements(GL_TRIANGLES, m_IndexBuffer->GetCount(), GL_UNSIGNED_INT, nullptr); // drawing function
+            glDrawElements(GL_TRIANGLES, static_cast<GLint>(m_IndexBuffer->GetCount()), GL_UNSIGNED_INT, nullptr); // drawing function
 
             for (Layer* layer : m_LayerStack)
                 layer->OnUpdate();

@@ -16,6 +16,7 @@ namespace Mashenka
         case RendererAPI::OpenGL:
             return new OpenGLVertexBuffer(vertices, size);
         }
+        return nullptr;
     }
 
     Mashenka::IndexBuffer* Mashenka::IndexBuffer::Create(uint32_t* indices, uint32_t count)
@@ -29,6 +30,7 @@ namespace Mashenka
         case RendererAPI::OpenGL:
             return new OpenGLIndexBuffer(indices, count);
         }
+        return nullptr;
     }
 }
 
