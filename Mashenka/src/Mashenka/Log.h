@@ -2,6 +2,7 @@
 #include "Core.h"
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
+// ReSharper disable once CppUnusedIncludeDirective
 #include "spdlog/fmt/ostr.h" // for operator overload
 
 /*

@@ -13,11 +13,7 @@ namespace Mashenka
         : Layer("ImGuiLayer")
     {
     }
-
-    ImGuiLayer::~ImGuiLayer()
-    {
-    }
-
+    
     void ImGuiLayer::OnAttach()
     {
         // call original class func

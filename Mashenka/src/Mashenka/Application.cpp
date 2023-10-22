@@ -159,10 +159,6 @@ namespace Mashenka
         m_BlueShader.reset(new Shader(blueShaderVertexSrc, blueShaderFragmentSrc));
     }
 
-    Application::~Application()
-    {
-    }
-
     // Define the OnEvent function, this works similar to all OnEvent functions
     // Basically it creates a dispatcher and bind the function to it
     void Application::OnEvent(Event& e)

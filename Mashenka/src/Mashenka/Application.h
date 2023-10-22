@@ -4,7 +4,6 @@
 #include "Mashenka/Events/ApplicationEvent.h"
 #include "LayerStack.h"
 #include "ImGui/ImGuiLayer.h"
-#include "Renderer/Buffer.h"
 #include "Renderer/Shader.h"
 #include "Renderer/VertexArray.h"
 
@@ -19,7 +18,9 @@ namespace Mashenka
     public:
         Application();
 
-        virtual ~Application();
+        // virtual destructor to make sure the derived class destructor is called
+        // explain this: https://stackoverflow.com/questions/461203/when-to-use-virtual-destructors
+        virtual ~Application() = default;
 
         void Run();
 

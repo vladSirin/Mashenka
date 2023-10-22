@@ -150,9 +150,7 @@ namespace Mashenka
         // this is because the derived class is deleted first, then the base class
         // if the destructor is not virtual, the derived class destructor will not be called
         // and the derived class will not be deleted
-        virtual ~VertexBuffer()
-        {
-        }
+        virtual ~VertexBuffer() =default;
 
         // bind and unbind
         virtual void Bind() const = 0;
@@ -171,9 +169,7 @@ namespace Mashenka
     class IndexBuffer
     {
     public:
-        virtual ~IndexBuffer()
-        {
-        }
+        virtual ~IndexBuffer() =default;
 
         // bind and unbind
         virtual void Bind() const = 0;

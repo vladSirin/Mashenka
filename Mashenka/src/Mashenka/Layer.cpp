@@ -9,10 +9,5 @@ namespace Mashenka
         
     }
 
-    Layer::~Layer()
-    {
-        
-    }
-
 
 }

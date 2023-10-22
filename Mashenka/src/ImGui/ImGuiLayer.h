@@ -1,8 +1,5 @@
 ﻿#pragma once
 #include "Mashenka/Layer.h"
-#include "Mashenka/Events/KeyEvent.h"
-#include "Mashenka/Events/ApplicationEvent.h"
-#include "Mashenka/Events/MouseEvent.h"
 
 namespace Mashenka
 {
@@ -10,7 +7,7 @@ namespace Mashenka
     {
     public:
         ImGuiLayer();
-        ~ImGuiLayer();
+        ~ImGuiLayer() override = default;
 
         void OnAttach() override;
         void OnDetach() override;
@@ -21,7 +18,7 @@ namespace Mashenka
         void End();
 
     private:
-        float m_Time = 0.0f;
+        // float m_Time = 0.0f;
         
     };
 }

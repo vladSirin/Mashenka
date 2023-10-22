@@ -36,7 +36,7 @@ namespace Mashenka
          *in any non-abstract derived class.
          *A class with one or more pure virtual functions is considered an abstract class,
          *and you cannot create instances of it directly.*/
-        virtual ~Window() {}
+        virtual ~Window() = default;
         virtual void OnUpdate() = 0;
         virtual unsigned int GetWidth() const = 0;
         virtual unsigned int GetHeight() const = 0;
