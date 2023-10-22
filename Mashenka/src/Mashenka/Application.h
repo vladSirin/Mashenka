@@ -6,6 +6,7 @@
 #include "ImGui/ImGuiLayer.h"
 #include "Renderer/Buffer.h"
 #include "Renderer/Shader.h"
+#include "Renderer/VertexArray.h"
 
 /*
  * implement a form of the Singleton pattern for the Application class.
@@ -51,15 +52,19 @@ namespace Mashenka
         m_IndexBuffer: This is the ID of the Element Buffer Object (EBO), also known as the Index Buffer Object (IBO).
         It stores the indices that OpenGL uses to decide which vertices to draw,
         allowing for the reuse of vertex data and thus more efficient rendering.*/
-        unsigned int m_VertexArray;
-        std::unique_ptr<VertexBuffer> m_VertexBuffer;
-        std::unique_ptr<IndexBuffer> m_IndexBuffer;
 
         // Explanation: https://www.khronos.org/opengl/wiki/Shader_Compilation
         // The shader program is the final linked version of multiple shaders combined.
         // The shader program is the one that is used in the rendering process.
         // The shader program is the one that is stored in the OpenGL state machine.
+
+        // Example data for the triangle: VAO and shader
         std::unique_ptr<Shader> m_Shader;
+        std::shared_ptr<VertexArray> m_VertexArray;
+
+        // Example data for blue square: VAO and shader
+        std::shared_ptr<Shader> m_BlueShader;
+        std::shared_ptr<VertexArray> m_SquareVA;
 
         // declare a static global single instance to access
         static Application* s_Instance;
