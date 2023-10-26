@@ -1,19 +1,19 @@
 ﻿#include "mkpch.h"
 #include "Buffer.h"
-
 #include "Platform/OpenGL/OpenGLBuffer.h"
 #include "Renderer.h"
 
 namespace Mashenka
 {
+    // Factory Method for different renderer API
     Mashenka::VertexBuffer* Mashenka::VertexBuffer::Create(float* vertices, uint32_t size)
     {
-        switch (Renderer::GetAPI())
+        switch (RendererAPI::GetAPI())
         {
-        case RendererAPI::None:
+        case RendererAPI::API::None:
             MK_CORE_ASSERT(false, "RendererAPI::None is currently not supported!")
             return nullptr;
-        case RendererAPI::OpenGL:
+        case RendererAPI::API::OpenGL:
             return new OpenGLVertexBuffer(vertices, size);
         }
         return nullptr;
@@ -22,12 +22,12 @@ namespace Mashenka
     Mashenka::IndexBuffer* Mashenka::IndexBuffer::Create(uint32_t* indices, uint32_t count)
     {
         // Factory Method for different renderer API
-        switch (Renderer::GetAPI())
+        switch (RendererAPI::GetAPI())
         {
-        case RendererAPI::None:
+        case RendererAPI::API::None:
             MK_CORE_ASSERT(false, "RendererAPI::None is currently not supported!")
             return nullptr;
-        case RendererAPI::OpenGL:
+        case RendererAPI::API::OpenGL:
             return new OpenGLIndexBuffer(indices, count);
         }
         return nullptr;

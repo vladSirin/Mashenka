@@ -5,6 +5,8 @@
 #include <glad/glad.h>
 #include "Input.h"
 #include "Platform/Windows/WindowsWindow.h"
+#include "Renderer/RenderCommand.h"
+#include "Renderer/Renderer.h"
 
 namespace Mashenka
 {
@@ -211,17 +213,19 @@ namespace Mashenka
             // Poll Input
             Input::Poll();
 
-            glClearColor(0.1f, 0.1f, 0.1f, 1);
-            glClear(GL_COLOR_BUFFER_BIT);
-
-            // Bind the shader and vertex array, then draw the triangle / square
+            // ==Render Pipeline==
+            // call on render command
+            RenderCommand::SetClearColor({0.1f, 0.1f, 0.1f, 1});
+            RenderCommand::Clear();
+            // Prepare the scene and Bind the Shaders
+            Renderer::BeginScene();
             m_BlueShader->Bind();
-            m_SquareVA->Bind();
-            glDrawElements(GL_TRIANGLES, m_SquareVA->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
-
+            Renderer::Submit(m_SquareVA);
             m_Shader->Bind();
-            m_VertexArray->Bind();
-            glDrawElements(GL_TRIANGLES, m_VertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+            Renderer::Submit(m_VertexArray);
+            // End the scene
+            Renderer::EndScene();
+            
 
             // Go through all the layers, as each layer can handle its own update
             for (Layer* layer : m_LayerStack)

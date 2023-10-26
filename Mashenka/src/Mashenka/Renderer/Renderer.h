@@ -1,19 +1,19 @@
 ﻿#pragma once
+#include "RendererAPI.h"
+#include "VertexArray.h"
 
 namespace Mashenka
 {
-
-    enum class RendererAPI
-    {
-        None = 0,
-        OpenGL = 1
-    };
-
+    // high-level rendering functions used by application
+    // This class  will stay high level and will not be platform-specific
+    // This mostly will be used to handle shader and scene management for application
     class Renderer
     {
     public:
-        inline static RendererAPI GetAPI() { return s_RendererAPI; }
-    private:
-        static RendererAPI s_RendererAPI;
+        static void BeginScene();
+        static void EndScene();
+
+        static void Submit(const std::shared_ptr<VertexArray> vertexArray);
+        
     };
 };
