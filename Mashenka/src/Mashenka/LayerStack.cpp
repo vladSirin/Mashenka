@@ -25,25 +25,27 @@ namespace Mashenka
         m_Layers.emplace_back(overlay);
         overlay->OnAttach();
     }
-
+    
     void LayerStack::PopLayer(Layer* layer)
     {
-        auto it = std::find(m_Layers.begin(), m_Layers.end(), layer);
+        // only check the layers before the overlay
+        auto it = std::find(m_Layers.begin(), m_Layers.begin() + m_LayerInsertIndex, layer);
         if(it != m_Layers.end())
         {
+            layer->OnDetach(); // call OnDetach when layer is poped
             m_Layers.erase(it);
             m_LayerInsertIndex--;
-            layer->OnDetach(); // call OnDetach when layer is poped
         }
     }
 
     void LayerStack::PopOverlay(Layer* overlay)
     {
-        auto it = std::find(m_Layers.begin(), m_Layers.end(), overlay);
+        // only check the overlays after the layers
+        auto it = std::find(m_Layers.begin() + m_LayerInsertIndex, m_Layers.end(), overlay);
         if (it != m_Layers.end())
         {
-            m_Layers.erase(it);
             overlay->OnDetach();
+            m_Layers.erase(it);
         }
     }
 
