@@ -110,6 +110,7 @@ namespace Mashenka
                     data.EventCallback(event);
                     break;
                 }
+            default: ;
             }
         });
 
@@ -145,6 +146,7 @@ namespace Mashenka
                     data.EventCallback(event);
                     break;
                 }
+            default: ;
             }
         });
 

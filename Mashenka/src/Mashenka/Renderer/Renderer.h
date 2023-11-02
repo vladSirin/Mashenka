@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "RendererAPI.h"
+#include "Shader.h"
 #include "VertexArray.h"
+#include "Mashenka/OrthographicCamera.h"
 
 namespace Mashenka
 {
@@ -10,10 +12,18 @@ namespace Mashenka
     class Renderer
     {
     public:
-        static void BeginScene();
+        static void BeginScene(OrthographicCamera& camera); //Prepare the scene 
         static void EndScene();
 
-        static void Submit(const std::shared_ptr<VertexArray> vertexArray);
-        
+        static void Submit(std::shared_ptr<Shader>& shader, std::shared_ptr<VertexArray> vertexArray);
+
+    private:
+        // Scene data
+        struct SceneData
+        {
+            glm::mat4 ViewProjectionMatrix;
+        };
+
+        static SceneData* s_SceneData;
     };
 };

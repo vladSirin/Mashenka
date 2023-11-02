@@ -4,10 +4,13 @@
 
 namespace Mashenka
 {
-    void Renderer::BeginScene()
+    // Initialize the scene data
+    Renderer::SceneData* Renderer::s_SceneData = new Renderer::SceneData;
+    
+    void Renderer::BeginScene(OrthographicCamera& camera)
     {
-        // Prepare for the next frame
-        
+        // Set the view projection matrix of the scene
+        s_SceneData->ViewProjectionMatrix = camera.GetViewProjectionMatrix();
     }
 
     void Renderer::EndScene()
@@ -15,8 +18,13 @@ namespace Mashenka
         // Render the next frame
     }
 
-    void Renderer::Submit(const std::shared_ptr<VertexArray> vertexArray)
+    // Submit the vertex array to the RendererCommand
+    // This is the function that will be called by the application
+    void Renderer::Submit(std::shared_ptr<Shader>& shader, std::shared_ptr<VertexArray> vertexArray)
     {
+        shader->Bind();
+        shader->UploadUniformMat4("u_ViewProjection", s_SceneData->ViewProjectionMatrix);
+        
         // Submit the vertex array to the RendererCommand
         vertexArray->Bind();
         RenderCommand::DrawIndexed(vertexArray);

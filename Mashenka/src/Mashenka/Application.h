@@ -3,6 +3,7 @@
 #include "Window.h"
 #include "Mashenka/Events/ApplicationEvent.h"
 #include "LayerStack.h"
+#include "OrthographicCamera.h"
 #include "ImGui/ImGuiLayer.h"
 #include "Renderer/Shader.h"
 #include "Renderer/VertexArray.h"
@@ -60,12 +61,15 @@ namespace Mashenka
         // The shader program is the one that is stored in the OpenGL state machine.
 
         // Example data for the triangle: VAO and shader
-        std::unique_ptr<Shader> m_Shader;
+        std::shared_ptr<Shader> m_Shader;
         std::shared_ptr<VertexArray> m_VertexArray;
 
         // Example data for blue square: VAO and shader
         std::shared_ptr<Shader> m_BlueShader;
         std::shared_ptr<VertexArray> m_SquareVA;
+
+        // Camera member
+        OrthographicCamera m_Camera;
 
         // declare a static global single instance to access
         static Application* s_Instance;
