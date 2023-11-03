@@ -9,7 +9,7 @@ namespace Mashenka
     // high-level rendering functions used by application
     // This class  will stay high level and will not be platform-specific
     // This mostly will be used to handle shader and scene management for application
-    class Renderer
+    class MASHENKA_API Renderer
     {
     public:
         static void BeginScene(OrthographicCamera& camera); //Prepare the scene 

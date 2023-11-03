@@ -12,6 +12,12 @@
 #include "Mashenka/MouseButtonCodes.h"
 #include "glm/glm.hpp"
 
+#include "imgui/imgui.h"
+#include "Mashenka/Renderer/RenderCommand.h"
+#include "Mashenka/Renderer/Renderer.h"
+#include "Mashenka/Events/KeyEvent.h"
+#include "Mashenka/OrthographicCamera.h"
+
 // -- Entry Point---
 #include "Mashenka/EntryPoint.h"
 

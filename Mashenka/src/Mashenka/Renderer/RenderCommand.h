@@ -11,7 +11,7 @@ namespace Mashenka
      * RendererAPI is an abstract class, so we can't create an instance of it
      * RendererAPI will be implemented in the platform-specific code
      */
-    class RenderCommand
+    class MASHENKA_API RenderCommand
     {
     public:
 
