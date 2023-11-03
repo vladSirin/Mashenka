@@ -1,8 +1,10 @@
 ﻿#pragma once
+#include "Events/Event.h"
 #include "glm/glm.hpp"
 
 namespace Mashenka
 {
+
     // This is a camera base class for Mashenka Engine
     class Camera
     {
@@ -30,7 +32,9 @@ namespace Mashenka
         // Get the view projection matrix
         // What is view projection matrix? It is the matrix that transform the world space to clip space
         inline const glm::mat4& GetViewProjectionMatrix() const {return m_ViewProjectionMatrix;}
-        
+
+        // On Event for camera
+        virtual void OnEvent(Event& e) {}
 
     protected:
         void RecalculateViewMatrix();

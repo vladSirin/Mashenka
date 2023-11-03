@@ -4,6 +4,7 @@
 #include "Mashenka/Log.h"
 #include <glad/glad.h>
 #include "Input.h"
+#include "Events/KeyEvent.h"
 #include "Platform/Windows/WindowsWindow.h"
 #include "Renderer/RenderCommand.h"
 #include "Renderer/Renderer.h"
@@ -177,6 +178,9 @@ namespace Mashenka
         // If so, the bound event will be called (which is the Application.OnWindowClose functions)
         dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::OnWindowClose));
 
+        // Dispatch the event to the camera
+        m_Camera.OnEvent(e);
+
         /*
          * The purpose of this loop seems to be to process an event e in reverse order of the layers in the m_LayerStack
          * until one of the layers handles the event. Once the event is handled, the loop stops,
@@ -213,9 +217,12 @@ namespace Mashenka
      */
     void Application::Run()
     {
+        m_Camera.SetPosition({0.5f, 0.5f, 0.0f});
+        m_Camera.SetRotation(60.0f);
+        
         while (m_Running)
         {
-            // Poll Input
+            // Poll Input, this is the polling of the input system
             Input::Poll();
 
             // ==Render Pipeline==
@@ -223,9 +230,6 @@ namespace Mashenka
             RenderCommand::SetClearColor({0.1f, 0.1f, 0.1f, 1});
             RenderCommand::Clear();
 
-            // Set the camera position and rotation
-            m_Camera.SetPosition({0.5f, 0.5f, 0.0f});
-            m_Camera.SetRotation(60.0f);
             // Prepare the scene and Bind the Shaders
             Renderer::BeginScene(m_Camera);
             m_BlueShader->Bind();

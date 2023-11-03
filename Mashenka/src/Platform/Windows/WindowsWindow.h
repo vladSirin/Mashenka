@@ -21,7 +21,8 @@ namespace Mashenka
         inline unsigned int GetHeight() const override {return m_Data.Height;}
 
         // Window Attributes
-        // Set EventCallback function is just Set callback for m_Data
+        // Set EventCallback function is just Set callback for m_Data, which is a WindowData struct
+        // This is later used in application class so that the EventCallbackFn will be bind to the application::OnEvent
         inline void SetEventCallback(const EventCallbackFn& callback) override {m_Data.EventCallback = callback;}
         void SetVSync(bool enabled) override;
         bool IsVSync() const override;

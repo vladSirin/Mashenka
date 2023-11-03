@@ -59,24 +59,28 @@ namespace Mashenka
         // Create Context and Init it
         m_Context = new OpenGLContext(m_Window);
         m_Context->Init();
-        
+
 
         glfwSetWindowUserPointer(m_Window, &m_Data);
         SetVSync(true);
 
+        // ==================== Set GLFW Callbacks ====================
         // Set GLFW callbacks, callbacks will be called when the original functions are executed
         // But the callback functions might happen at a different time as they are on different layers
         glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
         {
-            // In summary, this line retrieves a void* pointer from the GLFW window, casts it to a WindowData* pointer,
-            // dereferences it to get the WindowData object,
-            // and then creates a reference to this object for easier access and manipulation.
+            // ===THIS IS THE BODY OF THE LAMBDA CALLBACK FUNCTION===
+            // NOT A DEFINITION FOR GLFWSetWindowSizeCallback!
             WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
             data.Width = width;
             data.Height = height;
 
             WindowResizeEvent event(width, height);
             data.EventCallback(event);
+
+            // In summary, this line retrieves a void* pointer from the GLFW window, casts it to a WindowData* pointer,
+            // dereferences it to get the WindowData object,
+            // and then creates a reference to this object for easier access and manipulation.
         });
 
         glfwSetWindowCloseCallback(m_Window, [](GLFWwindow* window)
@@ -115,7 +119,7 @@ namespace Mashenka
         });
 
         //Set the character typing callbacks
-        glfwSetCharCallback(m_Window, [](GLFWwindow* window,unsigned int keycode)
+        glfwSetCharCallback(m_Window, [](GLFWwindow* window, unsigned int keycode)
         {
             WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 
@@ -124,7 +128,6 @@ namespace Mashenka
 
             // wrapping a callable event
             data.EventCallback(event);
-            
         });
 
         // Callbacks
@@ -132,7 +135,7 @@ namespace Mashenka
         {
             WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 
-            switch(action)
+            switch (action)
             {
             case GLFW_PRESS:
                 {
@@ -171,7 +174,7 @@ namespace Mashenka
     {
         glfwDestroyWindow(m_Window);
     }
-    
+
     void WindowsWindow::OnUpdate()
     {
         // Checks for any pending events and handle them, if not app or window will not respond
