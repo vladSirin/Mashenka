@@ -6,6 +6,8 @@
 #include "Mashenka/Layer.h"
 #include "Mashenka/Log.h"
 
+#include "Mashenka/Core/TimeStep.h"
+
 #include "Mashenka/Input.h"
 #include "Mashenka/ControllerCodes.h"
 #include "Mashenka/KeyCodes.h"

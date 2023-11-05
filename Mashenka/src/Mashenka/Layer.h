@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include "Core/TimeStep.h"
 #include "Mashenka/Core.h"
 #include "Mashenka/Events/Event.h"
 
@@ -17,7 +18,7 @@ namespace Mashenka
 
         virtual void OnAttach(){}
         virtual void OnDetach(){}
-        virtual void OnUpdate(){}
+        virtual void OnUpdate(TimeStep ts){}
         virtual void OnImGuiRender(){} // Every layer could have its own thing to render
         virtual void OnEvent(Event& event){}
 

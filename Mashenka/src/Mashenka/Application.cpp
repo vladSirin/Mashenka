@@ -4,6 +4,7 @@
 #include "Mashenka/Log.h"
 #include "Input.h"
 #include "Platform/Windows/WindowsWindow.h"
+#include "Core/TimeStep.h"
 
 namespace Mashenka
 {
@@ -21,6 +22,7 @@ namespace Mashenka
 
         // Create the window
         m_Window = std::unique_ptr<Window>(WindowsWindow::Create());
+        m_Window->SetVSync(false);
 
 
         // using bind to call the member function of application when needed in Window layer
@@ -88,12 +90,18 @@ namespace Mashenka
     {
         while (m_Running)
         {
+            // Calculate the Delta Time based on the TimeStep
+            float time = (float)glfwGetTime(); // Platform::GetTime()
+            TimeStep timeStep = time - m_LastFrameTime;
+            m_LastFrameTime = time;
+
+
             // Poll Input, this is the polling of the input system
             Input::Poll();
 
             // Go through all the layers, as each layer can handle its own update
             for (Layer* layer : m_LayerStack)
-                layer->OnUpdate();
+                layer->OnUpdate(timeStep);
 
             // Initialize the ImGui frame, prepare for the rendering, context and input
             m_ImGuiLayer->Begin();

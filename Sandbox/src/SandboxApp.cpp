@@ -145,27 +145,30 @@ public:
         m_BlueShader.reset(new Mashenka::Shader(blueShaderVertexSrc, blueShaderFragmentSrc));
     }
 
-    void OnUpdate() override
+    void OnUpdate(Mashenka::TimeStep ts) override
     {
         // MK_INFO("ExampleLayer::Update");
         MK_TRACE("{0} update started", this->GetName());
 
+        // Log the TimeStep
+        MK_TRACE("Delta time: {0}s ({1}ms)", ts.GetSeconds(), ts.GetMilliseconds());
+
         // Moving the camera by arrow keys and rotate with Q and E
         if (Mashenka::Input::IsKeyPressed(MK_KEY_LEFT))
         {
-            m_CameraPosition.x -= m_CameraTranslationSpeed;
+            m_CameraPosition.x -= m_CameraTranslationSpeed * ts;
         }
         else if (Mashenka::Input::IsKeyPressed(MK_KEY_RIGHT))
         {
-            m_CameraPosition.x += m_CameraTranslationSpeed;
+            m_CameraPosition.x += m_CameraTranslationSpeed * ts;
         }
         if (Mashenka::Input::IsKeyPressed(MK_KEY_UP))
         {
-            m_CameraPosition.y += m_CameraTranslationSpeed;
+            m_CameraPosition.y += m_CameraTranslationSpeed * ts;
         }
         else if (Mashenka::Input::IsKeyPressed(MK_KEY_DOWN))
         {
-            m_CameraPosition.y -= m_CameraTranslationSpeed;
+            m_CameraPosition.y -= m_CameraTranslationSpeed * ts;
         }
 
         // Rotate the camera

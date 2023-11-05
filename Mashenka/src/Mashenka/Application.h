@@ -42,6 +42,9 @@ namespace Mashenka
 
         // declare a static global single instance to access
         static Application* s_Instance;
+
+        // define the last frame time
+        float m_LastFrameTime = 0.0f;
     };
 
     // To be defined in Client
