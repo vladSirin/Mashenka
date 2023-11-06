@@ -80,6 +80,7 @@ public:
             layout(location = 1) in vec4 a_Color;
 
             uniform mat4 u_ViewProjection;
+            uniform mat4 u_Transform;
 
             out vec3 v_Position;
             out vec4 v_Color;
@@ -88,7 +89,7 @@ public:
             {
                 v_Position = a_Position;
                 v_Color = a_Color;
-                gl_Position = u_ViewProjection * vec4(a_Position, 1.0);
+                gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1.0);
             }
         )";
 
@@ -119,13 +120,14 @@ public:
             layout(location = 0) in vec3 a_Position;
 
             uniform mat4 u_ViewProjection;
+            uniform mat4 u_Transform;
 
             out vec3 v_Position;
             
             void main()
             {
                 v_Position = a_Position;
-                gl_Position = u_ViewProjection * vec4(a_Position, 1.0);
+                gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1.0);
             }
         )";
 
@@ -190,11 +192,21 @@ public:
         // call on render command
         Mashenka::RenderCommand::SetClearColor({0.1f, 0.1f, 0.1f, 1});
         Mashenka::RenderCommand::Clear();
-
+        
         // Prepare the scene and Bind the Shaders
         Mashenka::Renderer::BeginScene(m_Camera);
         m_BlueShader->Bind();
-        Mashenka::Renderer::Submit(m_BlueShader, m_SquareVA);
+
+        // prepare the transform matrix
+        // Example: draw 10 boxes along a same line
+        for (int i = 0; i < 10; ++i)
+        {
+            m_SquarePosition = {i * 0.16f, 0.0f, 0.0f};
+            glm::mat4 transform = glm::translate(glm::mat4(1.0f), m_SquarePosition) * glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
+            Mashenka::Renderer::Submit(m_BlueShader, m_SquareVA, transform);
+        }
+        
+        
         m_Shader->Bind();
         Mashenka::Renderer::Submit(m_Shader, m_VertexArray);
         // End the scene
@@ -243,10 +255,13 @@ allowing for the reuse of vertex data and thus more efficient rendering.*/
     // Example data for the triangle: VAO and shader
     std::shared_ptr<Mashenka::Shader> m_Shader;
     std::shared_ptr<Mashenka::VertexArray> m_VertexArray;
+    glm::vec3 m_TrianglePosition = {0.0f, 0.0f, 0.0f};
 
     // Example data for blue square: VAO and shader
     std::shared_ptr<Mashenka::Shader> m_BlueShader;
     std::shared_ptr<Mashenka::VertexArray> m_SquareVA;
+    glm::vec3 m_SquarePosition = {0.0f, 0.0f, 0.0f};
+    
 
     // Camera and properties
     // Why Define the camera here? Because the camera is a part of the layer, and the layer is a part of the application
