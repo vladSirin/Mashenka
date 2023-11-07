@@ -19,6 +19,7 @@
 #include "Mashenka/Renderer/Renderer.h"
 #include "Mashenka/Events/KeyEvent.h"
 #include "Mashenka/OrthographicCamera.h"
+#include "Platform/OpenGL/OpenGLShader.h"
 
 // -- Entry Point---
 #include "Mashenka/EntryPoint.h"

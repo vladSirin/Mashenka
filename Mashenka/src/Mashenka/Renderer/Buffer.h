@@ -142,6 +142,7 @@ namespace Mashenka
     };
 
     // base vertex buffer class
+    // virtual class is used to make sure the derived class is deleted when the base class is deleted
     class VertexBuffer
     {
     public:

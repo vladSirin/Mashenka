@@ -1,6 +1,7 @@
 ﻿#include "mkpch.h"
 #include "Renderer.h"
 #include "RenderCommand.h"
+#include "Platform/OpenGL/OpenGLShader.h"
 
 
 namespace Mashenka
@@ -23,9 +24,9 @@ namespace Mashenka
     // This is the function that will be called by the application
     void Renderer::Submit(std::shared_ptr<Shader>& shader, std::shared_ptr<VertexArray> vertexArray, const glm::mat4& transform)
     {
-        shader->Bind();
-        shader->UploadUniformMat4("u_ViewProjection", s_SceneData->ViewProjectionMatrix);
-        shader->UploadUniformMat4("u_Transform", transform);
+        const auto openglShader = std::dynamic_pointer_cast<OpenGLShader>(shader);
+        openglShader->UploadUniformMat4("u_ViewProjection", s_SceneData->ViewProjectionMatrix);
+        openglShader->UploadUniformMat4("u_Transform", transform);
         
         // Submit the vertex array to the RendererCommand
         vertexArray->Bind();

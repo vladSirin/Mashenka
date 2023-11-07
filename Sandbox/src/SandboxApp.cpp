@@ -1,4 +1,5 @@
 ﻿#include "Mashenka.h"
+#include "glm/gtc/type_ptr.hpp"
 
 // Should not include anything else than the engine to make it work, below is TEMP
 
@@ -16,7 +17,6 @@ public:
     ExampleLayer()
         : Layer("Example"), m_Camera(-1.6f, 1.6f, -0.9f, 0.9f), m_CameraPosition(0.0f)
     {
-
         // ==================== OpenGL BELOW ====================
         // ==================== Prepare for Triangle Example ====================
         // Initialize the OpenGL function pointers
@@ -111,10 +111,10 @@ public:
 
         // new shader object with the vertex and fragment shader source code
         // using reset to reset the m_Shader pointer to the new shader object
-        m_Shader.reset(new Mashenka::Shader(vertexSrc, fragmentSrc));
+        m_Shader.reset(Mashenka::Shader::Create(vertexSrc, fragmentSrc));
 
         // Create the Vertex and Fragment shaders for the blue square
-        std::string blueShaderVertexSrc = R"(
+        std::string FlatColorShaderVertexSrc = R"(
             #version 330 core
             
             layout(location = 0) in vec3 a_Position;
@@ -131,20 +131,20 @@ public:
             }
         )";
 
-        std::string blueShaderFragmentSrc = R"(
+        std::string FlatColorShaderFragmentSrc = R"(
             #version 330 core
-            
-            layout(location = 0) out vec4 color;
 
+            layout(location = 0) out vec4 Color;
             in vec3 v_Position;
+            uniform vec3 u_Color;
             
             void main()
             {
-                color = vec4(0.2, 0.3, 0.8, 1.0);
+                Color = vec4(u_Color, 0.5);
             }
         )";
 
-        m_BlueShader.reset(new Mashenka::Shader(blueShaderVertexSrc, blueShaderFragmentSrc));
+        m_FlatColorShader.reset(Mashenka::Shader::Create(FlatColorShaderVertexSrc, FlatColorShaderFragmentSrc));
     }
 
     void OnUpdate(Mashenka::TimeStep ts) override
@@ -192,31 +192,35 @@ public:
         // call on render command
         Mashenka::RenderCommand::SetClearColor({0.1f, 0.1f, 0.1f, 1});
         Mashenka::RenderCommand::Clear();
-        
+
         // Prepare the scene and Bind the Shaders
         Mashenka::Renderer::BeginScene(m_Camera);
-        m_BlueShader->Bind();
-
+        std::dynamic_pointer_cast<Mashenka::OpenGLShader>(m_FlatColorShader)->Bind();
+        std::dynamic_pointer_cast<Mashenka::OpenGLShader>(m_FlatColorShader)->UploadUniformFloat3(
+            "u_Color", m_SquareColor);
+        
         // prepare the transform matrix
         // Example: draw 10 boxes along a same line
         for (int i = 0; i < 10; ++i)
         {
             m_SquarePosition = {i * 0.16f, 0.0f, 0.0f};
-            glm::mat4 transform = glm::translate(glm::mat4(1.0f), m_SquarePosition) * glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
-            Mashenka::Renderer::Submit(m_BlueShader, m_SquareVA, transform);
+            glm::mat4 transform = glm::translate(glm::mat4(1.0f), m_SquarePosition) * glm::scale(
+                glm::mat4(1.0f), glm::vec3(0.1f));
+            Mashenka::Renderer::Submit(m_FlatColorShader, m_SquareVA, transform);
         }
-        
-        
+
+
         m_Shader->Bind();
         Mashenka::Renderer::Submit(m_Shader, m_VertexArray);
         // End the scene
         Mashenka::Renderer::EndScene();
     }
 
-    virtual void OnImGuiRender() override
+    // ImGui Color Editor
+    void OnImGuiRender() override
     {
-        ImGui::Begin("Test");
-        ImGui::Text("Hello World");
+        ImGui::Begin("Color Editor");
+        ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
         ImGui::End();
     }
 
@@ -258,10 +262,11 @@ allowing for the reuse of vertex data and thus more efficient rendering.*/
     glm::vec3 m_TrianglePosition = {0.0f, 0.0f, 0.0f};
 
     // Example data for blue square: VAO and shader
-    std::shared_ptr<Mashenka::Shader> m_BlueShader;
+    std::shared_ptr<Mashenka::Shader> m_FlatColorShader;
     std::shared_ptr<Mashenka::VertexArray> m_SquareVA;
     glm::vec3 m_SquarePosition = {0.0f, 0.0f, 0.0f};
-    
+    glm::vec3 m_SquareColor = {0.2f, 0.3f, 0.8f};
+
 
     // Camera and properties
     // Why Define the camera here? Because the camera is a part of the layer, and the layer is a part of the application

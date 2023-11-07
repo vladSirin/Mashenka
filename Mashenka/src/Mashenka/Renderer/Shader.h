@@ -10,20 +10,18 @@ namespace Mashenka
     {
     public:
         // Constructor
-        Shader(const std::string& vertexSrc, const std::string& fragmentSrc);
-        ~Shader();
+        virtual ~Shader() = default;
 
         // Bind and Unbind the shader
-        void Bind() const;
-        void Unbind() const;
+        virtual void Bind() const = 0;
+        virtual void Unbind() const = 0;
 
-        // Set uniforms for screen space transformation
-        void UploadUniformMat4(const std::string& name, const glm::mat4& matrix) const;
-
-    private:
-        // Shader ID
-        uint32_t m_RendererID;
-    
+        // create a shader
+        // the type is the type of the shader
+        // the source is the source code of the shader
+        // return the id of the shader
+        static Shader* Create(const std::string& vertexSrc, const std::string& fragmentSrc);
+        
     };
 }
 
