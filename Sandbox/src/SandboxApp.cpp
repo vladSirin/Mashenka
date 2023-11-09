@@ -30,7 +30,7 @@ public:
         };
 
         // Create the vertex buffer
-        std::shared_ptr<Mashenka::VertexBuffer> vertexBuffer;
+        Mashenka::Ref<Mashenka::VertexBuffer> vertexBuffer;
         vertexBuffer.reset(Mashenka::VertexBuffer::Create(vertices, sizeof(vertices)));
 
         // Create the layout of the buffer, which is the layout of the vertex buffer then bind it to the vertex array
@@ -44,7 +44,7 @@ public:
         // Example data for indices of the triangle
         uint32_t indices[3] = {0, 1, 2};
         // Create the index buffer, which is the buffer that contains the indices of the vertices to be drawn by the GPU
-        std::shared_ptr<Mashenka::IndexBuffer> indexBuffer;
+        Mashenka::Ref<Mashenka::IndexBuffer> indexBuffer;
         indexBuffer.reset(Mashenka::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
         // Bind the index buffer to the vertex array
         m_VertexArray->SetIndexBuffer(indexBuffer);
@@ -59,7 +59,7 @@ public:
             -0.75f, 0.75f, 0.0f
         };
 
-        std::shared_ptr<Mashenka::VertexBuffer> squareVB;
+        Mashenka::Ref<Mashenka::VertexBuffer> squareVB;
         squareVB.reset(Mashenka::VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
         squareVB->SetLayout({
             {Mashenka::ShaderDataType::Float3, "a_Position"}
@@ -67,7 +67,7 @@ public:
         m_SquareVA->AddVertexBuffer(squareVB);
 
         uint32_t squareIndices[6] = {0, 1, 2, 2, 3, 0};
-        std::shared_ptr<Mashenka::IndexBuffer> squareIB;
+        Mashenka::Ref<Mashenka::IndexBuffer> squareIB;
         squareIB.reset(Mashenka::IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t)));
         m_SquareVA->SetIndexBuffer(squareIB);
 
@@ -257,13 +257,13 @@ allowing for the reuse of vertex data and thus more efficient rendering.*/
     // The shader program is the one that is stored in the OpenGL state machine.
 
     // Example data for the triangle: VAO and shader
-    std::shared_ptr<Mashenka::Shader> m_Shader;
-    std::shared_ptr<Mashenka::VertexArray> m_VertexArray;
+    Mashenka::Ref<Mashenka::Shader> m_Shader;
+    Mashenka::Ref<Mashenka::VertexArray> m_VertexArray;
     glm::vec3 m_TrianglePosition = {0.0f, 0.0f, 0.0f};
 
     // Example data for blue square: VAO and shader
-    std::shared_ptr<Mashenka::Shader> m_FlatColorShader;
-    std::shared_ptr<Mashenka::VertexArray> m_SquareVA;
+    Mashenka::Ref<Mashenka::Shader> m_FlatColorShader;
+    Mashenka::Ref<Mashenka::VertexArray> m_SquareVA;
     glm::vec3 m_SquarePosition = {0.0f, 0.0f, 0.0f};
     glm::vec3 m_SquareColor = {0.2f, 0.3f, 0.8f};
 

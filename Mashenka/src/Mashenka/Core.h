@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include <memory>
 
 
 /*
@@ -35,6 +36,19 @@
 #define MK_ASSERT(x, ...)
 #define MK_CORE_ASSERT(x, ...)
 #endif
+
+
+namespace Mashenka
+{
+    
+    template <typename T>
+    using Scope = std::unique_ptr<T>;
+
+    template <typename T>
+    using Ref = std::shared_ptr<T>;
+}
+
+
 /*
 * The macro BIT(x) is defined as (1 << (x)). This is a bit shift operation.
 Here's what it does:
