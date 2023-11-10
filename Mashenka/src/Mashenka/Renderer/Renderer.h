@@ -1,7 +1,7 @@
 ﻿#pragma once
+#include "OrthographicCamera.h"
 #include "Shader.h"
 #include "VertexArray.h"
-#include "Mashenka/OrthographicCamera.h"
 #include "glm/gtc/matrix_transform.hpp"
 #include "RendererAPI.h"
 

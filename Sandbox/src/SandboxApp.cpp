@@ -1,5 +1,8 @@
 ﻿#include "Mashenka.h"
 #include "glm/gtc/type_ptr.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "Platform/OpenGL/OpenGLShader.h"
+#include "imgui/imgui.h"
 
 // Should not include anything else than the engine to make it work, below is TEMP
 
@@ -52,17 +55,18 @@ public:
         // ==================== Prepare for Square Example ====================
         // Create the vertex array for the square
         m_SquareVA.reset(Mashenka::VertexArray::Create());
-        float squareVertices[3 * 4] = {
-            -0.75f, -0.75f, 0.0f,
-            0.75f, -0.75f, 0.0f,
-            0.75f, 0.75f, 0.0f,
-            -0.75f, 0.75f, 0.0f
+        float squareVertices[5 * 4] = {
+            -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
+            0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+            0.5f, 0.5f, 0.0f, 1.0f, 1.0f,
+            -0.5f, 0.5f, 0.0f, 0.0f, 1.0f
         };
 
         Mashenka::Ref<Mashenka::VertexBuffer> squareVB;
         squareVB.reset(Mashenka::VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
         squareVB->SetLayout({
-            {Mashenka::ShaderDataType::Float3, "a_Position"}
+            {Mashenka::ShaderDataType::Float3, "a_Position"},
+            {Mashenka::ShaderDataType::Float2, "a_TexCoord"}
         });
         m_SquareVA->AddVertexBuffer(squareVB);
 
@@ -145,6 +149,45 @@ public:
         )";
 
         m_FlatColorShader.reset(Mashenka::Shader::Create(FlatColorShaderVertexSrc, FlatColorShaderFragmentSrc));
+
+        // ==================== Prepare for Texture ====================
+        // Texture shader src
+        std::string textureShaderVertexSrc = R"(
+                #version 330 core
+                
+                layout(location = 0) in vec3 a_Position;
+                layout(location = 1) in vec2 a_TexCoord;
+
+                uniform mat4 u_ViewProjection;
+                uniform mat4 u_Transform;
+
+                out vec2 v_TexCoord;
+                void main()
+                {
+                    v_TexCoord = a_TexCoord;
+                    gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1.0);
+                }
+        )";
+
+        // Texture fragment shader src
+        std::string textureShaderFragmentSrc = R"(
+                #version 330 core
+                
+                layout(location = 0) out vec4 color;
+                in vec2 v_TexCoord;
+
+                uniform sampler2D u_Texture;
+                
+                void main()
+                {
+                    color = texture(u_Texture, v_TexCoord);
+                }
+        )";
+
+        m_TextureShader.reset(Mashenka::Shader::Create(textureShaderVertexSrc, textureShaderFragmentSrc));
+        m_Texture = Mashenka::Texture2D::Create("assets/textures/Checkerboard.png");
+        std::dynamic_pointer_cast<Mashenka::OpenGLShader>(m_TextureShader)->Bind();
+        std::dynamic_pointer_cast<Mashenka::OpenGLShader>(m_TextureShader)->UploadUniformInt("u_Texture", 0);
     }
 
     void OnUpdate(Mashenka::TimeStep ts) override
@@ -198,7 +241,7 @@ public:
         std::dynamic_pointer_cast<Mashenka::OpenGLShader>(m_FlatColorShader)->Bind();
         std::dynamic_pointer_cast<Mashenka::OpenGLShader>(m_FlatColorShader)->UploadUniformFloat3(
             "u_Color", m_SquareColor);
-        
+
         // prepare the transform matrix
         // Example: draw 10 boxes along a same line
         for (int i = 0; i < 10; ++i)
@@ -209,9 +252,11 @@ public:
             Mashenka::Renderer::Submit(m_FlatColorShader, m_SquareVA, transform);
         }
 
-
-        m_Shader->Bind();
-        Mashenka::Renderer::Submit(m_Shader, m_VertexArray);
+        // Draw the texture
+        m_Texture->Bind(0);
+        Mashenka::Renderer::Submit(m_TextureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
+        
+        // Mashenka::Renderer::Submit(m_Shader, m_VertexArray);
         // End the scene
         Mashenka::Renderer::EndScene();
     }
@@ -266,6 +311,11 @@ allowing for the reuse of vertex data and thus more efficient rendering.*/
     Mashenka::Ref<Mashenka::VertexArray> m_SquareVA;
     glm::vec3 m_SquarePosition = {0.0f, 0.0f, 0.0f};
     glm::vec3 m_SquareColor = {0.2f, 0.3f, 0.8f};
+
+    // Example data for texture
+    Mashenka::Ref<Mashenka::Shader> m_TextureShader;
+    Mashenka::Ref<Mashenka::Texture2D> m_Texture;
+    
 
 
     // Camera and properties

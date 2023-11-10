@@ -1,27 +1,36 @@
 ﻿#pragma once
 
 // For use by Mashenka Application
-#include <cstdio>
 #include "Mashenka/Application.h"
 #include "Mashenka/Layer.h"
 #include "Mashenka/Log.h"
 
-#include "Mashenka/Core/TimeStep.h"
+// PRODUCT_CORE
+#include "Mashenka/Core/Timestep.h"
 
+// INPUT
 #include "Mashenka/Input.h"
-#include "Mashenka/ControllerCodes.h"
 #include "Mashenka/KeyCodes.h"
 #include "Mashenka/MouseButtonCodes.h"
-#include "glm/glm.hpp"
-
-#include "imgui/imgui.h"
-#include "Mashenka/Renderer/RenderCommand.h"
-#include "Mashenka/Renderer/Renderer.h"
 #include "Mashenka/Events/KeyEvent.h"
-#include "Mashenka/OrthographicCamera.h"
-#include "Platform/OpenGL/OpenGLShader.h"
+#include "Mashenka/Events/MouseEvent.h"
 
-// -- Entry Point---
+// GUI
+#include "Mashenka/ImGui/ImGuiLayer.h"
+
+// --------Renderer-------------------
+#include "Mashenka/Renderer/Renderer.h"
+#include "Mashenka/Renderer/RenderCommand.h"
+
+
+#include "Mashenka/Renderer/Buffer.h"
+#include "Mashenka/Renderer/Shader.h"
+#include "Mashenka/Renderer/Texture.h"
+#include "Mashenka/Renderer/VertexArray.h"
+
+// Camera
+#include "Mashenka/Renderer/Camera.h"
+#include "Mashenka/Renderer/OrthographicCamera.h"
+
+// ---Entry Point---------------------
 #include "Mashenka/EntryPoint.h"
-
-// -- Entry Point---

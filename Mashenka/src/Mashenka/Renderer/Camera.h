@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Events/Event.h"
+#include "Mashenka/Events/Event.h"
 #include "glm/glm.hpp"
 
 namespace Mashenka
