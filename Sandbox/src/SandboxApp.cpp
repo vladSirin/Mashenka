@@ -186,6 +186,7 @@ public:
 
         m_TextureShader.reset(Mashenka::Shader::Create(textureShaderVertexSrc, textureShaderFragmentSrc));
         m_Texture = Mashenka::Texture2D::Create("assets/textures/Checkerboard.png");
+        m_ChernoLogoTexture = Mashenka::Texture2D::Create("assets/textures/ChernoLogo.png");
         std::dynamic_pointer_cast<Mashenka::OpenGLShader>(m_TextureShader)->Bind();
         std::dynamic_pointer_cast<Mashenka::OpenGLShader>(m_TextureShader)->UploadUniformInt("u_Texture", 0);
     }
@@ -255,6 +256,11 @@ public:
         // Draw the texture
         m_Texture->Bind(0);
         Mashenka::Renderer::Submit(m_TextureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
+
+        // Draw the logo
+        m_ChernoLogoTexture->Bind(0);
+        Mashenka::Renderer::Submit(m_TextureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
+        
         
         // Mashenka::Renderer::Submit(m_Shader, m_VertexArray);
         // End the scene
@@ -315,6 +321,7 @@ allowing for the reuse of vertex data and thus more efficient rendering.*/
     // Example data for texture
     Mashenka::Ref<Mashenka::Shader> m_TextureShader;
     Mashenka::Ref<Mashenka::Texture2D> m_Texture;
+    Mashenka::Ref<Mashenka::Texture2D> m_ChernoLogoTexture;
     
 
 

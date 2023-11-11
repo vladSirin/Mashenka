@@ -5,6 +5,7 @@
 #include "Input.h"
 #include "Platform/Windows/WindowsWindow.h"
 #include "Core/TimeStep.h"
+#include "Renderer/Renderer.h"
 
 namespace Mashenka
 {
@@ -33,6 +34,11 @@ namespace Mashenka
         // This was done by sandbox app, which is not ideal as it should be part of the engine app
         m_ImGuiLayer = new ImGuiLayer();
         PushOverlay(m_ImGuiLayer);
+
+        // ==================== Initialize the Renderer ====================
+        // Initialize the Renderer
+        Renderer::Init();
+        
     }
 
     // Define the OnEvent function, this works similar to all OnEvent functions

@@ -13,6 +13,7 @@ namespace Mashenka
     class MASHENKA_API Renderer
     {
     public:
+        static void Init();
         static void BeginScene(OrthographicCamera& camera); //Prepare the scene 
         static void EndScene();
 

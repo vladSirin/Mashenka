@@ -8,6 +8,13 @@ namespace Mashenka
 {
     // Initialize the scene data
     Renderer::SceneData* Renderer::s_SceneData = new Renderer::SceneData;
+
+    // Init
+    void Renderer::Init()
+    {
+        // Initialize the renderer API
+        RenderCommand::Init();
+    }
     
     void Renderer::BeginScene(OrthographicCamera& camera)
     {
