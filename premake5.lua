@@ -9,6 +9,12 @@ workspace "Mashenka"
         "Dist"
     }
 
+    flags
+    {
+        "MultiProcessorCompile" -- enable multi-processor compilation --
+    
+    }
+
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 -- Include directories relative to root folder (solution directory) --
