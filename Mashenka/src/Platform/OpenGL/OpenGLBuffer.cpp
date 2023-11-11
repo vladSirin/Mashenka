@@ -40,15 +40,15 @@ namespace Mashenka
      * Index buffer
      */
     OpenGLIndexBuffer::OpenGLIndexBuffer(uint32_t* indices, uint32_t count)
+        : m_Count(count)
     {
-        // set the count
-        m_Count = count;
         // create a buffer
         glGenBuffers(1, &m_RendererID);
-        // bind the buffer
+        // bind the index buffer TODO: why use GL_ELEMENT_ARRAY_BUFFER? why not GL_ARRAY_BUFFER? what is the difference?
+        // GL_ARRAY_BUFFER is used for vertex buffer, GL_ELEMENT_ARRAY_BUFFER is used for index buffer
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID);
         // allocate memory for the buffer
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, static_cast<GLsizeiptr>(count) * sizeof(uint32_t), indices, GL_STATIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(uint32_t), indices, GL_STATIC_DRAW);
     }
 
     OpenGLIndexBuffer::~OpenGLIndexBuffer()

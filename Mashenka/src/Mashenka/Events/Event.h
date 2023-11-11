@@ -69,17 +69,6 @@ namespace Mashenka
     // This class is to dispatch events
     class EventDispatcher
     {
-        // In this case, template<typename T> declares a template that takes a single type parameter T.
-        // You can think of T as a placeholder for a type that will be provided later.
-        // When you use this template to define a function or a class,
-        // you can use T as if it were a regular type.
-        template<typename T>
-
-        //naming alias for a std::function that takes a ref to an object of type 'T' and returns a 'bool'
-        // The power of std::function comes from its ability to wrap any kind of callable entity,
-        // not just simple functions. 
-        using EventFn = std::function<bool(T&)>;
-        
     // This is the constructor
     public:
         EventDispatcher(Event& event)
@@ -89,16 +78,21 @@ namespace Mashenka
             
         }
 
-        template<typename T>
+        // This is the template function that will be called by the application
+        // EventType is the type of the event, Func is the function that will be called
+        // Two types are used here, one is the type of the event, the other is the type of the function
+        template<typename EventType, typename Func>
 
-        // Takes an function as input
-        bool Dispatch(EventFn<T> func)
+        // Dispatch the event, Func&& means that the function is a rvalue reference, which means that the function will be called directly
+        // Using rvalue reference is to avoid copying the function, which is expensive
+        bool Dispatch(Func&& func)
         {
-            // if the event type matches the "func" type supposed to be handled
-            if (m_Event.GetEventType() == T::GetStaticType())
+            // Check if the event type matches the type of the event
+            if (m_Event.GetEventType() == EventType::GetStaticType())
             {
-                // calls 'func' with the event and sets m_handled to the result
-                m_Event.Handled = func(*(T*)&m_Event);
+                // If so, call the function
+                // static_cast is used to convert the type of the event, which is Event, to the type of the event, which is EventType
+                m_Event.Handled = func(static_cast<EventType&>(m_Event));
                 return true;
             }
             return false;
