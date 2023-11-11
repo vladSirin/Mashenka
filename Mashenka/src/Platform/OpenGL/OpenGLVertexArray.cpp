@@ -69,15 +69,16 @@ namespace Mashenka
         for (const auto& element : layout)
         {
             // enable the vertex attribute array
-            glEnableVertexAttribArray(index);
+            glEnableVertexAttribArray(index + m_VertexBufferIndex);
             // set the vertex attribute pointer
             glVertexAttribPointer(
-                index,
+                index + m_VertexBufferIndex,
                 static_cast<GLint>(element.GetComponentCount()),
                 ShaderDataTypeToOpenGLBaseType(element.Type),
                 element.Normalized ? GL_TRUE : GL_FALSE,
                 layout.GetStride(),
-                reinterpret_cast<const void*>(static_cast<uintptr_t>(element.Offset)) // the offset of the element in the buffer
+                reinterpret_cast<const void*>(static_cast<uintptr_t>(element.
+                    Offset)) // the offset of the element in the buffer
             );
             index++;
         }

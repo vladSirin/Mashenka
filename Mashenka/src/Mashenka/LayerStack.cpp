@@ -30,7 +30,7 @@ namespace Mashenka
     {
         // only check the layers before the overlay
         auto it = std::find(m_Layers.begin(), m_Layers.begin() + m_LayerInsertIndex, layer);
-        if(it != m_Layers.end())
+        if(it != m_Layers.begin() + m_LayerInsertIndex) // from begin to the layerInsertIndex is the layers
         {
             layer->OnDetach(); // call OnDetach when layer is poped
             m_Layers.erase(it);

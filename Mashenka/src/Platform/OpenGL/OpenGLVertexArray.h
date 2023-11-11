@@ -27,6 +27,7 @@ namespace Mashenka
     private:
         // The unique identifier of the vertex array
         uint32_t m_RendererID;
+        uint32_t m_VertexBufferIndex = 0; // offset of the vertex buffer index
         std::vector<std::shared_ptr<VertexBuffer>> m_VertexBuffers;
         std::shared_ptr<IndexBuffer> m_IndexBuffer;
     };
