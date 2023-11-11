@@ -7,7 +7,14 @@ namespace Mashenka
 {
     class MASHENKA_API Input
     {
+    protected:
+        // This is the constructor of the Input class
+        Input() = default;
     public:
+        // This is the declaration of the singleton instance of the Input class
+        Input(const Input&) = delete; // forbid copy constructor
+        Input& operator=(const Input&) = delete; // forbid copy assignment operator
+        
         inline static bool IsKeyPressed(int keycode) {return s_Instance->IsKeyPressedImpl(keycode);}
         inline static bool IsMouseButtonPressed(int button) {return s_Instance->IsMouseButtonPressedImpl(button);}
         inline static std::pair<float, float> GetMousePosition() {return s_Instance->GetMousePositionImpl();}
