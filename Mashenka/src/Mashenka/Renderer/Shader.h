@@ -21,6 +21,9 @@ namespace Mashenka
         // the source is the source code of the shader
         // return the id of the shader
         static Shader* Create(const std::string& vertexSrc, const std::string& fragmentSrc);
+
+        // Create a shader from file path
+        static Shader* Create(const std::string& filepath);
         
     };
 }
