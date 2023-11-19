@@ -12,7 +12,7 @@ namespace Mashenka
         // OpenGL specific solution for the Shader Class
         // Constructor
         OpenGLShader(const std::string& filepath);
-        OpenGLShader(const std::string& vertexSrc, const std::string& fragmentSrc);
+        OpenGLShader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc);
 
         // Destructor
         ~OpenGLShader() override;
@@ -20,6 +20,8 @@ namespace Mashenka
         // Bind and Unbind the shader
         void Bind() const override;
         void Unbind() const override;
+
+        virtual const std::string& GetName() const override {return m_Name; }
 
         // Upload uniform functions for different types
         void UploadUniformInt(const std::string& name, int value) const;
@@ -36,6 +38,7 @@ namespace Mashenka
     private:
         // Shader program id
         uint32_t m_RendererID;
+        std::string m_Name;
     };
 }
 

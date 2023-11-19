@@ -113,9 +113,11 @@ public:
             }
         )";
 
-        // new shader object with the vertex and fragment shader source code
-        // using reset to reset the m_Shader pointer to the new shader object
-        m_Shader.reset(Mashenka::Shader::Create(vertexSrc, fragmentSrc));
+        // Create the shader program, which is the final linked version of multiple shaders combined.
+        // Why: to encapsulate all of the state needed to specify per-vertex attribute data to the OpenGL pipeline.
+        // How: using a vertex array object (VAO), which essentially serves as a container for VBOs and EBOs.
+        //     using a vertex buffer object (VBO), which is a memory buffer in the high-speed memory of your video card designed to hold information about vertices.
+        m_Shader = Mashenka::Shader::Create("VertexPosColor", vertexSrc, fragmentSrc);
 
         // Create the Vertex and Fragment shaders for the blue square
         std::string FlatColorShaderVertexSrc = R"(
@@ -148,15 +150,15 @@ public:
             }
         )";
 
-        m_FlatColorShader.reset(Mashenka::Shader::Create(FlatColorShaderVertexSrc, FlatColorShaderFragmentSrc));
+        m_FlatColorShader = Mashenka::Shader::Create("FlatColor", FlatColorShaderVertexSrc, FlatColorShaderFragmentSrc);
 
         // ==================== Prepare for Texture ====================
         // Texture shader src
-        m_TextureShader.reset(Mashenka::Shader::Create("assets/shaders/Texture.glsl"));
+        auto textureShader = m_ShaderLibrary.Load("assets/shaders/Texture.glsl");
         m_Texture = Mashenka::Texture2D::Create("assets/textures/Checkerboard.png");
         m_ChernoLogoTexture = Mashenka::Texture2D::Create("assets/textures/ChernoLogo.png");
-        std::dynamic_pointer_cast<Mashenka::OpenGLShader>(m_TextureShader)->Bind();
-        std::dynamic_pointer_cast<Mashenka::OpenGLShader>(m_TextureShader)->UploadUniformInt("u_Texture", 0);
+        std::dynamic_pointer_cast<Mashenka::OpenGLShader>(textureShader)->Bind();
+        std::dynamic_pointer_cast<Mashenka::OpenGLShader>(textureShader)->UploadUniformInt("u_Texture", 0);
     }
 
     void OnUpdate(Mashenka::TimeStep ts) override
@@ -215,19 +217,21 @@ public:
         // Example: draw 10 boxes along a same line
         for (int i = 0; i < 10; ++i)
         {
-            m_SquarePosition = {i * 0.16f, 0.0f, 0.0f};
+            m_SquarePosition = {static_cast<float>(i) * 0.16f, 0.0f, 0.0f};
             glm::mat4 transform = glm::translate(glm::mat4(1.0f), m_SquarePosition) * glm::scale(
                 glm::mat4(1.0f), glm::vec3(0.1f));
             Mashenka::Renderer::Submit(m_FlatColorShader, m_SquareVA, transform);
         }
 
+        // Getting texture from the lib
+        auto textureShader = m_ShaderLibrary.Get("Texture");
         // Draw the texture
         m_Texture->Bind(0);
-        Mashenka::Renderer::Submit(m_TextureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
+        Mashenka::Renderer::Submit(textureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
 
         // Draw the logo
         m_ChernoLogoTexture->Bind(0);
-        Mashenka::Renderer::Submit(m_TextureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
+        Mashenka::Renderer::Submit(textureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
         
         
         // Mashenka::Renderer::Submit(m_Shader, m_VertexArray);
@@ -276,6 +280,7 @@ allowing for the reuse of vertex data and thus more efficient rendering.*/
     // The shader program is the one that is stored in the OpenGL state machine.
 
     // Example data for the triangle: VAO and shader
+    Mashenka::ShaderLibrary m_ShaderLibrary;
     Mashenka::Ref<Mashenka::Shader> m_Shader;
     Mashenka::Ref<Mashenka::VertexArray> m_VertexArray;
     glm::vec3 m_TrianglePosition = {0.0f, 0.0f, 0.0f};
@@ -287,7 +292,6 @@ allowing for the reuse of vertex data and thus more efficient rendering.*/
     glm::vec3 m_SquareColor = {0.2f, 0.3f, 0.8f};
 
     // Example data for texture
-    Mashenka::Ref<Mashenka::Shader> m_TextureShader;
     Mashenka::Ref<Mashenka::Texture2D> m_Texture;
     Mashenka::Ref<Mashenka::Texture2D> m_ChernoLogoTexture;
     
