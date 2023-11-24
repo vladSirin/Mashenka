@@ -13,11 +13,12 @@ namespace Mashenka
         Camera() = default;
         virtual ~Camera() = default;
 
-        // camera frustum struct
-        struct Frustum
-        {
-            float left, right, bottom, top, nearPlane, farPlane;
-        };
+        // Virtual Functions
+        // set projection, override for different camera types
+        virtual void SetProjection(float left, float right, float bottom, float top) = 0;
+
+        // On Event for camera, override for different camera types
+        virtual void OnEvent(Event& e) = 0 {}
         
         // getter & setter
         inline const glm::vec3& GetPosition() const {return m_Position;}
@@ -32,10 +33,7 @@ namespace Mashenka
         // Get the view projection matrix
         // What is view projection matrix? It is the matrix that transform the world space to clip space
         inline const glm::mat4& GetViewProjectionMatrix() const {return m_ViewProjectionMatrix;}
-
-        // On Event for camera
-        virtual void OnEvent(Event& e) {}
-
+    
     protected:
         void RecalculateViewMatrix();
         

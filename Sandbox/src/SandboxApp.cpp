@@ -18,7 +18,7 @@ class ExampleLayer : public Mashenka::Layer
 {
 public:
     ExampleLayer()
-        : Layer("Example"), m_Camera(-1.6f, 1.6f, -0.9f, 0.9f), m_CameraPosition(0.0f)
+        : Layer("Example"), m_CameraController(1280.0f / 720.0f, true)
     {
         // ==================== OpenGL BELOW ====================
         // ==================== Prepare for Triangle Example ====================
@@ -163,43 +163,8 @@ public:
 
     void OnUpdate(Mashenka::TimeStep ts) override
     {
-        // MK_INFO("ExampleLayer::Update");
-        MK_TRACE("{0} update started", this->GetName());
-
-        // Log the TimeStep
-        MK_TRACE("Delta time: {0}s ({1}ms)", ts.GetSeconds(), ts.GetMilliseconds());
-
-        // Moving the camera by arrow keys and rotate with Q and E
-        if (Mashenka::Input::IsKeyPressed(MK_KEY_LEFT))
-        {
-            m_CameraPosition.x -= m_CameraTranslationSpeed * ts;
-        }
-        else if (Mashenka::Input::IsKeyPressed(MK_KEY_RIGHT))
-        {
-            m_CameraPosition.x += m_CameraTranslationSpeed * ts;
-        }
-        if (Mashenka::Input::IsKeyPressed(MK_KEY_UP))
-        {
-            m_CameraPosition.y += m_CameraTranslationSpeed * ts;
-        }
-        else if (Mashenka::Input::IsKeyPressed(MK_KEY_DOWN))
-        {
-            m_CameraPosition.y -= m_CameraTranslationSpeed * ts;
-        }
-
-        // Rotate the camera
-        if (Mashenka::Input::IsKeyPressed(MK_KEY_Q))
-        {
-            m_CameraRotation += m_CameraRotationSpeed;
-        }
-        else if (Mashenka::Input::IsKeyPressed(MK_KEY_E))
-        {
-            m_CameraRotation -= m_CameraRotationSpeed;
-        }
-
-        // set the camera position and rotation
-        m_Camera.SetPosition(m_CameraPosition);
-        m_Camera.SetRotation(m_CameraRotation);
+        // Update the camera controller
+        m_CameraController.OnUpdate(ts);
 
 
         // ==Render Pipeline==
@@ -208,7 +173,7 @@ public:
         Mashenka::RenderCommand::Clear();
 
         // Prepare the scene and Bind the Shaders
-        Mashenka::Renderer::BeginScene(m_Camera);
+        Mashenka::Renderer::BeginScene(m_CameraController.GetCamera());
         std::dynamic_pointer_cast<Mashenka::OpenGLShader>(m_FlatColorShader)->Bind();
         std::dynamic_pointer_cast<Mashenka::OpenGLShader>(m_FlatColorShader)->UploadUniformFloat3(
             "u_Color", m_SquareColor);
@@ -259,6 +224,9 @@ public:
             }
             MK_TRACE("{0}", static_cast<char>(e.GetKeyCode()));
         }
+
+        // camera event
+        m_CameraController.OnEvent(event);
     }
 
 private:
@@ -300,13 +268,8 @@ allowing for the reuse of vertex data and thus more efficient rendering.*/
     // Camera and properties
     // Why Define the camera here? Because the camera is a part of the layer, and the layer is a part of the application
     // The camera is a part of the layer because the camera is a part of the scene
-    Mashenka::OrthographicCamera m_Camera;
-    glm::vec3 m_CameraPosition;
-    float m_CameraRotation = 0.0f;
-    float m_CameraTranslationSpeed = 0.1f;
-    float m_CameraRotationSpeed = 0.1f;
+    Mashenka::OrthographicCameraController m_CameraController;
 };
-
 
 /* ==
  * == SandBox App for the Mashenka Game Engine ====================

@@ -10,6 +10,8 @@ namespace Mashenka
 
         void OnEvent(Event& e) override;
 
+        void SetProjection(float left, float right, float bottom, float top) override;
+
     private:
   
     };

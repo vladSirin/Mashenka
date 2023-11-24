@@ -31,6 +31,7 @@
 // Camera
 #include "Mashenka/Renderer/Camera.h"
 #include "Mashenka/Renderer/OrthographicCamera.h"
+#include "Mashenka/OrthographicCameraController.h"
 
 // ---Entry Point---------------------
 #include "Mashenka/EntryPoint.h"
