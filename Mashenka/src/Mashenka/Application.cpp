@@ -51,6 +51,7 @@ namespace Mashenka
         // Dispatch (which takes a template func as input), will check if the input matches the type
         // If so, the bound event will be called (which is the Application.OnWindowClose functions)
         dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::OnWindowClose));
+        dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(Application::OnWindowResize));
 
         /*
          * Explain the following code:
@@ -106,8 +107,11 @@ namespace Mashenka
             Input::Poll();
 
             // Go through all the layers, as each layer can handle its own update
-            for (Layer* layer : m_LayerStack)
-                layer->OnUpdate(timeStep);
+            if (!m_Minimized)
+            {
+                for (Layer* layer : m_LayerStack)
+                    layer->OnUpdate(timeStep); // Update the needed info
+            }
 
             // Initialize the ImGui frame, prepare for the rendering, context and input
             m_ImGuiLayer->Begin();
@@ -129,5 +133,21 @@ namespace Mashenka
     {
         m_Running = false;
         return true;
+    }
+
+    bool Application::OnWindowResize(WindowResizeEvent& e)
+    {
+        // Check if the window is minimized
+        if (e.GetWidth() == 0 || e.GetHeight() == 0)
+        {
+            m_Minimized = true;
+            return false;
+        }
+
+        // Set the minimized flag to false
+        m_Minimized = false;
+        // Set the viewport
+        Renderer::OnWindowResize(e.GetWidth(), e.GetHeight());
+        return false;
     }
 }

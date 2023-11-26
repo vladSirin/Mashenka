@@ -15,7 +15,13 @@ namespace Mashenka
         // Initialize the renderer API
         RenderCommand::Init();
     }
-    
+
+    void Renderer::OnWindowResize(uint32_t width, uint32_t height)
+    {
+        // Set the viewport
+        RenderCommand::SetViewport(0, 0, width, height);
+    }
+
     void Renderer::BeginScene(OrthographicCamera& camera)
     {
         // Set the view projection matrix of the scene

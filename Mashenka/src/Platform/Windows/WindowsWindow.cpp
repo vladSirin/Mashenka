@@ -75,6 +75,7 @@ namespace Mashenka
             data.Width = width;
             data.Height = height;
 
+            // Create a WindowResizeEvent with the new width and height
             WindowResizeEvent event(width, height);
             data.EventCallback(event);
 

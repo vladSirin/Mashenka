@@ -14,6 +14,8 @@ namespace Mashenka
     {
     public:
         static void Init();
+        // on window resize
+        static void OnWindowResize(uint32_t width, uint32_t height);
         static void BeginScene(OrthographicCamera& camera); //Prepare the scene 
         static void EndScene();
 

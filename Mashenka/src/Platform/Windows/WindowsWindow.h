@@ -43,6 +43,10 @@ namespace Mashenka
             unsigned int Width, Height;
             bool VSync;
 
+            // EventCallbackFn is a function pointer, which is a callable object
+            // This is used to bind the application::OnEvent to the WindowData::EventCallback
+            // So that the application::OnEvent will be called when the WindowData::EventCallback is called
+            // This is done in the application::Run()
             EventCallbackFn EventCallback;
             
         };

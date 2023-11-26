@@ -92,7 +92,7 @@ namespace Mashenka
             {
                 // If so, call the function
                 // static_cast is used to convert the type of the event, which is Event, to the type of the event, which is EventType
-                m_Event.Handled = func(static_cast<EventType&>(m_Event));
+                m_Event.Handled = func(static_cast<EventType&>(m_Event)); // Call the function
                 return true;
             }
             return false;

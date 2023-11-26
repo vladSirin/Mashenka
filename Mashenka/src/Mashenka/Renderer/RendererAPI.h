@@ -20,6 +20,9 @@ namespace Mashenka
     public:
         // init
         virtual void Init() = 0;
+
+        // viewport
+        virtual void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) = 0;
         
         // virtual functions to be implemented in the platform-specific code
         virtual void SetClearColor(const glm::vec4& color) = 0;
