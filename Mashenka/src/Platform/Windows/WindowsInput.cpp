@@ -3,9 +3,9 @@
 #include <GLFW/glfw3.h>
 #include <map>
 
-#include "Mashenka/Application.h"
-#include "Mashenka/KeyCodes.h"
-#include "Mashenka/MouseButtonCodes.h"
+#include "Mashenka/Core/Application.h"
+#include "Mashenka/Core/KeyCodes.h"
+#include "Mashenka/Core/MouseButtonCodes.h"
 
 
 namespace Mashenka

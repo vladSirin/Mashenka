@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include <map>
 
-#include "Mashenka/Input.h"
+#include "Mashenka/Core/Input.h"
 #include "Platform/Windows/WindowsWindow.h"
 
 namespace Mashenka

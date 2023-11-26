@@ -1,17 +1,17 @@
 ﻿#pragma once
 
 // For use by Mashenka Application
-#include "Mashenka/Application.h"
-#include "Mashenka/Layer.h"
-#include "Mashenka/Log.h"
+#include "Mashenka/Core/Application.h"
+#include "Mashenka/Core/Layer.h"
+#include "Mashenka/Core/Log.h"
 
 // PRODUCT_CORE
 #include "Mashenka/Core/Timestep.h"
 
 // INPUT
-#include "Mashenka/Input.h"
-#include "Mashenka/KeyCodes.h"
-#include "Mashenka/MouseButtonCodes.h"
+#include "Mashenka/Core/Input.h"
+#include "Mashenka/Core/KeyCodes.h"
+#include "Mashenka/Core/MouseButtonCodes.h"
 #include "Mashenka/Events/KeyEvent.h"
 #include "Mashenka/Events/MouseEvent.h"
 
@@ -31,7 +31,7 @@
 // Camera
 #include "Mashenka/Renderer/Camera.h"
 #include "Mashenka/Renderer/OrthographicCamera.h"
-#include "Mashenka/OrthographicCameraController.h"
+#include "Mashenka/Renderer/OrthographicCameraController.h"
 
 // ---Entry Point---------------------
-#include "Mashenka/EntryPoint.h"
+#include "Mashenka/Core/EntryPoint.h"

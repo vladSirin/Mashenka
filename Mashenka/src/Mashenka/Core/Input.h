@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Mashenka/Core.h"
+#include "Mashenka/Core/Core.h"
 
 // This is the input System that will be called by the application loop
 // Using a Singleton Interface Pattern

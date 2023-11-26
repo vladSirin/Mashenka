@@ -1,7 +1,9 @@
 # Binaries
-**/bin/*
-**/bin-int/*
+**/bin/
+!vendor/bin/premake/
+bin-int/
 Intermediates/
+
 
 # Log files
 *.log

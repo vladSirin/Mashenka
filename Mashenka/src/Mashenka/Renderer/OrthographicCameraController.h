@@ -1,10 +1,10 @@
 ﻿#pragma once
-#include "Events/ApplicationEvent.h"
-#include "Events/Event.h"
-#include "Events/MouseEvent.h"
+#include "Mashenka/Events/ApplicationEvent.h"
+#include "Mashenka/Events/Event.h"
+#include "Mashenka/Events/MouseEvent.h"
 #include "glm/vec3.hpp"
-#include "Renderer/OrthographicCamera.h"
-#include "Core/Timestep.h"
+#include "Mashenka/Renderer/OrthographicCamera.h"
+#include "Mashenka/Core/Timestep.h"
 
 namespace Mashenka
 {

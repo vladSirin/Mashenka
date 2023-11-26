@@ -13,7 +13,7 @@
 #include <unordered_map>
 #include <unordered_set>
 
-#include "Mashenka/Log.h"
+#include "Mashenka/Core/Log.h"
 #ifdef MK_PLATFORM_WINDOWS
 #include <Windows.h>
 #endif

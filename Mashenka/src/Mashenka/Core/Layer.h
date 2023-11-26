@@ -1,7 +1,7 @@
 ﻿#pragma once
 
-#include "Core/TimeStep.h"
-#include "Mashenka/Core.h"
+#include "Timestep.h"
+#include "Core.h"
 #include "Mashenka/Events/Event.h"
 
 namespace Mashenka

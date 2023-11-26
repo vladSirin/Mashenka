@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Mashenka/Window.h"
+#include "Mashenka/Core/Window.h"
 #include <glad/glad.h>
 #include "GLFW/glfw3.h"
 #include "Mashenka/Renderer/GraphicsContext.h"

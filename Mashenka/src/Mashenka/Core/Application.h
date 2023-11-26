@@ -3,7 +3,7 @@
 #include "Window.h"
 #include "Mashenka/Events/ApplicationEvent.h"
 #include "LayerStack.h"
-#include "ImGui/ImGuiLayer.h"
+#include "Mashenka/ImGui/ImGuiLayer.h"
 
 /*
  * implement a form of the Singleton pattern for the Application class.

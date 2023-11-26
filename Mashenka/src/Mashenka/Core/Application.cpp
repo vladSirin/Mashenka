@@ -1,11 +1,10 @@
 ﻿#include "mkpch.h"
 #include "Application.h"
-#include "Mashenka/Events/ApplicationEvent.h"
-#include "Mashenka/Log.h"
+#include "Mashenka/Core/Log.h"
 #include "Input.h"
 #include "Platform/Windows/WindowsWindow.h"
-#include "Core/TimeStep.h"
-#include "Renderer/Renderer.h"
+#include "Mashenka/Core/TimeStep.h"
+#include "Mashenka/Renderer/Renderer.h"
 
 namespace Mashenka
 {

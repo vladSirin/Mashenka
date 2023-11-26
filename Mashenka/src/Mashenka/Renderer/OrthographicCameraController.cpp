@@ -1,8 +1,8 @@
 ﻿#include "mkpch.h"
 #include "OrthographicCameraController.h"
 
-#include "Input.h"
-#include "KeyCodes.h"
+#include "Mashenka/Core/Input.h"
+#include "Mashenka/Core/KeyCodes.h"
 
 namespace Mashenka
 {

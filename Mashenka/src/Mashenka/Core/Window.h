@@ -2,7 +2,7 @@
 
 #include "mkpch.h"
 
-#include "Mashenka/Core.h"
+#include "Mashenka/Core/Core.h"
 #include "Mashenka/Events/Event.h"
 
 namespace Mashenka
