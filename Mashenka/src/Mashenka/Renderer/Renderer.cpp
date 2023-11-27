@@ -7,7 +7,7 @@
 namespace Mashenka
 {
     // Initialize the scene data
-    Renderer::SceneData* Renderer::s_SceneData = new Renderer::SceneData;
+    Scope<Renderer::SceneData> Renderer::s_SceneData = CreateScope<SceneData>();
 
     // Init
     void Renderer::Init()

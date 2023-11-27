@@ -5,5 +5,5 @@
 namespace Mashenka
 {
     // Initialize the static member variable
-    RendererAPI* RenderCommand::s_RendererAPI = new OpenGLRendererAPI;
+    Scope<RendererAPI> RenderCommand::s_RendererAPI = CreateScope<OpenGLRendererAPI>();
 }

@@ -37,7 +37,7 @@ namespace Mashenka
         
     private:
         // This is a singleton declare, need to be initialized in cpp
-        static std::unique_ptr<Input> s_Instance;
+        static Scope<Input> s_Instance;
     };
     
 }

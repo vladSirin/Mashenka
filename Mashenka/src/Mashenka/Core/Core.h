@@ -71,15 +71,36 @@
 #define MK_CORE_ASSERT(x, ...)
 #endif
 
-
+/*
+ * 3. **Setting up Scope/Ref instead of raw pointers**:
+ */
 namespace Mashenka
 {
-    
+    // Explain the following code snippet
+    /*
+     * The following code snippet is a template alias.
+     * It's a way to create a new name for an existing type.
+     * In this case, the type is std::unique_ptr<T>.
+     * The new name is Scope<T>.
+     */
     template <typename T>
     using Scope = std::unique_ptr<T>;
 
+    // Template alias for creating a scope
+    // Using Args&& ... args to forward the arguments so it supports variadic arguments
+    template<typename T, typename ... Args>
+    constexpr Scope<T> CreateScope(Args&& ... args)
+    {
+        return std::make_unique<T>(std::forward<Args>(args)...); //perfect forwarding for variadic arguments
+    }
+
     template <typename T>
     using Ref = std::shared_ptr<T>;
+    template<typename T, typename ... Args>
+    constexpr Ref<T> CreateRef(Args&& ... args)
+    {
+        return std::make_shared<T>(std::forward<Args>(args)...);
+    }
 }
 
 
@@ -102,6 +123,5 @@ BIT(2) would be 4 (binary 0100), and so on.
  *and when it is called, it will invoke the fn member function of the parent object,
  *passing along the given argument.*/
 #define BIND_EVENT_FN(fn) std::bind(&fn, this, std::placeholders::_1)
-
 
 

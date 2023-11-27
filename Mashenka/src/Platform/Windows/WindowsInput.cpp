@@ -11,8 +11,8 @@
 namespace Mashenka
 {
     // Create the s_Instance singleton for calling
-    std::unique_ptr<Input> Input::s_Instance = std::make_unique<WindowsInput>();
-    
+    Scope<Input> Input::s_Instance = CreateScope<WindowsInput>();
+
     void Mashenka::WindowsInput::PollImpl()
     {
         auto m_window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
@@ -38,7 +38,7 @@ namespace Mashenka
 
     bool Mashenka::WindowsInput::IsKeyPressedImpl(int keycode)
     {
-        return keyState [keycode];
+        return keyState[keycode];
     }
 
     bool Mashenka::WindowsInput::IsMouseButtonPressedImpl(int button)
@@ -60,6 +60,6 @@ namespace Mashenka
     {
         return mouseY;
     }
-    
 }
+
 
