@@ -89,7 +89,6 @@ project "Mashenka"
 
         defines
         {
-            "MK_PLATFORM_WINDOWS",
             "MK_BUILD_DLL",
             "GLFW_INCLUDE_NONE"
         }
@@ -144,11 +143,6 @@ project "Sandbox"
     filter "system:windows"
         systemversion "latest"
 
-        defines
-        {
-            "MK_PLATFORM_WINDOWS",
-        }
-    
     filter "configurations:Debug"
         defines "MK_DEBUG"
         runtime "Debug"

@@ -10,7 +10,10 @@ namespace Mashenka
     LayerStack::~LayerStack()
     {
         for (Layer* layer : m_Layers)
+        {
+            layer->OnDetach(); // call OnDetach when the layer is deleted
             delete layer;
+        }
     }
 
     void LayerStack::PushLayer(Layer* layer)

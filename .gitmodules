@@ -1,12 +1,16 @@
 [submodule "Mashenka/vendor/spdlog"]
 	path = Mashenka/vendor/spdlog
 	url = https://github.com/gabime/spdlog
+	branch = v1.x
 [submodule "Mashenka/vendor/GLFW"]
 	path = Mashenka/vendor/GLFW
 	url = https://github.com/vladimirSirin/glfw
+	branch = master
 [submodule "Mashenka/vendor/imgui"]
 	path = Mashenka/vendor/imgui
 	url = https://github.com/vladimirSirin/imgui
+	branch = docking
 [submodule "Mashenka/vendor/glm"]
 	path = Mashenka/vendor/glm
 	url = https://github.com/g-truc/glm
+	branch = master

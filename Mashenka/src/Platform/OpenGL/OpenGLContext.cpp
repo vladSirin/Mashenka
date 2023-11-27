@@ -7,13 +7,13 @@
 
 namespace Mashenka
 {
-    Mashenka::OpenGLContext::OpenGLContext(GLFWwindow* windowHandle)
+    OpenGLContext::OpenGLContext(GLFWwindow* windowHandle)
         : m_WindowHandle(windowHandle)
     {
         MK_CORE_ASSERT(windowHandle, "Window hanlde is null")
     }
 
-    void Mashenka::OpenGLContext::Init()
+    void OpenGLContext::Init()
     {
         /*
          * gladLoadGLLoader is a function provided by GLAD,
@@ -33,11 +33,21 @@ namespace Mashenka
         MK_CORE_INFO(" Vendor: {0}", reinterpret_cast<const char*>(glGetString(GL_VENDOR))); //eg: Intel
         MK_CORE_INFO(" Renderer: {0}", reinterpret_cast<const char*>(glGetString(GL_RENDERER))); //eg: RTX 4060
         MK_CORE_INFO(" Version: {0}", reinterpret_cast<const char*>(glGetString(GL_VERSION))); //eg: OPENGL Version
+
+        // Enable OpenGL Debug Context
+#ifdef MK_ENABLE_ASSERTS
+        int versionMajor;
+        int versionMinor;
+        glGetIntegerv(GL_MAJOR_VERSION, &versionMajor);
+        glGetIntegerv(GL_MINOR_VERSION, &versionMinor);
+
+        MK_CORE_ASSERT(versionMajor > 4 || (versionMajor == 4 && versionMinor >= 5),
+                       "Mashenka requires at least OpenGL version 4.5!");
+#endif
     }
 
-    void Mashenka::OpenGLContext::SwapBuffers()
+    void OpenGLContext::SwapBuffers()
     {
         glfwSwapBuffers(m_WindowHandle);
     }
 }
-
