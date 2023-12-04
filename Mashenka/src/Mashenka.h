@@ -34,4 +34,4 @@
 #include "Mashenka/Renderer/OrthographicCameraController.h"
 
 // ---Entry Point---------------------
-#include "Mashenka/Core/EntryPoint.h"
+//#include "Mashenka/Core/EntryPoint.h" //There should only be on entry point

@@ -1,8 +1,16 @@
-﻿#include "Mashenka.h"
+﻿// Engine: Mashenka Game Engine
+#include "Mashenka.h"
+#include "Mashenka/Core/EntryPoint.h"
+
+// Graphics and Imgui
 #include "glm/gtc/type_ptr.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "Platform/OpenGL/OpenGLShader.h"
 #include "imgui/imgui.h"
+
+// sandbox2D
+#include "Sandbox2D.h"
+
 
 // Should not include anything else than the engine to make it work, below is TEMP
 
@@ -23,7 +31,7 @@ public:
         // ==================== OpenGL BELOW ====================
         // ==================== Prepare for Triangle Example ====================
         // Initialize the OpenGL function pointers
-        m_VertexArray.reset(Mashenka::VertexArray::Create());
+        m_VertexArray = Mashenka::VertexArray::Create();
 
         // Example data for the triangle
         float vertices[3 * 7] = {
@@ -54,7 +62,7 @@ public:
 
         // ==================== Prepare for Square Example ====================
         // Create the vertex array for the square
-        m_SquareVA.reset(Mashenka::VertexArray::Create());
+        m_SquareVA = Mashenka::VertexArray::Create();
         float squareVertices[5 * 4] = {
             -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
             0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
@@ -281,7 +289,8 @@ class Sandbox : public Mashenka::Application
 public:
     Sandbox()
     {
-        PushLayer(new ExampleLayer);
+        // PushLayer(new ExampleLayer);
+        PushLayer(new Sandbox2D());
     }
 
     // destructor

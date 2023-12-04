@@ -27,13 +27,13 @@ namespace Mashenka
         void SetVSync(bool enabled) override;
         bool IsVSync() const override;
 
-        inline virtual void* GetNativeWindow() const override {return m_Window.get();}
+        inline virtual void* GetNativeWindow() const override {return m_Window;}
 
     private:
         virtual void Init(const WindowProps& props);
         virtual void Shutdown();
         
-        Scope<GLFWwindow> m_Window;
+        GLFWwindow* m_Window;
         Scope<GraphicsContext> m_Context;
 
         // WindowData is for holding the properties on runtime, while WindowProp is for creation/init
