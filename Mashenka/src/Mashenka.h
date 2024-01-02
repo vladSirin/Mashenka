@@ -20,6 +20,7 @@
 
 // --------Renderer-------------------
 #include "Mashenka/Renderer/Renderer.h"
+#include "Mashenka/Renderer/Renderer2D.h"
 #include "Mashenka/Renderer/RenderCommand.h"
 
 

@@ -13,6 +13,14 @@ You can clone the repository to a local destination using git:
 
 Make sure that you do a `--recursive` clone to fetch all of the submodules!
 
+## Setting up the solution:
+- Go to the Mashenka directory and run `scripts\Win-GenProjects.bat` to generate the Visual Studio solution.
+- Open the solution in Visual Studio and build the `Mashenka` target.
+- Set the `Sandbox` project as the startup project and run.
+- Make sure to set the working directory to `Mashenka\Sandbox\assets` in the project settings.
+- If you get an error about missing DLLs, make sure you have the Visual C++ Runtime installed.
+- Make sure you setup the multi-threaded debugger (no DLL) runtime library for all projects.
+
 ## The Plan
 This is a demo engine for me to mainly learning Game Engine Architecture and C++.
 Plan to finish basic 2D game functionality by the end of 2023 and create first demo game.
