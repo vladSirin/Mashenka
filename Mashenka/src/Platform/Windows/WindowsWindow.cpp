@@ -7,9 +7,9 @@
 
 namespace Mashenka
 {
-    // Check if glfw is initialized, shared by all instance to make sure glfw is initialized once only
-    // As glfwinit() should only be called once during the execution of a program
-    static bool s_GLFWInitialized = false;
+    // Static variable, only visible in this file
+    // GLFWWindowCount is used to track the number of windows created globally in the application
+    static uint8_t s_GLFWWindowCount = 0;
 
     // Defined a Error log function
     static void GLFWErrorCallback(int error, const char* description)
@@ -43,18 +43,18 @@ namespace Mashenka
 
         MK_CORE_INFO("Creating window {0} ({1}, {2})", props.Title, props.Width, props.Height);
 
-        if (!s_GLFWInitialized)
+        if (s_GLFWWindowCount == 0) // If this is the first window, initialize GLFW
         {
             //TODO: glfwTerminate on system shutdown
+            MK_CORE_INFO("Initializing GLFW");
             int success = glfwInit();
             MK_CORE_ASSERT(success, "Could not initialize GLFW!");
             // Error callback
             glfwSetErrorCallback(GLFWErrorCallback);
-
-            s_GLFWInitialized = true;
         }
 
-        m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
+        m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr); 
+        s_GLFWWindowCount++; // Increase the window count
 
         // Create Context and Init it
         m_Context = CreateScope<OpenGLContext>(m_Window);
@@ -174,6 +174,12 @@ namespace Mashenka
     void WindowsWindow::Shutdown()
     {
         glfwDestroyWindow(m_Window);
+        if (--s_GLFWWindowCount == 0)
+        {
+            // If this is the last window, terminate GLFW
+            MK_CORE_INFO("Terminating GLFW");
+            glfwTerminate();
+        }
     }
 
     void WindowsWindow::OnUpdate()
