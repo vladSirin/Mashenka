@@ -53,7 +53,8 @@ namespace Mashenka
         std::string Name;
         ShaderDataType Type;
         uint32_t Size;
-        uint32_t Offset;
+        size_t Offset;
+        //size_t is a type that can store the size of the largest object in the current environment, uint32_t is not enough because the size of the object may be larger than 4GB
         bool Normalized;
 
         // constructor, destructor and default constructor, the default constructor is used to create an empty buffer element
@@ -126,7 +127,7 @@ namespace Mashenka
         // calculate the offset and stride of the buffer
         void CalculateOffsetAndStride()
         {
-            uint32_t offset = 0;
+            size_t offset = 0;
             m_Stride = 0;
             for (auto& element : m_Elements)
             {

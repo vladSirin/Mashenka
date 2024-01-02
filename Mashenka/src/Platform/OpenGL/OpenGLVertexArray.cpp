@@ -77,8 +77,10 @@ namespace Mashenka
                 ShaderDataTypeToOpenGLBaseType(element.Type),
                 element.Normalized ? GL_TRUE : GL_FALSE,
                 layout.GetStride(),
-                reinterpret_cast<const void*>(static_cast<uintptr_t>(element.
-                    Offset)) // the offset of the element in the buffer
+                reinterpret_cast<const void*>(element.
+                    Offset) // the offset of the element in the buffer. removing intptr_t because it is not defined in this scope
+                // intptr_t is a signed integer type with the property that any valid pointer to void can be converted to this type, then converted back to pointer to void, and the result will compare equal to the original pointer.
+                // intptr_t is used to represent the difference between two pointers, thus the size of intptr_t is the same as the size of a pointer.
             );
             index++;
         }
