@@ -46,8 +46,14 @@ namespace Mashenka
         glTextureStorage2D(m_RendererID, 1, internalFormat, m_Width, m_Height);
 
         // Set the texture parameters, for min filter we use GL_LINEAR, for mag filter we use GL_NEAREST
+        // Explanation: https://www.khronos.org/opengl/wiki/Sampler_Object
         glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+        // Set the texture parameters for wrap, we use GL_REPEAT
+        glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        
 
         // Set the texture parameters
         // SubImage2D: https://www.khronos.org/opengl/wiki/GLAPI/glTexSubImage2D
