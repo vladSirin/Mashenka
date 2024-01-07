@@ -12,6 +12,8 @@ namespace Mashenka
         virtual uint32_t GetWidth() const = 0;
         virtual uint32_t GetHeight() const = 0;
 
+        virtual void SetData(void* data, uint32_t size) = 0;
+
         // Bind the texture to a slot, default is 0, which is the first slot
         // This is used when we have multiple textures, slots are used to distinguish them
         // For example, we have a texture for the color of the object, and a texture for the normal of the object
@@ -27,6 +29,7 @@ namespace Mashenka
     public:
         // Create
         static Ref<Texture2D> Create(const std::string& path);
+        static Ref<Texture2D> Create(uint32_t width, uint32_t height); // create a texture with the given width and height
     };
 }
 

@@ -35,5 +35,7 @@ namespace Mashenka
     {
         // Opengl function
         glDrawElements(GL_TRIANGLES, vertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+
+        glBindTexture(GL_TEXTURE_2D, 0); // unbind the texture, so that we can use the texture slot for other textures
     }
 }
