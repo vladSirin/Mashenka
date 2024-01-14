@@ -1,6 +1,6 @@
 ﻿#include "mkpch.h"
-#include "OrthographicCamera.h"
-#include "glm/ext/matrix_clip_space.hpp"
+#include "Mashenka/Renderer/OrthographicCamera.h"
+#include <glm/ext/matrix_clip_space.hpp>
 
 namespace Mashenka
 {

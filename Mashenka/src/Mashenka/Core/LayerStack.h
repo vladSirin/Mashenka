@@ -10,15 +10,15 @@
 #pragma once
 
 #include "Mashenka/Core/Core.h"
-#include "Layer.h"
+#include "Mashenka/Core/Layer.h"
 #include <vector>
 
 namespace Mashenka
 {
-    class MASHENKA_API LayerStack
+    class LayerStack
     {
     public:
-        LayerStack();
+        LayerStack() = default;
         ~LayerStack();
 
         void PushLayer(Layer* layer);

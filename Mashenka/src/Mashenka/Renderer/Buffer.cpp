@@ -1,7 +1,7 @@
 ﻿#include "mkpch.h"
-#include "Buffer.h"
+#include "Mashenka/Renderer/Buffer.h"
 #include "Platform/OpenGL/OpenGLBuffer.h"
-#include "Renderer.h"
+#include "Mashenka/Renderer/Renderer.h"
 
 namespace Mashenka
 {
@@ -11,7 +11,7 @@ namespace Mashenka
     // The derived class is only used internally, so we don't need to worry about memory leak
     // The derived class is deleted when the base class is deleted
     // This is called polymorphism
-    Mashenka::VertexBuffer* Mashenka::VertexBuffer::Create(float* vertices, uint32_t size)
+    Ref<VertexBuffer> Mashenka::VertexBuffer::Create(float* vertices, uint32_t size)
     {
         switch (RendererAPI::GetAPI())
         {
@@ -19,12 +19,12 @@ namespace Mashenka
             MK_CORE_ASSERT(false, "RendererAPI::None is currently not supported!")
             return nullptr;
         case RendererAPI::API::OpenGL:
-            return new OpenGLVertexBuffer(vertices, size);
+            return CreateRef<OpenGLVertexBuffer>(vertices, size);
         }
         return nullptr;
     }
 
-    Mashenka::IndexBuffer* Mashenka::IndexBuffer::Create(uint32_t* indices, uint32_t count)
+    Ref<IndexBuffer> Mashenka::IndexBuffer::Create(uint32_t* indices, uint32_t count)
     {
         // Factory Method for different renderer API
         switch (RendererAPI::GetAPI())
@@ -33,7 +33,7 @@ namespace Mashenka
             MK_CORE_ASSERT(false, "RendererAPI::None is currently not supported!")
             return nullptr;
         case RendererAPI::API::OpenGL:
-            return new OpenGLIndexBuffer(indices, count);
+            return CreateRef<OpenGLIndexBuffer>(indices, count);
         }
         return nullptr;
     }

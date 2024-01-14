@@ -41,8 +41,7 @@ public:
         };
 
         // Create the vertex buffer
-        Mashenka::Ref<Mashenka::VertexBuffer> vertexBuffer;
-        vertexBuffer.reset(Mashenka::VertexBuffer::Create(vertices, sizeof(vertices)));
+        Mashenka::Ref<Mashenka::VertexBuffer> vertexBuffer = Mashenka::VertexBuffer::Create(vertices, sizeof(vertices));
 
         // Create the layout of the buffer, which is the layout of the vertex buffer then bind it to the vertex array
         Mashenka::BufferLayout layout = {
@@ -55,8 +54,7 @@ public:
         // Example data for indices of the triangle
         uint32_t indices[3] = {0, 1, 2};
         // Create the index buffer, which is the buffer that contains the indices of the vertices to be drawn by the GPU
-        Mashenka::Ref<Mashenka::IndexBuffer> indexBuffer;
-        indexBuffer.reset(Mashenka::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
+        Mashenka::Ref<Mashenka::IndexBuffer> indexBuffer = Mashenka::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t));
         // Bind the index buffer to the vertex array
         m_VertexArray->SetIndexBuffer(indexBuffer);
 
@@ -70,8 +68,7 @@ public:
             -0.5f, 0.5f, 0.0f, 0.0f, 1.0f
         };
 
-        Mashenka::Ref<Mashenka::VertexBuffer> squareVB;
-        squareVB.reset(Mashenka::VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
+        Mashenka::Ref<Mashenka::VertexBuffer> squareVB = Mashenka::VertexBuffer::Create(squareVertices, sizeof(squareVertices));
         squareVB->SetLayout({
             {Mashenka::ShaderDataType::Float3, "a_Position"},
             {Mashenka::ShaderDataType::Float2, "a_TexCoord"}
@@ -79,8 +76,7 @@ public:
         m_SquareVA->AddVertexBuffer(squareVB);
 
         uint32_t squareIndices[6] = {0, 1, 2, 2, 3, 0};
-        Mashenka::Ref<Mashenka::IndexBuffer> squareIB;
-        squareIB.reset(Mashenka::IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t)));
+        Mashenka::Ref<Mashenka::IndexBuffer> squareIB = Mashenka::IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t));
         m_SquareVA->SetIndexBuffer(squareIB);
 
         // ==================== Prepare for Shaders of Triangle and Square ====================

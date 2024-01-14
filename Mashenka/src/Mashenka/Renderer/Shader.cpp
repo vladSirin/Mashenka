@@ -1,7 +1,6 @@
 ﻿#include "mkpch.h"
-#include "Shader.h"
-
-#include "RendererAPI.h"
+#include "Mashenka/Renderer/Shader.h"
+#include "Mashenka/Renderer/Renderer.h"
 #include "Platform/OpenGL/OpenGLShader.h"
 
 namespace Mashenka
@@ -15,7 +14,7 @@ namespace Mashenka
             MK_CORE_ASSERT(false, "RendererAPI::None is currently not supported!")
             return nullptr;
         case RendererAPI::API::OpenGL:
-            return std::make_shared<OpenGLShader>(name, vertexSrc, fragmentSrc);
+            return CreateRef<OpenGLShader>(name, vertexSrc, fragmentSrc);
         }
         return nullptr;
     }
@@ -28,7 +27,7 @@ namespace Mashenka
             MK_CORE_ASSERT(false, "RendererAPI::None is currently not supported!")
                 return nullptr;
         case RendererAPI::API::OpenGL:
-            return std::make_shared<OpenGLShader>(filepath);
+            return CreateRef<OpenGLShader>(filepath);
         }
         return nullptr;
     }

@@ -38,7 +38,7 @@ namespace Mashenka
 #define EVENT_CLASS_CATEGORY(category) virtual int GetCategoryFlags() const override {return category;}
 
     // base event class for all events in the engine
-    class MASHENKA_API Event
+    class Event
     {
         // The friend class can access the private and protected data from this
         // friend class EventDispatcher;

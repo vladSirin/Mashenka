@@ -42,17 +42,6 @@
     #error "Unknown platform!"
 #endif // End of platform detection
 
-// DLL support
-#ifdef MK_PLATFORM_WINDOWS
-    #ifdef MK_BUILD_DLL
-        #define MASHENKA_API __declspec(dllexport)
-    #else
-        #define MASHENKA_API __declspec(dllimport)
-    #endif
-#else
-    #define MASHENKA_API
-#endif // End of DLL support
-
 /*
  * 2. **Setting up the Mashenka Log Macros**:
  * The Mashenka Log Macros are set up to log messages to the console.
@@ -122,6 +111,6 @@ BIT(2) would be 4 (binary 0100), and so on.
 /*The resulting callable object can be called with one argument,
  *and when it is called, it will invoke the fn member function of the parent object,
  *passing along the given argument.*/
-#define BIND_EVENT_FN(fn) std::bind(&fn, this, std::placeholders::_1)
+#define MK_BIND_EVENT_FN(fn) std::bind(&fn, this, std::placeholders::_1)
 
 

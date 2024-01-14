@@ -1,5 +1,5 @@
 ﻿#include "mkpch.h"
-#include "OpenGLRendererAPI.h"
+#include "Platform/OpenGL/OpenGLRendererAPI.h"
 
 #include "glad/glad.h"
 
@@ -31,7 +31,7 @@ namespace Mashenka
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
-    void OpenGLRendererAPI::DrawIndexed(const std::shared_ptr<Mashenka::VertexArray>& vertexArray)
+    void OpenGLRendererAPI::DrawIndexed(const Ref<Mashenka::VertexArray>& vertexArray)
     {
         // Opengl function
         glDrawElements(GL_TRIANGLES, vertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);

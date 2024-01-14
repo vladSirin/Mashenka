@@ -24,7 +24,7 @@ namespace Mashenka
     };
 
     // Interface representing a desktop system based Window
-    class MASHENKA_API Window
+    class Window
     {
     public:
         // wrapping a callable object/method with Event& input
@@ -47,7 +47,7 @@ namespace Mashenka
         virtual bool IsVSync() const = 0;
         virtual void* GetNativeWindow() const = 0;
 
-        static Window* Create(const WindowProps& props = WindowProps());
+        static Scope<Window> Create(const WindowProps& props = WindowProps());
     };
     
 }

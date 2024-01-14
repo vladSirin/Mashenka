@@ -1,6 +1,6 @@
 ﻿#include "mkpch.h"
-#include "Texture.h"
-#include "Renderer.h"
+#include "Mashenka/Renderer/Renderer.h"
+#include "Mashenka/Renderer/Texture.h"
 #include "Platform/OpenGL/OpenGLTexture.h"
 
 namespace Mashenka

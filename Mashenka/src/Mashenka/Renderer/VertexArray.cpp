@@ -1,6 +1,6 @@
 ﻿#include "mkpch.h"
-#include "VertexArray.h"
-#include "Renderer.h"
+#include "Mashenka/Renderer/VertexArray.h"
+#include "Mashenka/Renderer/Renderer.h"
 #include "Platform/OpenGL/OpenGLVertexArray.h"
 
 namespace Mashenka

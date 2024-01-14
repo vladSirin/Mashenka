@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "Event.h"
+#include "Mashenka/Events/Event.h"
 
 // For key events, there should be key pressed and releases as major public classes
 // As the normal logic for applications are based on those too
@@ -8,7 +8,7 @@
 // And based on how long u pressed it to count the num of repeats that should happen
 namespace Mashenka
 {
-    class MASHENKA_API KeyEvent: public Event
+    class KeyEvent: public Event
     {
     public:
         inline int GetKeyCode() const {return  m_KeyCode;}
@@ -22,7 +22,7 @@ namespace Mashenka
         int m_KeyCode;
     };
 
-    class MASHENKA_API KeyPressedEvent: public KeyEvent
+    class KeyPressedEvent: public KeyEvent
     {
     public:
         KeyPressedEvent(int keycode, int repeatCount)
@@ -43,7 +43,7 @@ namespace Mashenka
         int m_RepeatCount;
     };
 
-    class MASHENKA_API KeyReleasedEvent: public KeyEvent
+    class KeyReleasedEvent: public KeyEvent
     {
     public:
         KeyReleasedEvent(int keycode)
@@ -61,7 +61,7 @@ namespace Mashenka
     };
 
     //DONE: Implement a key typed function
-    class MASHENKA_API KeyTypedEvent: public KeyEvent
+    class KeyTypedEvent: public KeyEvent
     {
     public:
         KeyTypedEvent(int keycode)

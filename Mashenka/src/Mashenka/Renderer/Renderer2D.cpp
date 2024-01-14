@@ -1,9 +1,9 @@
 ﻿#include "mkpch.h"
-#include "Renderer2D.h"
+#include "Mashenka/Renderer/Renderer2D.h"
 
-#include "VertexArray.h"
-#include "Shader.h"
-#include "RenderCommand.h"
+#include "Mashenka/Renderer/VertexArray.h"
+#include "Mashenka/Renderer/Shader.h"
+#include "Mashenka/Renderer/RenderCommand.h"
 // #include "Platform/OpenGL/OpenGLShader.h", but we can't include it here because it will cause a circular dependency
 #include <glm/gtc/matrix_transform.hpp> // for glm::mat4
 
@@ -35,8 +35,7 @@ namespace Mashenka
         };
 
         // Create the vertex buffer
-        Ref<VertexBuffer> squareVB;
-        squareVB.reset(VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
+        Ref<VertexBuffer> squareVB = VertexBuffer::Create(squareVertices, sizeof(squareVertices));
         BufferLayout layout = {
             { ShaderDataType::Float3, "a_Position" },
             { ShaderDataType::Float2, "a_TexCoord" }
@@ -46,8 +45,7 @@ namespace Mashenka
 
         // Create the index buffer
         uint32_t squareIndices[6] = { 0, 1, 2, 2, 3, 0 };
-        Ref<IndexBuffer> squareIB;
-        squareIB.reset(IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t)));
+        Ref<IndexBuffer> squareIB = IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t));
         s_Data->QuadVertexArray->SetIndexBuffer(squareIB);
 
         // Create the shaders

@@ -5,7 +5,7 @@
 // Using a Singleton Interface Pattern
 namespace Mashenka
 {
-    class MASHENKA_API Input
+    class Input
     {
     protected:
         // This is the constructor of the Input class

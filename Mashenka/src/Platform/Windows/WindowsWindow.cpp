@@ -1,5 +1,5 @@
 ﻿#include "mkpch.h"
-#include "WindowsWindow.h"
+#include "Platform/Windows/WindowsWindow.h"
 #include "Mashenka/Events/ApplicationEvent.h"
 #include "Mashenka/Events/MouseEvent.h"
 #include "Mashenka/Events/KeyEvent.h"
@@ -17,9 +17,9 @@ namespace Mashenka
         MK_CORE_ERROR("GLFW Error ({0}): {1}", error, description);
     }
 
-    Window* Window::Create(const WindowProps& props)
+    Scope<Window> Window::Create(const WindowProps& props)
     {
-        return new WindowsWindow(props);
+        return CreateScope<WindowsWindow>(props);
     }
 
     // Using Init and Shutdown to organize and potentially reuse code when other ways to construct or destruct exists
@@ -45,8 +45,6 @@ namespace Mashenka
 
         if (s_GLFWWindowCount == 0) // If this is the first window, initialize GLFW
         {
-            //TODO: glfwTerminate on system shutdown
-            MK_CORE_INFO("Initializing GLFW");
             int success = glfwInit();
             MK_CORE_ASSERT(success, "Could not initialize GLFW!");
             // Error callback
@@ -57,7 +55,7 @@ namespace Mashenka
         s_GLFWWindowCount++; // Increase the window count
 
         // Create Context and Init it
-        m_Context = CreateScope<OpenGLContext>(m_Window);
+        m_Context = GraphicsContext::Create(m_Window);
         m_Context->Init();
 
 
@@ -174,10 +172,10 @@ namespace Mashenka
     void WindowsWindow::Shutdown()
     {
         glfwDestroyWindow(m_Window);
-        if (--s_GLFWWindowCount == 0)
+        --s_GLFWWindowCount;
+        if (s_GLFWWindowCount == 0)
         {
             // If this is the last window, terminate GLFW
-            MK_CORE_INFO("Terminating GLFW");
             glfwTerminate();
         }
     }

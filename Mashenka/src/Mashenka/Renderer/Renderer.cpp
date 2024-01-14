@@ -1,8 +1,6 @@
 ﻿#include "mkpch.h"
-#include "Renderer.h"
-#include "RenderCommand.h"
-#include "Platform/OpenGL/OpenGLShader.h"
-#include "Renderer2D.h"
+#include "Mashenka/Renderer/Renderer.h"
+#include "Mashenka/Renderer/Renderer2D.h"
 
 
 namespace Mashenka
@@ -16,6 +14,11 @@ namespace Mashenka
         // Initialize the renderer API
         RenderCommand::Init();
         Renderer2D::Init();
+    }
+
+    void Renderer::Shutdown()
+    {
+        Renderer2D::Shutdown();
     }
 
     void Renderer::OnWindowResize(uint32_t width, uint32_t height)
@@ -37,14 +40,13 @@ namespace Mashenka
 
     // Submit the vertex array to the RendererCommand
     // This is the function that will be called by the application
-    void Renderer::Submit(std::shared_ptr<Shader>& shader, std::shared_ptr<VertexArray> vertexArray, const glm::mat4& transform)
+    void Renderer::Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform)
     {
         shader->Bind(); // Bind the shader
 
-        // Upload the uniform matrix to the shader
-        const auto openglShader = std::dynamic_pointer_cast<OpenGLShader>(shader);
-        openglShader->UploadUniformMat4("u_ViewProjection", s_SceneData->ViewProjectionMatrix);
-        openglShader->UploadUniformMat4("u_Transform", transform);
+        // Set the uniform matrix in the shader
+        shader->SetMat4("u_ViewProjection", s_SceneData->ViewProjectionMatrix);
+        shader->SetMat4("u_Transform", transform);
         
         // Submit the vertex array to the RendererCommand
         vertexArray->Bind();

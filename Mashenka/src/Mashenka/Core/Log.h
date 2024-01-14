@@ -1,7 +1,7 @@
 ﻿#pragma once
-#include "Core.h"
-#include "spdlog/spdlog.h"
-#include "spdlog/sinks/stdout_color_sinks.h"
+#include "Mashenka/Core/Core.h"
+#include <spdlog/spdlog.h>
+#include <spdlog/fmt/ostr.h>
 // ReSharper disable once CppUnusedIncludeDirective
 #include "spdlog/fmt/ostr.h" // for operator overload
 
@@ -22,17 +22,17 @@
  */
 namespace Mashenka
 {
-    class MASHENKA_API Log
+    class Log
     {
     public:
         static void Init();
 
-        inline static std::shared_ptr<spdlog::logger>& GetCoreLogger() { return s_CoreLogger; }
-        inline static std::shared_ptr<spdlog::logger>& GetClientLogger() { return s_ClientLogger; }
+        inline static Ref<spdlog::logger>& GetCoreLogger() { return s_CoreLogger; }
+        inline static Ref<spdlog::logger>& GetClientLogger() { return s_ClientLogger; }
 
     private:
-        static std::shared_ptr<spdlog::logger> s_ClientLogger;
-        static std::shared_ptr<spdlog::logger> s_CoreLogger;
+        static Ref<spdlog::logger> s_ClientLogger;
+        static Ref<spdlog::logger> s_CoreLogger;
     };
 }
 

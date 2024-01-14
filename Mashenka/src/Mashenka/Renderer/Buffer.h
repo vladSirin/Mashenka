@@ -164,7 +164,7 @@ namespace Mashenka
 
         // create a new vertex buffer
         // the size is the size of the vertices
-        static VertexBuffer* Create(float* vertices, uint32_t size);
+        static Ref<VertexBuffer> Create(float* vertices, uint32_t size);
     };
 
     // base index buffer class
@@ -188,6 +188,6 @@ namespace Mashenka
         // for example, OpenGL uses unsigned int as indices, but DirectX uses unsigned short
         // so we need to use different functions to create different index buffers
         // this is called a static factory function
-        static IndexBuffer* Create(uint32_t* indices, uint32_t count);
+        static Ref<IndexBuffer> Create(uint32_t* indices, uint32_t count);
     };
 }

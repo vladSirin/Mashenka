@@ -1,7 +1,6 @@
 ﻿#pragma once
-#include "OrthographicCamera.h"
-
-#include "Texture.h"
+#include "Mashenka/Renderer/OrthographicCamera.h"
+#include "Mashenka/Renderer/Texture.h"
 
 namespace Mashenka
 {

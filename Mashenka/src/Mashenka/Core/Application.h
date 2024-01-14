@@ -1,6 +1,6 @@
 ﻿#pragma once
-#include "Core.h"
-#include "Window.h"
+#include "Mashenka/Core/Core.h"
+#include "Mashenka/Core/Window.h"
 #include "Mashenka/Events/ApplicationEvent.h"
 #include "LayerStack.h"
 #include "Mashenka/ImGui/ImGuiLayer.h"
@@ -18,7 +18,7 @@ namespace Mashenka
 
         // virtual destructor to make sure the derived class destructor is called
         // explain this: https://stackoverflow.com/questions/461203/when-to-use-virtual-destructors
-        virtual ~Application() = default;
+        virtual ~Application();
 
         void Run();
 

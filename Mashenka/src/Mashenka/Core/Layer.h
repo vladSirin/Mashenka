@@ -10,7 +10,7 @@ namespace Mashenka
      *Layers can be thought of as individual components or stages in the rendering or update process of a game or application.
      *By providing virtual functions like OnAttach, OnDetach, OnUpdate, and OnEvent,
      *this design allows derived classes to implement custom behavior for these operations.*/
-    class MASHENKA_API Layer
+    class Layer
     {
     public:
         Layer(const std::string& name="Layer");

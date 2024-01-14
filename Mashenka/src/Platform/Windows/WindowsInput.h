@@ -6,7 +6,7 @@
 
 namespace Mashenka
 {
-    class MASHENKA_API WindowsInput : public Input
+    class WindowsInput : public Input
     {
     public:
         void PollImpl() override;

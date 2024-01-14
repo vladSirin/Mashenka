@@ -1,5 +1,5 @@
 ﻿#include "mkpch.h"
-#include "OrthographicCameraController.h"
+#include "Mashenka/Renderer/OrthographicCameraController.h"
 
 #include "Mashenka/Core/Input.h"
 #include "Mashenka/Core/KeyCodes.h"
@@ -69,8 +69,8 @@ namespace Mashenka
     {
         // Dispatching events
         EventDispatcher dispatcher(e);
-        dispatcher.Dispatch<MouseScrolledEvent>(BIND_EVENT_FN(OrthographicCameraController::OnMouseScrolled));
-        dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(OrthographicCameraController::OnWindowResized));
+        dispatcher.Dispatch<MouseScrolledEvent>(MK_BIND_EVENT_FN(OrthographicCameraController::OnMouseScrolled));
+        dispatcher.Dispatch<WindowResizeEvent>(MK_BIND_EVENT_FN(OrthographicCameraController::OnWindowResized));
     }
 
     bool Mashenka::OrthographicCameraController::OnMouseScrolled(MouseScrolledEvent& e)

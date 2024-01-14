@@ -1,12 +1,8 @@
 ﻿#include "mkpch.h"
-#include "LayerStack.h"
+#include "Mashenka/Core/LayerStack.h"
 
 namespace Mashenka
 {
-    LayerStack::LayerStack()
-    {
-    }
-
     LayerStack::~LayerStack()
     {
         for (Layer* layer : m_Layers)

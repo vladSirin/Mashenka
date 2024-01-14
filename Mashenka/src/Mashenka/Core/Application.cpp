@@ -1,10 +1,11 @@
 ﻿#include "mkpch.h"
-#include "Application.h"
+#include "Mashenka/Core/Application.h"
 #include "Mashenka/Core/Log.h"
-#include "Input.h"
-#include "Platform/Windows/WindowsWindow.h"
+#include "Mashenka/Core/Input.h"
 #include "Mashenka/Core/TimeStep.h"
 #include "Mashenka/Renderer/Renderer.h"
+
+#include <GLFW/glfw3.h>
 
 namespace Mashenka
 {
@@ -21,13 +22,13 @@ namespace Mashenka
         s_Instance = this;
 
         // Create the window
-        m_Window = std::unique_ptr<Window>(WindowsWindow::Create());
+        m_Window = Window::Create();
         m_Window->SetVSync(false);
 
 
         // using bind to call the member function of application when needed in Window layer
         // set the application OnEvent function to the window layer as a callback
-        m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
+        m_Window->SetEventCallback(MK_BIND_EVENT_FN(Application::OnEvent));
 
         // Create and assign the ImGuiLayer, Push it into the stack
         // This was done by sandbox app, which is not ideal as it should be part of the engine app
@@ -40,6 +41,11 @@ namespace Mashenka
         
     }
 
+    Application::~Application()
+    {
+        Renderer::Shutdown();
+    }
+
     // Define the OnEvent function, this works similar to all OnEvent functions
     // Basically it creates a dispatcher and bind the function to it
     void Application::OnEvent(Event& e)
@@ -49,8 +55,8 @@ namespace Mashenka
 
         // Dispatch (which takes a template func as input), will check if the input matches the type
         // If so, the bound event will be called (which is the Application.OnWindowClose functions)
-        dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::OnWindowClose));
-        dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(Application::OnWindowResize));
+        dispatcher.Dispatch<WindowCloseEvent>(MK_BIND_EVENT_FN(Application::OnWindowClose));
+        dispatcher.Dispatch<WindowResizeEvent>(MK_BIND_EVENT_FN(Application::OnWindowResize));
 
         /*
          * Explain the following code:

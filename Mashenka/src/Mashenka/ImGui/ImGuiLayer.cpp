@@ -1,9 +1,13 @@
 ﻿#include "mkpch.h"
-#include "ImGuiLayer.h"
-#include "imgui.h"
+#include "Mashenka/ImGui/ImGuiLayer.h"
 #include "Mashenka/Core/Application.h"
-#include "backends/imgui_impl_opengl3.h"
+
+// Include the imgui header file
+#include <imgui.h>
+#include <backends/imgui_impl_opengl3.h>
 #include <backends/imgui_impl_glfw.h>
+
+// TEMPORARY
 #include "GLFW/glfw3.h"
 
 namespace Mashenka
