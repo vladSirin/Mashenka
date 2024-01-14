@@ -53,11 +53,20 @@ namespace Mashenka
             if (in)
             {
                 // read the file
-                in.seekg(0, std::ios::end);
-                result.resize(in.tellg());
-                in.seekg(0, std::ios::beg);
-                in.read(&result[0], result.size());
-                in.close();
+                in.seekg(0, std::ios::end); // seek to the end of the file
+                size_t size = in.tellg(); // get the size of the file
+                if (size != -1) // if the file is not empty
+                {
+                    result.resize(size); // resize the result string to the size of the file
+                    in.seekg(0, std::ios::beg); // seek to the beginning of the file
+                    in.read(&result[0], size); // read the file
+                    in.close(); // close the file
+                }
+                else
+                {
+                    MK_CORE_ERROR("Could not read from file '{0}'", filepath);
+                }
+                
             }
             else
             {
