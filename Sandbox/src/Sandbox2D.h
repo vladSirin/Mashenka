@@ -27,4 +27,14 @@ private:
     Mashenka::Ref<Mashenka::Texture2D> m_CheckerboardTexture;
 
     glm::vec4 m_SquareColor = { 0.2f, 0.3f, 0.8f, 1.0f };
+
+    // Profiling
+    struct ProfileResult
+    {
+        const char* Name;
+        float Time;
+    };
+
+    // This is a vector of ProfileResult
+    std::vector<ProfileResult> m_ProfileResults;
 };
