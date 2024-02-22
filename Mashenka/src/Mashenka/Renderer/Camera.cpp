@@ -9,6 +9,7 @@ namespace Mashenka
 {
     void Camera::RecalculateViewMatrix()
     {
+        MK_PROFILE_FUNCTION(); // Profiling
         // Recalculate the view matrix
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), m_Position) *
             glm::rotate(glm::mat4(1.0f), glm::radians(m_Rotation), glm::vec3(0, 0, 1));

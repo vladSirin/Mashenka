@@ -1,0 +1,1 @@
+{"otherData": {},"traceEvents":[{"cat":"function","dur":83,"name":"__cdecl Mashenka::Application::~Application(void)","ph":"X","pid":0,"tid":13890607823623055907,"ts":186593582416},{"cat":"function","dur":824,"name":"void __cdecl Mashenka::ImGuiLayer::OnDetach(void)","ph":"X","pid":0,"tid":13890607823623055907,"ts":186593582543}]}

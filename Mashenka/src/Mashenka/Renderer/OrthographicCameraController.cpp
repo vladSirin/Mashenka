@@ -13,6 +13,7 @@ namespace Mashenka
 
     void Mashenka::OrthographicCameraController::OnUpdate(TimeStep ts)
     {
+        MK_PROFILE_FUNCTION(); // Profiling
         // Camera controls, WASD
         if (Input::IsKeyPressed(MK_KEY_A))
         {
@@ -67,6 +68,7 @@ namespace Mashenka
 
     void Mashenka::OrthographicCameraController::OnEvent(Event& e)
     {
+        MK_PROFILE_FUNCTION(); // Profiling
         // Dispatching events
         EventDispatcher dispatcher(e);
         dispatcher.Dispatch<MouseScrolledEvent>(MK_BIND_EVENT_FN(OrthographicCameraController::OnMouseScrolled));
@@ -75,6 +77,7 @@ namespace Mashenka
 
     bool Mashenka::OrthographicCameraController::OnMouseScrolled(MouseScrolledEvent& e)
     {
+        MK_PROFILE_FUNCTION(); // Profiling
         // Zooming in and out
         m_ZoomLevel -= e.GetYOffset() * 0.25f;
         m_ZoomLevel = std::max(m_ZoomLevel, 0.25f);
@@ -84,6 +87,7 @@ namespace Mashenka
 
     bool Mashenka::OrthographicCameraController::OnWindowResized(WindowResizeEvent& e)
     {
+        MK_PROFILE_FUNCTION(); // Profiling
         // Resizing the camera
         m_AspectRatio = (float)e.GetWidth() / (float)e.GetHeight();
         m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);

@@ -24,6 +24,7 @@ namespace Mashenka
          * By casting it to GLADloadproc, you're telling GLAD to use this function to
          * load all the required OpenGL function addresses.
         */
+        MK_PROFILE_FUNCTION(); // Profiling
         glfwMakeContextCurrent(m_WindowHandle); // Associate the context with current window, crucial step for next
         int status = gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress));
         MK_CORE_ASSERT(status, "Failed to initialize Glad!")
@@ -48,6 +49,7 @@ namespace Mashenka
 
     void OpenGLContext::SwapBuffers()
     {
+        MK_PROFILE_FUNCTION(); // Profiling
         glfwSwapBuffers(m_WindowHandle);
     }
 }

@@ -7,6 +7,7 @@ namespace Mashenka
 {
     void OpenGLRendererAPI::Init()
     {
+        MK_PROFILE_FUNCTION(); // Profiling
         // Opengl function
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

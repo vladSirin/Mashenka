@@ -22,6 +22,7 @@ namespace Mashenka
     
     void Renderer2D::Init()
     {
+        MK_PROFILE_FUNCTION(); // Profiling
         // Initialize the renderer API
         s_Data = new Render2DStorage();
         
@@ -60,17 +61,20 @@ namespace Mashenka
 
     void Renderer2D::Shutdown()
     {
+        MK_PROFILE_FUNCTION(); // Profiling
         delete s_Data;
     }
 
     void Renderer2D::BeginScene(const OrthographicCamera& camera)
     {
+        MK_PROFILE_FUNCTION(); // Profiling
         s_Data->TextureShader->Bind();
         s_Data->TextureShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
     }
 
     void Renderer2D::EndScene()
     {
+        MK_PROFILE_FUNCTION(); // Profiling
     }
 
     void Renderer2D::DrawQuad(const glm::vec2& position, float angle,const glm::vec2& size, const glm::vec4& color)
@@ -80,6 +84,7 @@ namespace Mashenka
 
     void Renderer2D::DrawQuad(const glm::vec3& position, float angle, const glm::vec2& size, const glm::vec4& color)
     {
+        MK_PROFILE_FUNCTION(); // Profiling
         s_Data->TextureShader->SetFloat4("u_Color", color); // set the color
         s_Data->WhiteTexture->Bind(); // bind the texture
         
@@ -99,6 +104,7 @@ namespace Mashenka
 
     void Renderer2D::DrawQuad(const glm::vec3& position, float angle, const glm::vec2& size, const Ref<Texture2D>& texture)
     {
+        MK_PROFILE_FUNCTION(); // Profiling
         s_Data->TextureShader->SetFloat4("u_Color", glm::vec4(1.0f)); // set the color to white
         texture->Bind(); // bind the texture
 

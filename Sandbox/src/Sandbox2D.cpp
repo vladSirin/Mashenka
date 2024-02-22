@@ -12,11 +12,13 @@ Sandbox2D::Sandbox2D()
 
 void Sandbox2D::OnAttach()
 {
+    MK_PROFILE_FUNCTION(); // Profiling
     m_CheckerboardTexture = Mashenka::Texture2D::Create("assets/textures/Checkerboard.png");
 }
 
 void Sandbox2D::OnDetach()
 {
+    MK_PROFILE_FUNCTION(); // Profiling
     Layer::OnDetach();
 }
 

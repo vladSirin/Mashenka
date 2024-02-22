@@ -16,6 +16,8 @@ namespace Mashenka
     // this is the constructor of the application class
     Application::Application()
     {
+        // Profiling
+        MK_PROFILE_FUNCTION();
         // ==================== Make sure Singleton and setup Window ====================
         // Make sure there is only one instance
         MK_CORE_ASSERT(!s_Instance, "Application Alreay Exists!")
@@ -43,6 +45,8 @@ namespace Mashenka
 
     Application::~Application()
     {
+        // Profiling
+        MK_PROFILE_FUNCTION();
         Renderer::Shutdown();
     }
 
@@ -50,6 +54,8 @@ namespace Mashenka
     // Basically it creates a dispatcher and bind the function to it
     void Application::OnEvent(Event& e)
     {
+        // Profiling
+        MK_PROFILE_FUNCTION();
         // Create a dispatcher
         EventDispatcher dispatcher(e);
 
@@ -84,11 +90,15 @@ namespace Mashenka
     // The on attach now is called in LayerStack when Push, which it should be.
     void Application::PushLayer(Layer* layer)
     {
+        // Profiling
+        MK_PROFILE_FUNCTION();
         m_LayerStack.PushLayer(layer);
     }
 
     void Application::PushOverlay(Layer* layer)
     {
+        // Profiling
+        MK_PROFILE_FUNCTION();
         m_LayerStack.PushOverlay(layer);
     }
 
@@ -100,8 +110,12 @@ namespace Mashenka
      */
     void Application::Run()
     {
+        // Profiling
+        MK_PROFILE_FUNCTION();
         while (m_Running)
         {
+            // Profiling
+            MK_PROFILE_SCOPE("RunLoop");
             // Calculate the Delta Time based on the TimeStep
             float time = (float)glfwGetTime(); // Platform::GetTime()
             TimeStep timeStep = time - m_LastFrameTime;
@@ -114,6 +128,8 @@ namespace Mashenka
             // Go through all the layers, as each layer can handle its own update
             if (!m_Minimized)
             {
+                // Profiling
+                MK_PROFILE_SCOPE("LayerStack OnUpdate");
                 for (Layer* layer : m_LayerStack)
                     layer->OnUpdate(timeStep); // Update the needed info
             }
@@ -123,7 +139,11 @@ namespace Mashenka
 
             // Go through all the layers, as each layer can handle its own ImGui component
             for (Layer* layer : m_LayerStack)
+            {
+                // profiling
+                MK_PROFILE_SCOPE("LayerStack OnImGuiRender");
                 layer->OnImGuiRender(); // Render the needed info
+            }
 
             // finalize the rendering for the current frame, wraps up tasks like draw data
             m_ImGuiLayer->End();
@@ -142,6 +162,8 @@ namespace Mashenka
 
     bool Application::OnWindowResize(WindowResizeEvent& e)
     {
+        // Profiling
+        MK_PROFILE_FUNCTION();
         // Check if the window is minimized
         if (e.GetWidth() == 0 || e.GetHeight() == 0)
         {

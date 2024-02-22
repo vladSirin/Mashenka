@@ -19,6 +19,8 @@ namespace Mashenka
     
     void ImGuiLayer::OnAttach()
     {
+        // profiling
+        MK_PROFILE_FUNCTION();
         // call original class func
         Layer::OnAttach();
 
@@ -60,6 +62,9 @@ namespace Mashenka
 
     void ImGuiLayer::OnDetach()
     {
+        // profiling
+        MK_PROFILE_FUNCTION();
+        // call original class func
         Layer::OnDetach();
 
         ImGui_ImplOpenGL3_Shutdown(); //Shutdown rendering backend
@@ -69,6 +74,7 @@ namespace Mashenka
 
     void ImGuiLayer::Begin()
     {
+        MK_PROFILE_FUNCTION(); // profiling
         // Prepare the rendering and input/window glfw for new frame
         ImGui_ImplOpenGL3_NewFrame(); // setup state, clear butters.
         ImGui_ImplGlfw_NewFrame(); // handle input events and update mouse etc.
@@ -77,6 +83,7 @@ namespace Mashenka
 
     void ImGuiLayer::End()
     {
+        MK_PROFILE_FUNCTION(); // profiling
         ImGuiIO& io = ImGui::GetIO();
         Application& app = Application::Get();
 
@@ -105,8 +112,8 @@ namespace Mashenka
 
     void ImGuiLayer::OnImGuiRender()
     {
-        static bool show = true;
-        ImGui::ShowDemoWindow(&show);
+        static bool show = false;
+        // ImGui::ShowDemoWindow(&show);
     }
 
 

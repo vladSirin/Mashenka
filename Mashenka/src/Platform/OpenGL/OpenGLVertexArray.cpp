@@ -27,28 +27,36 @@ namespace Mashenka
         return 0;
     }
 
+    // Constructor
     OpenGLVertexArray::OpenGLVertexArray()
     {
+        MK_PROFILE_FUNCTION(); // Profiling
         glCreateVertexArrays(1, &m_RendererID);
     }
 
+    // Destructor
     OpenGLVertexArray::~OpenGLVertexArray()
     {
+        MK_PROFILE_FUNCTION(); // Profiling
         glDeleteVertexArrays(1, &m_RendererID);
     }
 
+    // Bind the vertex array
     void OpenGLVertexArray::Bind() const
     {
+        MK_PROFILE_FUNCTION(); // Profiling
         glBindVertexArray(m_RendererID);
     }
 
     void OpenGLVertexArray::Unbind() const
     {
+        MK_PROFILE_FUNCTION(); // Profiling
         glBindVertexArray(0);
     }
 
     void OpenGLVertexArray::SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer)
     {
+        MK_PROFILE_FUNCTION(); // Profiling
         // set index buffer for the opengl vertex array
         glBindVertexArray(m_RendererID);
         indexBuffer->Bind();
@@ -57,6 +65,7 @@ namespace Mashenka
 
     void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer)
     {
+        MK_PROFILE_FUNCTION(); // Profiling
         // add vertex buffer into the vertex array
         MK_CORE_ASSERT(vertexBuffer->GetLayout().GetElements().size(), "Vertex Buffer has no layout!")
         

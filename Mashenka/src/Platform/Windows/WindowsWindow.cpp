@@ -26,17 +26,20 @@ namespace Mashenka
     // It is also friendly to error handling as constructors and destructors are not allowed to throw exceptions or error codes
     WindowsWindow::WindowsWindow(const WindowProps& props)
     {
-        Init(props);
+        MK_PROFILE_FUNCTION(); // Profiling
+        WindowsWindow::Init(props);
     }
 
     WindowsWindow::~WindowsWindow()
     {
-        Shutdown();
+        MK_PROFILE_FUNCTION(); // Profiling
+        WindowsWindow::Shutdown();
     }
 
     // Initialize glfw and create the window
     void WindowsWindow::Init(const WindowProps& props)
     {
+        MK_PROFILE_FUNCTION(); // Profiling
         m_Data.Title = props.Title;
         m_Data.Width = props.Width;
         m_Data.Height = props.Height;
@@ -45,14 +48,18 @@ namespace Mashenka
 
         if (s_GLFWWindowCount == 0) // If this is the first window, initialize GLFW
         {
+            MK_PROFILE_FUNCTION(); // Profiling
             int success = glfwInit();
-            MK_CORE_ASSERT(success, "Could not initialize GLFW!");
+            MK_CORE_ASSERT(success, "Could not initialize GLFW!")
             // Error callback
             glfwSetErrorCallback(GLFWErrorCallback);
         }
+        {
+            MK_PROFILE_SCOPE("glfwCreateWindow"); // Profiling
+            m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr); 
+            s_GLFWWindowCount++; // Increase the window count
+        }
 
-        m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr); 
-        s_GLFWWindowCount++; // Increase the window count
 
         // Create Context and Init it
         m_Context = GraphicsContext::Create(m_Window);
@@ -123,7 +130,7 @@ namespace Mashenka
             WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 
             // define an corresponding event with the keycode
-            KeyTypedEvent event(keycode);
+            KeyTypedEvent event(keycode);  // NOLINT(bugprone-narrowing-conversions, cppcoreguidelines-narrowing-conversions)
 
             // wrapping a callable event
             data.EventCallback(event);
@@ -171,6 +178,7 @@ namespace Mashenka
 
     void WindowsWindow::Shutdown()
     {
+        MK_PROFILE_FUNCTION(); // Profiling
         glfwDestroyWindow(m_Window);
         --s_GLFWWindowCount;
         if (s_GLFWWindowCount == 0)
@@ -182,6 +190,7 @@ namespace Mashenka
 
     void WindowsWindow::OnUpdate()
     {
+        MK_PROFILE_FUNCTION(); // Profiling
         // Checks for any pending events and handle them, if not app or window will not respond
         glfwPollEvents();
 
@@ -192,6 +201,7 @@ namespace Mashenka
     // Setup Vertical Sync for the GPU
     void WindowsWindow::SetVSync(bool enabled)
     {
+        MK_PROFILE_FUNCTION(); // Profiling
         if (enabled)
             glfwSwapInterval(1);
         else

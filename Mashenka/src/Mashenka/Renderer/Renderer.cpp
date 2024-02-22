@@ -11,6 +11,7 @@ namespace Mashenka
     // Init
     void Renderer::Init()
     {
+        MK_PROFILE_FUNCTION(); // Profiling
         // Initialize the renderer API
         RenderCommand::Init();
         Renderer2D::Init();
@@ -42,6 +43,7 @@ namespace Mashenka
     // This is the function that will be called by the application
     void Renderer::Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform)
     {
+        MK_PROFILE_FUNCTION(); // Profiling
         shader->Bind(); // Bind the shader
 
         // Set the uniform matrix in the shader
