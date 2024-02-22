@@ -2,6 +2,7 @@
 
 // Suppress warnings
 #pragma warning(disable : 4251) //supress warnings about dll interface
+#pragma warning(disable : 4996) //supress warnings about dll interface
 #define _SILENCE_ALL_MS_EXT_DEPRECATION_WARNINGS
 #define _SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING
 
@@ -19,6 +20,7 @@
 #include <unordered_set>
 
 #include "Mashenka/Core/Log.h"
+#include "Mashenka/Debug/Instrumentor.h"
 #ifdef MK_PLATFORM_WINDOWS
 #include <Windows.h>
 #endif

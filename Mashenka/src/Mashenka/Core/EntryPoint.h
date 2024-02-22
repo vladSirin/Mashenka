@@ -20,10 +20,20 @@ int main(int argc, char** argv) //main cannot be inline
     MK_CORE_WARN("Initialized Log!");
     auto a = "User";
     MK_CORE_INFO("Hello {0}, Welcome to Mashenka!", a);
-    
+
+    MK_PROFILE_BEGIN_SESSION("Startup", "MashenkaProfile-Startup.json");
     auto app = Mashenka::CreateApplication();
+    MK_PROFILE_END_SESSION();
+
+    // Profile
+    MK_PROFILE_BEGIN_SESSION("Runtime", "MashenkaProfile-Runtime.json");
     app->Run();
+    MK_PROFILE_END_SESSION();
+
+    // Profile
+    MK_PROFILE_BEGIN_SESSION("Shutdown", "MashenkaProfile-Shutdown.json");
     delete app;
+    MK_PROFILE_END_SESSION();
 }
 
 #endif
