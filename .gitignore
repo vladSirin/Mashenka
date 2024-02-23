@@ -8,6 +8,9 @@ Intermediates/
 # Log files
 *.log
 
+# Profile data
+**/profile-data/
+
 # Directories
 
 # IDE files and folder
