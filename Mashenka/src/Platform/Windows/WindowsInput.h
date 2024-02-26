@@ -10,8 +10,8 @@ namespace Mashenka
     {
     public:
         void PollImpl() override;
-        bool IsKeyPressedImpl(int keycode) override;
-        bool IsMouseButtonPressedImpl(int button) override;
+        bool IsKeyPressedImpl(Key keycode) override;
+        bool IsMouseButtonPressedImpl(Mouse button) override;
         std::pair<float, float> GetMousePositionImpl() override;
         float GetMouseXImpl() override;
         float GetMouseYImpl() override;

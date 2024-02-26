@@ -5,7 +5,7 @@
 
 #include "Mashenka/Core/Application.h"
 #include "Mashenka/Core/KeyCodes.h"
-#include "Mashenka/Core/MouseButtonCodes.h"
+#include "Mashenka/Core/MouseCode.h"
 
 
 namespace Mashenka
@@ -18,13 +18,13 @@ namespace Mashenka
         auto m_window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
 
         // POll Keyboard state
-        for (int key = MK_KEY_SPACE; key <= MK_KEY_LAST; ++key)
+        for (int key = static_cast<int>(MK_KEY_SPACE); key <= static_cast<int>(MK_KEY_LAST); ++key)
         {
             keyState[key] = glfwGetKey(m_window, key) == GLFW_PRESS;
         }
 
         // Poll mouse state
-        for (int button = 0; button <= MK_MOUSE_BUTTON_LAST; ++button)
+        for (int button = 0; button <= static_cast<int>(MK_MOUSE_BUTTON_LAST); ++button)
         {
             mouseState[button] = glfwGetMouseButton(m_window, button) == GLFW_PRESS;
         }
@@ -36,14 +36,17 @@ namespace Mashenka
         mouseY = static_cast<float>(y);
     }
 
-    bool Mashenka::WindowsInput::IsKeyPressedImpl(int keycode)
+    // Check if the key is pressed, if it is return true
+    bool Mashenka::WindowsInput::IsKeyPressedImpl(Key keycode)
     {
-        return keyState[keycode];
+        return keyState[static_cast<int>(keycode)]; // return true if the key is pressed, else false
+        // using this because the keyState is a map, and the key is the index of the map
+        // the map is being updated by the PollImpl function
     }
 
-    bool Mashenka::WindowsInput::IsMouseButtonPressedImpl(int button)
+    bool Mashenka::WindowsInput::IsMouseButtonPressedImpl(Mouse button)
     {
-        return mouseState[button];
+        return mouseState[static_cast<int>(button)];
     }
 
     std::pair<float, float> Mashenka::WindowsInput::GetMousePositionImpl()

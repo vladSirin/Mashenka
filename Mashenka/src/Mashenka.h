@@ -12,7 +12,7 @@
 // INPUT
 #include "Mashenka/Core/Input.h"
 #include "Mashenka/Core/KeyCodes.h"
-#include "Mashenka/Core/MouseButtonCodes.h"
+#include "Mashenka/Core/MouseCode.h"
 #include "Mashenka/Events/KeyEvent.h"
 #include "Mashenka/Events/MouseEvent.h"
 

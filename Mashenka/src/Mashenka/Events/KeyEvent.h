@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "Mashenka/Events/Event.h"
+#include "Mashenka/Core/Input.h"
 
 // For key events, there should be key pressed and releases as major public classes
 // As the normal logic for applications are based on those too
@@ -11,21 +12,21 @@ namespace Mashenka
     class KeyEvent: public Event
     {
     public:
-        inline int GetKeyCode() const {return  m_KeyCode;}
+        inline KeyCode GetKeyCode() const {return  m_KeyCode;}
 
         EVENT_CLASS_CATEGORY(EventCategoryApplication | EventCategoryInput)
 
     protected:
-        KeyEvent(int Keycode)
+        KeyEvent(Key Keycode)
             : m_KeyCode(Keycode){}
 
-        int m_KeyCode;
+        Key m_KeyCode;
     };
 
     class KeyPressedEvent: public KeyEvent
     {
     public:
-        KeyPressedEvent(int keycode, int repeatCount)
+        KeyPressedEvent(Key keycode, int repeatCount)
             :KeyEvent(keycode), m_RepeatCount(repeatCount) {}
 
         inline int GetRepeatCount() const {return m_RepeatCount;}
@@ -46,7 +47,7 @@ namespace Mashenka
     class KeyReleasedEvent: public KeyEvent
     {
     public:
-        KeyReleasedEvent(int keycode)
+        KeyReleasedEvent(Key keycode)
             :KeyEvent(keycode) {}
 
         std::string ToString() const override
@@ -64,7 +65,7 @@ namespace Mashenka
     class KeyTypedEvent: public KeyEvent
     {
     public:
-        KeyTypedEvent(int keycode)
+        KeyTypedEvent(Key keycode)
             :KeyEvent(keycode){}
 
         std::string ToString() const override

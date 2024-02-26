@@ -1,5 +1,8 @@
 ﻿#include "mkpch.h"
 #include "Platform/Windows/WindowsWindow.h"
+
+#include "Mashenka/Core/Input.h"
+
 #include "Mashenka/Events/ApplicationEvent.h"
 #include "Mashenka/Events/MouseEvent.h"
 #include "Mashenka/Events/KeyEvent.h"
@@ -104,19 +107,19 @@ namespace Mashenka
             {
             case GLFW_PRESS:
                 {
-                    KeyPressedEvent event(key, 0);
+                    KeyPressedEvent event(static_cast<KeyCode>(key), 0);
                     data.EventCallback(event);
                     break;
                 }
             case GLFW_RELEASE:
                 {
-                    KeyReleasedEvent event(key);
+                    KeyReleasedEvent event(static_cast<KeyCode>(key));
                     data.EventCallback(event);
                     break;
                 }
             case GLFW_REPEAT:
                 {
-                    KeyPressedEvent event(key, 1);
+                    KeyPressedEvent event(static_cast<KeyCode>(key), 1);
                     data.EventCallback(event);
                     break;
                 }
@@ -130,7 +133,7 @@ namespace Mashenka
             WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 
             // define an corresponding event with the keycode
-            KeyTypedEvent event(keycode);  // NOLINT(bugprone-narrowing-conversions, cppcoreguidelines-narrowing-conversions)
+            KeyTypedEvent event(static_cast<KeyCode>(keycode));  // NOLINT(bugprone-narrowing-conversions, cppcoreguidelines-narrowing-conversions)
 
             // wrapping a callable event
             data.EventCallback(event);
