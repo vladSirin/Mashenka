@@ -45,9 +45,9 @@ namespace Mashenka
         std::ofstream m_OutputStream;
         // this is the output stream, used for writing to file
         // std::ofstream is a class to write on files, from the fstream library in C++
-        
+
         int m_ProfileCount; // this is the profile count, used to add commas to the json file to make it valid
-        
+
     public:
         Instrumentor()
             : m_CurrentSession(nullptr), m_ProfileCount(0)
@@ -59,7 +59,7 @@ namespace Mashenka
         {
             m_OutputStream.open(filepath);
             WriteHeader();
-            m_CurrentSession = new InstrumentationSession({ name });
+            m_CurrentSession = new InstrumentationSession({name});
         }
 
         void EndSession()
@@ -111,7 +111,6 @@ namespace Mashenka
             static Instrumentor instance;
             return instance;
         }
-
     };
 
     class InstrumentorTimer // this is the instrumentor timer class
@@ -138,8 +137,10 @@ namespace Mashenka
             long long end = std::chrono::time_point_cast
                 <std::chrono::microseconds>(endTimepoint).time_since_epoch().count();
 
-            size_t threadID = std::hash<std::thread::id>{}(std::this_thread::get_id());  // NOLINT(clang-diagnostic-shorten-64-to-32)
-            Instrumentor::Get().WriteProfile({ m_Name, start, end, threadID }); // Create a profile result and write it to the instrumentor
+            size_t threadID = std::hash<std::thread::id>{}(std::this_thread::get_id());
+            // NOLINT(clang-diagnostic-shorten-64-to-32)
+            Instrumentor::Get().WriteProfile({m_Name, start, end, threadID});
+            // Create a profile result and write it to the instrumentor
 
             m_Stopped = true;
         }
@@ -161,10 +162,32 @@ namespace Mashenka
  */
 #define MK_PROFILE 1
 #if MK_PROFILE
+    // Resolve which function signature macro will be used based on the compiler that is using here
+    // Note tha this only is resolved when the (pre)compiler starts
+    // so the syntax highlighting will not work properly in your editor
+
+    #if defined(__GNUC__) || (defined(_MWERKS) && (__MWERKS__ >= 0x3000)) || (defined(__ICC) && (__ICC >= 600)) ||defined(__ghs__)
+    #define MK_FUNC_SIG __PRETTY_FUNCTION__
+    #elif defined(__DMC__) && (__DMC__ >= 0x810)
+    #define MK_FUNC_SIG __PRETTY_FUNCTION__
+    #elif (defined(__FUNCSIG__)
+    #define MK_FUNC_SIG __FUNCSIG__
+    #elif (defined(__INTEL_COMPILER) && (__INTEL_COMPILER >= 600)) || (defined(__IBMC__) && (__IBMC__ >= 500))
+    #define MK_FUNC_SIG __FUNCTION__
+    #elif defined(__BORLANDC__) && (__BORLANDC__ >= 0x550)
+    #define MK_FUNC_SIG __FUNC__
+    #elif defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901)
+    #define MK_FUNC_SIG __func__
+    #elif defined(__cplusplus) && (__cplusplus >= 201103)
+    #define MK_FUNC_SIG __func__
+    #else
+    #define MK_FUNC_SIG "MK_FUNC_SIG unknown!"
+    #endif
+
     #define MK_PROFILE_BEGIN_SESSION(name, filepath) ::Mashenka::Instrumentor::Get().BeginSession(name, filepath)
     #define MK_PROFILE_END_SESSION() ::Mashenka::Instrumentor::Get().EndSession()
     #define MK_PROFILE_SCOPE(name) ::Mashenka::InstrumentorTimer timer##__LINE__(name);
-    #define MK_PROFILE_FUNCTION() MK_PROFILE_SCOPE(__FUNCSIG__)
+    #define MK_PROFILE_FUNCTION() MK_PROFILE_SCOPE(MK_FUNC_SIG)
 #else
     #define MK_PROFILE_BEGIN_SESSION(name, filepath)
     #define MK_PROFILE_END_SESSION()
