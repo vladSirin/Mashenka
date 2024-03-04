@@ -1,6 +1,7 @@
 ﻿#include "mkpch.h"
 #include "Mashenka/Core/Log.h"
-#include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/sinks/stdout_color_sinks.h> // for console logging
+#include <spdlog/sinks/basic_file_sink.h> // for file logging
 
 namespace Mashenka
 {
@@ -11,13 +12,28 @@ namespace Mashenka
     // Initialize the logger objects
     void Log::Init()
     {
-        // "%^[%T] %n: %v%$" means that each log message will start with the time (%T),
-        // followed by the logger's name (%n), a colon, and then the log message (%v).
-        spdlog::set_pattern("%^[%T] %n: %v%$");
-        s_CoreLogger = spdlog::stdout_color_mt("MASHENKA");
-        s_CoreLogger->set_level(spdlog::level::trace);
+        // Prepare two sinks: one for console logging and one for file logging
+        std::vector<spdlog::sink_ptr> logSinks;
+        logSinks.emplace_back(CreateRef<spdlog::sinks::stdout_color_sink_mt>()); // console logging
+        logSinks.emplace_back(CreateRef<spdlog::sinks::basic_file_sink_mt>("Mashenka.log", true)); // file logging
 
-        s_ClientLogger = spdlog::stdout_color_mt("APP");
+        // Set the pattern for the loggers
+        // %^ and %$ are used to set the color for the console logging
+        // %T is the time, %n is the name of the logger, %v is the message
+        // %l is the level of the message, which is the log level
+        logSinks[0]->set_pattern("%^[%T] %n: %v%$");
+        logSinks[1]->set_pattern("[%T] [%l] %n: %v");
+
+        // set the core logger
+        s_CoreLogger = CreateRef<spdlog::logger>("MASHENKA", begin(logSinks), end(logSinks));
+        spdlog::register_logger(s_CoreLogger);
+        s_CoreLogger->set_level(spdlog::level::trace);
+        s_CoreLogger->flush_on(spdlog::level::trace);
+
+        // Set the client logger
+        s_ClientLogger = CreateRef<spdlog::logger>("APP", begin(logSinks), end(logSinks));
+        spdlog::register_logger(s_ClientLogger);
         s_ClientLogger->set_level(spdlog::level::trace);
+        s_ClientLogger->flush_on(spdlog::level::trace);
     }
 }
