@@ -20,11 +20,6 @@ namespace Mashenka
         MK_CORE_ERROR("GLFW Error ({0}): {1}", error, description);
     }
 
-    Scope<Window> Window::Create(const WindowProps& props)
-    {
-        return CreateScope<WindowsWindow>(props);
-    }
-
     // Using Init and Shutdown to organize and potentially reuse code when other ways to construct or destruct exists
     // It is also friendly to error handling as constructors and destructors are not allowed to throw exceptions or error codes
     WindowsWindow::WindowsWindow(const WindowProps& props)

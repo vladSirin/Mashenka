@@ -10,9 +10,6 @@
 
 namespace Mashenka
 {
-    // Create the s_Instance singleton for calling
-    Scope<Input> Input::s_Instance = CreateScope<WindowsInput>();
-
     void Mashenka::WindowsInput::PollImpl()
     {
         auto m_window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());

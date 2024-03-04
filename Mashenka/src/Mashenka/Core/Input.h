@@ -24,6 +24,8 @@ namespace Mashenka
         inline static float GetMouseY() {return s_Instance->GetMouseYImpl();}
 
         inline static void Poll() {s_Instance->PollImpl();}
+
+        static Scope<Input> Create();
         
         // A inline destructor is good practice
         virtual ~Input() {}
