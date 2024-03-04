@@ -9,6 +9,9 @@
  * implement a form of the Singleton pattern for the Application class.
  * The Singleton pattern ensures that a class has only one instance and provides a global point of access to that instance.
  */
+
+int main(int argc, char** argv); // declare the main function
+
 namespace Mashenka
 {
     class Application
@@ -19,8 +22,6 @@ namespace Mashenka
         // virtual destructor to make sure the derived class destructor is called
         // explain this: https://stackoverflow.com/questions/461203/when-to-use-virtual-destructors
         virtual ~Application();
-
-        void Run();
 
         void OnEvent(Event& e);
 
@@ -33,6 +34,7 @@ namespace Mashenka
         inline static Application& Get() {return *s_Instance;}
 
     private:
+        void Run(); // making the main loop private to make sure it is only called from the main function
         bool OnWindowClose(WindowCloseEvent& e);
         bool OnWindowResize(WindowResizeEvent& e);
 
@@ -44,6 +46,7 @@ namespace Mashenka
 
         // declare a static global single instance to access
         static Application* s_Instance;
+        friend int::main(int argc, char** argv); // declare the main function as a friend of the Application class
 
         // define the last frame time
         float m_LastFrameTime = 0.0f;

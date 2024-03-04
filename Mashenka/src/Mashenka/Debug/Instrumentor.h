@@ -4,6 +4,7 @@
 #include <chrono> // this is the time library
 #include <algorithm> // this is the algorithm library, which includes functions: sort, max, min, etc
 #include <fstream> // file stream
+#include <iomanip>
 
 #include <thread>
 
@@ -23,10 +24,13 @@
 
 namespace Mashenka
 {
+    using FloatingMicroseconds = std::chrono::duration<double, std::micro>; // this is the floating microseconds
+
     struct ProfileResult // this is a struct that contains the profile result
     {
         std::string Name;
-        long long Start, End;
+        FloatingMicroseconds Start;
+        std::chrono::microseconds ElapsedTime;
         std::thread::id ThreadID;
     };
 
@@ -98,14 +102,15 @@ namespace Mashenka
             std::replace(name.begin(), name.end(), '"', '\'');
 
             // setup the json format
+            json << std::setprecision(3) << std::fixed; // set the precision to 3 and fixed
             json << ",{";
             json << "\"cat\":\"function\",";
-            json << "\"dur\":" << (result.End - result.Start) << ',';
+            json << "\"dur\":" << (result.ElapsedTime.count()) << ',';
             json << "\"name\":\"" << name << "\",";
             json << "\"ph\":\"X\",";
             json << "\"pid\":0,";
             json << "\"tid\":" << result.ThreadID << ",";
-            json << "\"ts\":" << result.Start;
+            json << "\"ts\":" << result.Start.count();
             json << "}";
 
 
@@ -128,7 +133,7 @@ namespace Mashenka
     private:
         void WriteHeader()
         {
-            m_OutputStream << "{\"otherData\": {},\"traceEvents\":[{}"; 
+            m_OutputStream << "{\"otherData\": {},\"traceEvents\":[{}";
             m_OutputStream.flush();
         }
 
@@ -160,7 +165,8 @@ namespace Mashenka
         InstrumentorTimer(const char* name)
             : m_Name(name), m_Stopped(false)
         {
-            m_StartTimepoint = std::chrono::high_resolution_clock::now();
+            // steady_clock is used for measuring time intervals, it is not tied to the system clock
+            m_StartTimepoint = std::chrono::steady_clock::now();
         }
 
         ~InstrumentorTimer()
@@ -171,20 +177,19 @@ namespace Mashenka
 
         void Stop()
         {
-            auto endTimepoint = std::chrono::high_resolution_clock::now();
-            long long start = std::chrono::time_point_cast
-                <std::chrono::microseconds>(m_StartTimepoint).time_since_epoch().count();
-            long long end = std::chrono::time_point_cast
-                <std::chrono::microseconds>(endTimepoint).time_since_epoch().count();
+            auto endTimepoint = std::chrono::steady_clock::now();
+            auto highResStart = FloatingMicroseconds(m_StartTimepoint.time_since_epoch());
+            auto elapsedTime = std::chrono::time_point_cast<std::chrono::microseconds>(endTimepoint).time_since_epoch()
+                - std::chrono::time_point_cast<std::chrono::microseconds>(m_StartTimepoint).time_since_epoch();
 
-            Instrumentor::Get().WriteProfile({m_Name, start, end, std::this_thread::get_id()});
+            Instrumentor::Get().WriteProfile({m_Name, highResStart, elapsedTime, std::this_thread::get_id()});
 
             m_Stopped = true;
         }
 
     private:
         const char* m_Name;
-        std::chrono::time_point<std::chrono::high_resolution_clock> m_StartTimepoint;
+        std::chrono::time_point<std::chrono::steady_clock> m_StartTimepoint;
         bool m_Stopped;
     };
 }
