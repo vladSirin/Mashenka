@@ -228,13 +228,13 @@ Draw Call: OpenGL uses the active program when performing draw calls.
     void OpenGLShader::SetFloat(const std::string& name, float value)
     {
         MK_PROFILE_FUNCTION(); // Profiling
-        // TODO: UploadUniformFloat
+        UploadUniformFloat(name, value);
     }
 
     void OpenGLShader::SetFloat2(const std::string& name, const glm::vec2& value)
     {
         MK_PROFILE_FUNCTION(); // Profiling
-        // TODO: UploadUniformFloat2
+        UploadUniformFloat2(name, value);
     }
 
     void OpenGLShader::SetFloat3(const std::string& name, const glm::vec3& value)
