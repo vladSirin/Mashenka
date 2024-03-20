@@ -13,7 +13,7 @@ namespace Mashenka
     public:
         OrthographicCameraController(float aspectRatio, bool rotation = false);
 
-        void OnUpdate(TimeStep ts);
+        void OnUpdate(TimeStep ts); // handle camera movement and rotation
         void OnEvent(Event& e);
 
         OrthographicCamera& GetCamera() { return m_Camera; }
