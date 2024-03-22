@@ -4,6 +4,7 @@
 
 // sandbox2D
 #include "ExampleLayer.h"
+#include "GameLayer.h"
 #include "Sandbox2D.h"
 
 
@@ -13,6 +14,7 @@
 /*
  * 3. **Creating a Sandbox Class**:
  * A sandbox class is created as an instance of the Mashenka application.
+ * 
  * This class is defined in the client and returned by the `create application` function. 
  */
 
@@ -27,7 +29,9 @@ public:
     Sandbox()
     {
         //PushLayer(new ExampleLayer);
-        PushLayer(new Sandbox2D());
+        // PushLayer(new Sandbox2D());
+        PushLayer(new GameLayer()); // push the snake-eater game layer
+        
     }
 
     // destructor
