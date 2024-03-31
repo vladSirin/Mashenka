@@ -1,61 +1,61 @@
-﻿#include "Snake.h"
+﻿#include "snake.h"
 
-Snake::Snake(int grid_width, int grid_height)
-    : gridWidth(grid_width), gridHeight(grid_height), direction(Direction::kUp) {
+
+Snake::Snake(int grid_width, int grid_height) : direction(Direction::Right), gridWidth(grid_width),
+                                                gridHeight(grid_height), growing(false)
+{
+    // Smoke & Flame, particle system
+    // TODO:
+
+    // Initialize the body
     Reset();
 }
 
-Snake::~Snake() {
+void Snake::LoadAsset()
+{
+    m_SnakeHeadTexture = Mashenka::Texture2D::Create("assets/textures/SnakeHead.png");
 }
 
-void Snake::Update() {
-    if (!growing) {
-        UpdateBody();
-    } else {
-        growing = false; // Reset the growing flag after updating
-        growthCounter--;
-        if (growthCounter <= 0) growing = false;
-    }
-
-    MoveHead();
-    // Check for self-collision
-    if (CheckCollision()) {
-        Reset(); // Reset the snake if it collides with itself
-    }
+void Snake::OnUpdate(Mashenka::TimeStep ts)
+{
 }
 
-bool Snake::EatFood(int foodX, int foodY) {
-    std::pair<int, int> &head = body.front();
-    if (head.first == foodX && head.second == foodY) {
-        Grow();
-        return true;
-    }
+void Snake::OnRender()
+{
+    Mashenka::Renderer2D::DrawRotatedQuad({body.front().first, body.front().second}, {0.05, 0.05}, glm::radians(-45.0f),
+                                          m_SnakeHeadTexture);
+}
+
+void Snake::Update()
+{
+}
+
+void Snake::ChangeDirection(Direction newDirection)
+{
+}
+
+void Snake::Grow()
+{
+}
+
+bool Snake::CheckCollision() const
+{
     return false;
 }
 
-bool Snake::CheckCollision() const {
-    // Implement collision detection with the snake's body and boundaries
-    return true;
-}
-
-void Snake::Grow() {
-    growing = true;
-    growthCounter += 1; // Increase the length of the snake by one segment
-}
-
-void Snake::Reset() {
-    // Reset snake to initial state
+void Snake::Reset()
+{
     body.clear();
-    body.push_back({gridWidth / 2, gridHeight / 2}); // Start from center
-    direction = Direction::kUp;
-    growing = false;
-    growthCounter = 0;
+    int startX = gridWidth / 2;
+    int startY = gridHeight / 2;
+
+    for (int i=0; i<3; ++i)
+    {
+        body.push_back({startX - i, startY});
+    }
 }
 
-void Snake::MoveHead() {
-    // Update the head's position based on the current direction
-}
-
-void Snake::UpdateBody() {
-    // Move the snake's body following the head
+std::pair<int, int> Snake::NextHeadPosition() const
+{
+    return {1, 1};
 }

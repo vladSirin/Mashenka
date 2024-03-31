@@ -1,40 +1,57 @@
 ﻿#pragma once
 #include <vector>
 #include <utility> // For std::pair
+#include <Mashenka.h>
+
+// Direction enumeration to represent the snake's movement direction
+enum class Direction {
+    None,
+    Up,
+    Down,
+    Left,
+    Right
+};
 
 class Snake {
 public:
     Snake(int grid_width, int grid_height);
-    virtual ~Snake();
+    virtual ~Snake() = default;
 
-    enum class Direction {
-        kUp,
-        kDown,
-        kLeft,
-        kRight
-    };
-
+    void LoadAsset();
+    
+    // TimeStep Update
+    void OnUpdate(Mashenka::TimeStep ts);
+    void OnRender();
+    
+    // Updates the snake's position based on its current direction
     void Update();
-    bool EatFood(int foodX, int foodY);
+
+    // Changes the snake's direction
+    void ChangeDirection(Direction newDirection);
+
+    // Grows the snake's length by one segment
+    void Grow();
+
+    // Checks if the snake has collided with itself or the boundaries
     bool CheckCollision() const;
 
-    void Grow();
+    // Resets the snake to its initial state
     void Reset();
 
-    // Getters for snake properties
-    std::vector<std::pair<int, int>> GetBody() const { return body; }
+    // Getters
+    const std::vector<std::pair<int, int>>& GetBody() const { return body; }
+    const std::pair<int, int>& GetHead() const {return GetBody().front();}
     Direction GetDirection() const { return direction; }
-    void SetDirection(Direction dir) { direction = dir; }
 
 private:
-    std::vector<std::pair<int, int>> body; // Holds the coordinates of the snake's body segments
-    Direction direction;
-    int gridWidth, gridHeight;
-    bool growing = false;
-    int growthCounter = 0;
+    std::vector<std::pair<int, int>> body; // Stores the positions of the snake's body segments
+    Direction direction; // Current movement direction of the snake
+    int gridWidth, gridHeight; // Dimensions of the game grid
+    bool growing; // Flag to indicate if the snake is currently growing
 
-    // Helper methods
-    void MoveHead();
-    void UpdateBody();
+    // Helper method to update the position of the snake's head based on the current direction
+    std::pair<int, int> NextHeadPosition() const;
+
+    // Head Texture for the snake
+    Mashenka::Ref<Mashenka::Texture2D> m_SnakeHeadTexture;
 };
-

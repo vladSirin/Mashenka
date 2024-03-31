@@ -7,7 +7,7 @@
 
 namespace Mashenka
 {
-    // This is the window property struct, easier to manage, expand for future use.
+    // This is the default window property struct, easier to manage, expand for future use.
     struct WindowProps
     {
         std::string Title;

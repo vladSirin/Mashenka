@@ -4,12 +4,15 @@
 
 using namespace Mashenka;
 
-GameLayer::GameLayer() : Layer("GameLayer"), m_Snake(20,20), m_Food(20, 20), m_Level(1280, 820)
+GameLayer::GameLayer() : Layer("GameLayer"), m_Snake(1280,720), m_Food(1280, 720), m_Level(1280, 720)
 {
+    // Create the camera and window
     auto& window = Application::Get().GetWindow();
     CreateCamera(window.GetWidth(), window.GetHeight());
 
+    // Init Random
     Random::Init();
+    m_Snake.LoadAsset();
 }
 
 void GameLayer::OnAttach()
@@ -105,6 +108,7 @@ void GameLayer::OnUpdate(Mashenka::TimeStep ts)
 
     Mashenka::Renderer2D::BeginScene(*m_Camera);
     m_Level.OnRender();
+    m_Snake.OnRender(); //TODO: will be implement in level?
     Mashenka::Renderer2D::EndScene();
 }
 
@@ -141,4 +145,11 @@ void GameLayer::ResetGame()
 
 void GameLayer::CreateCamera(uint32_t width, uint32_t height)
 {
+    float aspectRatio = (float)width / (float)height;
+    float camWidth = 8.0f;
+    float bottom = -camWidth;
+    float top = camWidth;
+    float left = bottom * aspectRatio;
+    float right = top * aspectRatio;
+    m_Camera = CreateScope<OrthographicCamera>(left, right, bottom, top);
 }
