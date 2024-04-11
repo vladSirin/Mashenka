@@ -4,6 +4,7 @@
 
 // sandbox2D
 #include "ExampleLayer.h"
+#include "GameLayer.h"
 #include "Sandbox2D.h"
 
 
@@ -27,7 +28,7 @@ public:
     Sandbox()
     {
         //PushLayer(new ExampleLayer);
-        PushLayer(new Sandbox2D());
+        PushLayer(new GameLayer());
     }
 
     // destructor
