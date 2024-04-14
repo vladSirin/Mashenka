@@ -4,7 +4,8 @@ using namespace Mashenka;
 
 GameLayer::GameLayer() : Layer("GameLayer"), m_CameraController(1280.0f / 720.0f)
 {
-
+    //TODO remove the test for player
+    m_Player.Reset();
 }
 
 GameLayer::~GameLayer()
@@ -21,7 +22,10 @@ void GameLayer::OnAttach()
 
     // load basic assets
     m_CheckerboardTexture = Texture2D::Create("assets/textures/Checkerboard.png");
-    m_Snake = Texture2D::Create("assets/textures/Snake.png");
+
+    //TODO remove test
+    m_Player.LoadAssets();
+    
 }
 
 void GameLayer::OnDetach()
@@ -33,6 +37,10 @@ void GameLayer::OnUpdate(TimeStep ts)
 {
     MK_PROFILE_FUNCTION();
     Layer::OnUpdate(ts);
+
+    //TODO remove test
+    m_Player.OnUpdate(ts);
+    
 
     // Update
     {
@@ -52,8 +60,8 @@ void GameLayer::OnUpdate(TimeStep ts)
     {
         MK_PROFILE_SCOPE("Render Draw");
         Renderer2D::BeginScene(m_CameraController.GetCamera());
-        Renderer2D::DrawRotatedQuad({ 0.0f, 0.0f, 0.1f }, { 1.0f, 1.0f }, 0.0f, m_Snake, 1.0f);
         Renderer2D::DrawRotatedQuad({ 0.0f, 0.0f, -0.1f }, { 10.0f, 10.0f }, 0.0f, m_CheckerboardTexture, 10.f);
+        m_Player.OnRender();
         Renderer::EndScene();
     }
 }

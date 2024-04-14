@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Mashenka.h"
+#include "Player.h"
 #include "imgui/imgui.h"
 
 using namespace Mashenka;
@@ -32,4 +33,7 @@ private:
     };
 
     GameState m_State = GameState::MainMenu;
+
+    // test
+    Player m_Player;
 };
