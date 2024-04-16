@@ -16,13 +16,13 @@ void Player::LoadAssets()
 void Player::OnUpdate(Mashenka::TimeStep ts)
 {
     // based on the key that is pressed, I should swap the direction and reset the velocity of the snake
-    if (Input::IsKeyPressed(MK_KEY_UP))
+    if (Input::IsKeyPressed(MK_KEY_UP) && GetDirection() != DOWN)
         m_Direction = Direction::UP;
-    else if (Input::IsKeyPressed(MK_KEY_DOWN))
+    else if (Input::IsKeyPressed(MK_KEY_DOWN) && GetDirection() != UP)
         m_Direction = Direction::DOWN;
-    else if (Input::IsKeyPressed(MK_KEY_LEFT))
+    else if (Input::IsKeyPressed(MK_KEY_LEFT) && GetDirection() != RIGHT)
         m_Direction = Direction::LEFT;
-    else if (Input::IsKeyPressed(MK_KEY_RIGHT))
+    else if (Input::IsKeyPressed(MK_KEY_RIGHT) && GetDirection() != LEFT)
         m_Direction = Direction::RIGHT;
 
     UpdateVelocity();
