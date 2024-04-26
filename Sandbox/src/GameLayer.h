@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "Level.h"
 #include "Mashenka.h"
 #include "Player.h"
 #include "imgui/imgui.h"
@@ -24,6 +25,7 @@ private:
     Ref<Texture2D> m_Snake;
     ImFont* m_Font;
     float m_Time = 0.0f;
+    Level m_level;
 
     enum class GameState
     {
@@ -33,7 +35,4 @@ private:
     };
 
     GameState m_State = GameState::MainMenu;
-
-    // test
-    Player m_Player;
 };

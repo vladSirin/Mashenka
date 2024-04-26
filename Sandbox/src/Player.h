@@ -24,6 +24,7 @@ public:
 
     Direction GetDirection() const { return m_Direction; }
     float GetRotation() { return (float)GetDirection(); }
+    glm::vec2 GetPosition() const { return m_Position; }
 
     void Reset();
 

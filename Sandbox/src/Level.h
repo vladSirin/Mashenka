@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "Obstacle.h"
 #include "Player.h"
 
 struct SnakeObstacle
@@ -27,10 +28,10 @@ public:
 private:
     bool CollisionTest();
     void GenerateObstacles();
-    void CreateTriangleObstacle();
+    void CreateObstacle(int index);
 
 private:
     Player m_Player;
     bool m_GameOver = false;
-    Mashenka::Ref<Mashenka::Texture2D> m_TriangleTexture;
+    std::vector<Obstacle> m_Obstacles;
 };
