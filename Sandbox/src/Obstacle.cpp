@@ -5,6 +5,7 @@
 void Obstacle::Init()
 {
     LoadAsset();
+    m_AABB = CalculateAABB();
 }
 
 void Obstacle::LoadAsset()
@@ -41,21 +42,23 @@ void Obstacle::Render() const
 
 void Obstacle::Update(Mashenka::TimeStep ts)
 {
+
 }
 
-/**
- * @brief Checks if a point is inside a triangle.
- * 
- * This function uses the barycentric coordinate method to determine if a point is inside a triangle.
- * The barycentric coordinate method involves calculating the areas of three triangles and comparing them.
- * 
- * @param p The point to check.
- * @param a One vertex of the triangle.
- * @param b Another vertex of the triangle.
- * @param c The third vertex of the triangle.
- * @return True if the point is inside the triangle, false otherwise.
- */
-bool PointInTriangle(const glm::vec2& p, const glm::vec2& a, const glm::vec2& b, const glm::vec2& c)
+
+// private
+AABB Obstacle::CalculateAABB()
+{
+    // Calculate the AABB of the obstacle
+    AABB aabb;
+    aabb.min = aabb.max = m_Vertices[0];
+
+    aabb.Encapsulate(m_Vertices[1]);
+    aabb.Encapsulate(m_Vertices[2]);
+    return aabb;
+}
+
+bool Obstacle::PointInTriangle(const glm::vec2& p, const glm::vec2& a, const glm::vec2& b, const glm::vec2& c)
 {
     // Calculate the area of the original triangle
     float areaOrig = glm::abs((b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x));

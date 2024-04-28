@@ -15,6 +15,10 @@ void Level::Init()
 void Level::OnUpdate(Mashenka::TimeStep ts)
 {
     m_Player.OnUpdate(ts);
+    if(CollisionTest())
+    {
+        GameOver();
+    }
 }
 
 void Level::OnRender()
@@ -34,28 +38,16 @@ void Level::OnImGuiRender()
 void Level::Reset()
 {
     m_Player.Reset();
+    m_GameOver = false;
 }
 
 bool Level::CollisionTest()
 {
-    glm::vec4 playerVertices[4] = {
-        { -0.5f, -0.5f, 0.0f, 1.0f },
-        {  0.5f, -0.5f, 0.0f, 1.0f },
-        {  0.5f,  0.5f, 0.0f, 1.0f },
-        { -0.5f,  0.5f, 0.0f, 1.0f }
-    };
-
-    const auto& pos = m_Player.GetPosition();
-    glm::vec4 playerTransformedVerts[4];
-    for (int i = 0; i < 4; i++)
+    for (auto& obstacle : m_Obstacles)
     {
-        playerTransformedVerts[i] = glm::translate(glm::mat4(1.0f), { pos.x, pos.y, 0.0f })
-            * glm::rotate(glm::mat4(1.0f), glm::radians(m_Player.GetRotation()), { 0.0f, 0.0f, 1.0f })
-            * glm::scale(glm::mat4(1.0f), { 1.0f, 1.3f, 1.0f })
-            * playerVertices[i];
+        return m_Player.GetAABB().Intersects(obstacle.GetAABB());
     }
-
-    //TODO: if player collides with an obstacle, game over
+    return false;
 }
 
 void Level::GenerateObstacles()
@@ -72,6 +64,12 @@ void Level::CreateObstacle(int index)
     auto obstacle = Obstacle(pillarVertices, Obstacle::Type::Triangle, { 0.0f, 0.0f }, { 1.0f, 1.0f }, 0.0f);
     obstacle.Init();
     m_Obstacles.emplace_back(obstacle);
+}
+
+void Level::GameOver()
+{
+    m_GameOver = true;
+    MK_CORE_WARN("Game Over!");
 }
 
 

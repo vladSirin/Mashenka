@@ -29,6 +29,7 @@ private:
     bool CollisionTest();
     void GenerateObstacles();
     void CreateObstacle(int index);
+    void GameOver();
 
 private:
     Player m_Player;

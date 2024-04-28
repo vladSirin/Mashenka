@@ -2,6 +2,8 @@
 
 #include <Mashenka.h>
 
+#include "AABB.h"
+
 enum Direction : int
 {
     UP = 0,
@@ -25,19 +27,21 @@ public:
     Direction GetDirection() const { return m_Direction; }
     float GetRotation() { return (float)GetDirection(); }
     glm::vec2 GetPosition() const { return m_Position; }
+    AABB GetAABB() const { return m_AABB; }
 
     void Reset();
 
 private:
     inline static constexpr float DEFAULT_DIRECTIONAL_SPEED = 1.0f;
-
-
     float m_DirectionalSpeed = DEFAULT_DIRECTIONAL_SPEED; //directional speed
     glm::vec2 m_Position = {-10.0f, 0.0f};
     glm::vec2 m_Velocity = {5.0f, 0.0f}; //this is updated based on the direction and m_Speed
     Direction m_Direction = Direction::RIGHT;
-
     Mashenka::Ref<Mashenka::Texture2D> m_SnakeTexture;
+    AABB m_AABB; // used for collision detection
+    glm::vec4 m_TransformedVertices[4]; // used for collision detection
 
     void UpdateVelocity();
+    void CalculateTransformedVerts();
+    AABB CalculateAABB();
 };

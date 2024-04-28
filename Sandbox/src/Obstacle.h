@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "AABB.h"
 #include "glm/vec2.hpp"
 #include "Mashenka.h"
 
@@ -26,6 +27,7 @@ public:
     void Render() const;
     void Update(Mashenka::TimeStep ts);
     Type GetType() const {return m_Type;}
+    AABB GetAABB() const { return m_AABB; }
 
 private:
     Type m_Type;
@@ -34,7 +36,9 @@ private:
     float m_Rotation;
     Mashenka::Ref<Mashenka::Texture2D> m_Texture;
     std::vector<glm::vec4> m_Vertices;
+    AABB m_AABB;
 
 private:
+    AABB CalculateAABB();
     bool PointInTriangle(const glm::vec2& p, const glm::vec2& a, const glm::vec2& b, const glm::vec2& c);
 };
