@@ -33,7 +33,7 @@ void Player::OnUpdate(Mashenka::TimeStep ts)
 
 void Player::OnRender()
 {
-    Renderer2D::DrawRotatedQuad({m_Position.x, m_Position.y, 0.5}, {1.0f, 1.3f}, glm::radians(GetRotation()), m_SnakeTexture);
+    Renderer2D::DrawRotatedQuad({m_Position.x, m_Position.y, 0.5}, m_Size, glm::radians(GetRotation()), m_SnakeTexture);
 }
 
 void Player::OnImGuiRender()
@@ -84,7 +84,7 @@ void Player::CalculateTransformedVerts()
     {
         m_TransformedVertices[i] = glm::translate(glm::mat4(1.0f), { m_Position.x, m_Position.y, 0.0f })
             * glm::rotate(glm::mat4(1.0f), glm::radians(GetRotation()), { 0.0f, 0.0f, 1.0f })
-            * glm::scale(glm::mat4(1.0f), { 1.0f, 1.3f, 1.0f })
+            * glm::scale(glm::mat4(1.0f), { m_Size.x, m_Size.y, 1.0f })
             * playerVertices[i];
     }
 }

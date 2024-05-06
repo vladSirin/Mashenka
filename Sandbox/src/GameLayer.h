@@ -10,7 +10,7 @@ class GameLayer : public Layer
 {
 public:
     GameLayer();
-    virtual ~GameLayer();
+    virtual ~GameLayer() = default;
 
     void OnAttach() override;
     void OnDetach() override;
@@ -19,13 +19,17 @@ public:
     void OnImGuiRender() override;
     void OnEvent(Event& event) override;
 
+    bool OnEnterKeyPressed(KeyPressedEvent& e);
+    bool OnWindowResized(WindowResizeEvent& e);
+    
 private:
     OrthographicCameraController m_CameraController;
     Ref<Texture2D> m_CheckerboardTexture;
     Ref<Texture2D> m_Snake;
     ImFont* m_Font;
     float m_Time = 0.0f;
-    Level m_level;
+    bool m_Blink = false;
+    Level m_Level;
 
     enum class GameState
     {

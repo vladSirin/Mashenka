@@ -40,6 +40,7 @@ private:
     Mashenka::Ref<Mashenka::Texture2D> m_SnakeTexture;
     AABB m_AABB; // used for collision detection
     glm::vec4 m_TransformedVertices[4]; // used for collision detection
+    glm::vec2 m_Size = {0.2f, 0.2f};
 
     void UpdateVelocity();
     void CalculateTransformedVerts();
