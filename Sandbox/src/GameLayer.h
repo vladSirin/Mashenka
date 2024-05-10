@@ -30,6 +30,7 @@ private:
     float m_Time = 0.0f;
     bool m_Blink = false;
     Level m_Level;
+    glm::vec2 m_PlayerPos;
 
     enum class GameState
     {

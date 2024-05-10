@@ -21,6 +21,7 @@ namespace Mashenka
 
         float GetZoomLevel() const { return m_ZoomLevel; }
         void SetZoomLevel(float level) { m_ZoomLevel = level; }
+        void SetPosition(const glm::vec3& position) { m_CameraPosition = position; } // NOLINT()
 
     private:
         bool OnMouseScrolled(MouseScrolledEvent& e);

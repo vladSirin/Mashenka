@@ -38,6 +38,10 @@ void GameLayer::OnUpdate(TimeStep ts)
     if (m_Level.IsGameOver())
         m_State = GameState::GameOver;
 
+    // Calculate Camera positions based on player
+    m_PlayerPos = m_Level.GetPlayer().GetPosition();
+    m_CameraController.SetPosition({ m_PlayerPos.x, m_PlayerPos.y, 0.0f });
+    
     if (m_State == GameState::Play)
     {
         m_Level.OnUpdate(ts);
