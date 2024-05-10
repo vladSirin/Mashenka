@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "Obstacle.h"
 #include "Player.h"
+#include "Reward.h"
 
 struct SnakeObstacle
 {
@@ -26,13 +27,18 @@ public:
     Player& GetPlayer() {return m_Player;}
 
 private:
-    bool CollisionTest();
+    bool ObstacleCollideTest();
+    bool RewardCollideTest();
+    
     void GenerateObstacles();
     void CreateObstacle(int index);
+    void GenerateRewards();
+    void CreateReward(int index);
     void GameOver();
 
 private:
     Player m_Player;
     bool m_GameOver = false;
     std::vector<Obstacle> m_Obstacles;
+    std::vector<Reward> m_Rewards;
 };

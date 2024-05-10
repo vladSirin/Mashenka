@@ -29,6 +29,7 @@ public:
     AABB GetAABB() const { return m_AABB; }
 
     void Reset();
+    void RewardHit();
 
 private:
     std::vector<glm::vec2> m_BodySegments; // Store the body segments positions

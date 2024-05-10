@@ -99,9 +99,17 @@ void Player::Reset()
     m_Direction = Direction::RIGHT;
     UpdateVelocity();
     m_AABB = CalculateAABB();
+
+    //TODO: Temp grow, will be fixed after the reward is working for the game
     Grow(m_Position);
     Grow(m_Position);
     Grow(m_Position);
+}
+
+void Player::RewardHit()
+{
+    auto i = m_BodySegments.size();
+    Grow(m_BodySegments[i-1]);
 }
 
 // private functions
