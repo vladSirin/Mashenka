@@ -2,7 +2,7 @@
 
 using namespace Mashenka;
 
-GameLayer::GameLayer() : Layer("GameLayer"), m_CameraController(1920.0f / 1080.0f)
+GameLayer::GameLayer() : Layer("GameLayer"), m_CameraController(1280.0f / 720.0f)
 {
 }
 
@@ -14,8 +14,10 @@ void GameLayer::OnAttach()
     ImGuiIO io = ImGui::GetIO();
     m_Font = io.Fonts->AddFontFromFileTTF("assets/OpenSans-Regular.ttf", 120.0f);
 
-    // load basic assets
-    m_CheckerboardTexture = Texture2D::Create("assets/textures/Checkerboard.png");
+    //TODO: Move the background scale and setups to level, update the background based player crossing tiles
+    m_Background = Background(1, 1, 1280, 720);
+    m_Background.LoadAssets();
+    
 
     // Init Level
     m_Level.Init();
@@ -37,15 +39,15 @@ void GameLayer::OnUpdate(TimeStep ts)
 
     if (m_Level.IsGameOver())
         m_State = GameState::GameOver;
-
-    // Calculate Camera positions based on player
-    m_PlayerPos = m_Level.GetPlayer().GetPosition();
-    m_CameraController.SetPosition({ m_PlayerPos.x, m_PlayerPos.y, 0.0f });
     
     if (m_State == GameState::Play)
     {
         m_Level.OnUpdate(ts);
     }
+
+    // Calculate Camera positions based on player
+    m_PlayerPos = m_Level.GetPlayer().GetPosition();
+    m_CameraController.SetPosition({ m_PlayerPos.x, m_PlayerPos.y, 0.0f });
 
     // Update
     {
@@ -65,9 +67,9 @@ void GameLayer::OnUpdate(TimeStep ts)
     {
         MK_PROFILE_SCOPE("Render Draw");
         Renderer2D::BeginScene(m_CameraController.GetCamera());
-        Renderer2D::DrawRotatedQuad({0.0f, 0.0f, -0.1f}, {10.0f, 10.0f}, 0.0f, m_CheckerboardTexture, 25.0f);
 
         // Render Level
+        m_Background.OnRender(m_PlayerPos);
         m_Level.OnRender();
 
         Renderer::EndScene();
@@ -146,5 +148,6 @@ bool GameLayer::OnEnterKeyPressed(KeyPressedEvent& e)
 bool GameLayer::OnWindowResized(WindowResizeEvent& e)
 {
     m_CameraController.OnEvent(e);
+    m_Background.OnEvent(e); //TODO: move this to level
     return false;
 }

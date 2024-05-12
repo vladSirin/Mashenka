@@ -92,7 +92,7 @@ void Player::Grow(glm::vec2 lastSegmentPos)
 
 void Player::Reset()
 {
-    m_Position = {-5.0f, 0.0f};
+    m_Position = {-3.0f, 0.0f};
     m_BodySegments.clear();
     m_BodySegments.push_back(m_Position);
     m_DirectionalSpeed = DEFAULT_DIRECTIONAL_SPEED;

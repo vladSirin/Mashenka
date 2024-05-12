@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "Background.h"
 #include "Level.h"
 #include "Mashenka.h"
 #include "Player.h"
@@ -40,4 +41,6 @@ private:
     };
 
     GameState m_State = GameState::MainMenu;
+
+    Background m_Background; //TODO: move this to level
 };
