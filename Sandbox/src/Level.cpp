@@ -9,6 +9,7 @@ using namespace Mashenka;
 void Level::Init()
 {
     m_Player.LoadAssets();
+    m_Background.LoadAssets();
     CreateObstacle(1);
     CreateReward(1);
     Reset();
@@ -17,6 +18,7 @@ void Level::Init()
 void Level::OnUpdate(Mashenka::TimeStep ts)
 {
     m_Player.OnUpdate(ts);
+
     if (ObstacleCollideTest())
     {
         GameOver();
@@ -27,6 +29,8 @@ void Level::OnUpdate(Mashenka::TimeStep ts)
 
 void Level::OnRender()
 {
+    m_Background.OnRender(m_Player.GetPosition());
+
     for (auto& element : m_Obstacles)
     {
         element.Render();
@@ -35,8 +39,6 @@ void Level::OnRender()
     {
         element.Render();
     }
-
-
     m_Player.OnRender();
 }
 
@@ -68,7 +70,6 @@ bool Level::RewardCollideTest()
     {
         if (m_Player.GetAABB().Intersects(it->GetAABB()))
         {
-
             // Destroy the intersected reward
             it = m_Rewards.erase(it);
 
@@ -82,7 +83,6 @@ bool Level::RewardCollideTest()
 
     return collisionDetected;
 }
-
 
 void Level::GenerateObstacles()
 {

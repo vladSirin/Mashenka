@@ -27,6 +27,7 @@ public:
     float GetRotation() { return (float)GetDirection(); }
     glm::vec2 GetPosition() const { return m_Position; }
     AABB GetAABB() const { return m_AABB; }
+    glm::vec2 GetVelocity() const { return m_Velocity; }
 
     void Reset();
     void RewardHit();
@@ -48,7 +49,9 @@ private:
     AABB CalculateAABB();
     void Grow(glm::vec2 lastSegmentPos); // grow the snake
 
-    std::deque<glm::vec2> positionsQueue;
-    int updateDelay = 10;
+    // used for updating the body segments of the snake
+    std::deque<glm::vec2> positionsQueue; // saving a queue of positions the head went based on the update delay
+    int updateDelay = 3;
+    int m_SegmentSpaceScale = 4;
     int frameCounter = 0;
 };

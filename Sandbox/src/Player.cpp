@@ -35,9 +35,9 @@ void Player::OnUpdate(Mashenka::TimeStep ts)
     // Update body segments positions based on the queued positions
     for (size_t i = 1; i < m_BodySegments.size(); ++i)
     {
-        if (positionsQueue.size() > i * updateDelay)
+        if (positionsQueue.size() > i * updateDelay * m_SegmentSpaceScale)
         {
-            m_BodySegments[i] = positionsQueue[i * updateDelay];
+            m_BodySegments[i] = positionsQueue[i * updateDelay * m_SegmentSpaceScale];
         }
     }
 
@@ -48,7 +48,7 @@ void Player::OnUpdate(Mashenka::TimeStep ts)
         positionsQueue.push_front(m_BodySegments[0]);
 
         // Ensure the queue does not grow indefinitely
-        if (positionsQueue.size() > m_BodySegments.size() * updateDelay)
+        if (positionsQueue.size() > m_BodySegments.size() * updateDelay * m_SegmentSpaceScale)
         {
             positionsQueue.pop_back();
         }
@@ -109,7 +109,7 @@ void Player::Reset()
 void Player::RewardHit()
 {
     auto i = m_BodySegments.size();
-    Grow(m_BodySegments[i-1]);
+    Grow(m_BodySegments[i - 1]);
 }
 
 // private functions

@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "Background.h"
 #include "Obstacle.h"
 #include "Player.h"
 #include "Reward.h"
@@ -29,7 +30,7 @@ public:
 private:
     bool ObstacleCollideTest();
     bool RewardCollideTest();
-    
+
     void GenerateObstacles();
     void CreateObstacle(int index);
     void GenerateRewards();
@@ -41,4 +42,6 @@ private:
     bool m_GameOver = false;
     std::vector<Obstacle> m_Obstacles;
     std::vector<Reward> m_Rewards;
+
+    Background m_Background; // for auto-scaling background in the level
 };

@@ -34,7 +34,7 @@ void Background::OnRender(const glm::vec2& playerPosition) const
             tilePosition.y = topLeft.y - 1.0f * j;
             if (!((abs(tilePosition.x) == 2.0f && j != 0) || (abs(tilePosition.y) == 2.0f && i != 0)))
             {
-                Renderer2D::DrawQuad({topLeft.x + 1.0f * i, topLeft.y - 1.0f * j, -0.25}, m_Scale, m_BGTileTexture,
+                Renderer2D::DrawQuad({topLeft.x + 1.0f * i, topLeft.y - 1.0f * j, -0.1f}, m_Scale, m_BGTileTexture,
                                      1.0f);
             }
         }

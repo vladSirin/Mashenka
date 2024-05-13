@@ -21,7 +21,8 @@ void Reward::OnUpdate(Mashenka::TimeStep ts)
 
 void Reward::Render() const
 {
-    Mashenka::Renderer2D::DrawQuad(m_Position, m_Scale, m_Texture);
+    glm::vec3 pos = {m_Position.x, m_Position.y, 0.5f};
+    Mashenka::Renderer2D::DrawQuad(pos, m_Scale, m_Texture);
 }
 
 // calculate the AABB

@@ -41,6 +41,5 @@ private:
     };
 
     GameState m_State = GameState::MainMenu;
-
-    Background m_Background; //TODO: move this to level
+    int m_FPS = 0;
 };

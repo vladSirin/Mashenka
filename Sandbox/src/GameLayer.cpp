@@ -14,11 +14,6 @@ void GameLayer::OnAttach()
     ImGuiIO io = ImGui::GetIO();
     m_Font = io.Fonts->AddFontFromFileTTF("assets/OpenSans-Regular.ttf", 120.0f);
 
-    //TODO: Move the background scale and setups to level, update the background based player crossing tiles
-    m_Background = Background(1, 1, 1280, 720);
-    m_Background.LoadAssets();
-    
-
     // Init Level
     m_Level.Init();
 }
@@ -33,13 +28,17 @@ void GameLayer::OnUpdate(TimeStep ts)
     MK_PROFILE_FUNCTION();
     Layer::OnUpdate(ts);
 
+
     m_Time += ts;
-    if ((int)(m_Time * 10.0f) % 8 > 4)
+    if ((int)(m_Time * 10.0f) % 8 == 4)
+    {
         m_Blink = !m_Blink;
+        m_FPS = static_cast<int>(1.0f / ts);
+    }
 
     if (m_Level.IsGameOver())
         m_State = GameState::GameOver;
-    
+
     if (m_State == GameState::Play)
     {
         m_Level.OnUpdate(ts);
@@ -47,7 +46,7 @@ void GameLayer::OnUpdate(TimeStep ts)
 
     // Calculate Camera positions based on player
     m_PlayerPos = m_Level.GetPlayer().GetPosition();
-    m_CameraController.SetPosition({ m_PlayerPos.x, m_PlayerPos.y, 0.0f });
+    m_CameraController.SetPosition({m_PlayerPos.x, m_PlayerPos.y, 0.0f});
 
     // Update
     {
@@ -69,7 +68,6 @@ void GameLayer::OnUpdate(TimeStep ts)
         Renderer2D::BeginScene(m_CameraController.GetCamera());
 
         // Render Level
-        m_Background.OnRender(m_PlayerPos);
         m_Level.OnRender();
 
         Renderer::EndScene();
@@ -79,6 +77,15 @@ void GameLayer::OnUpdate(TimeStep ts)
 void GameLayer::OnImGuiRender()
 {
     Layer::OnImGuiRender();
+
+    {
+        auto pos = ImGui::GetWindowPos();
+        pos.x += 50.0f;
+        pos.y += 50.0f;
+        std::string scoreStr = std::string("FPS: ") + std::to_string(m_FPS);
+        ImGui::GetForegroundDrawList()->AddText(m_Font, 60.0f, pos, 0xFFFF0000
+                                                , scoreStr.c_str());
+    }
 
     switch (m_State)
     {
@@ -148,6 +155,5 @@ bool GameLayer::OnEnterKeyPressed(KeyPressedEvent& e)
 bool GameLayer::OnWindowResized(WindowResizeEvent& e)
 {
     m_CameraController.OnEvent(e);
-    m_Background.OnEvent(e); //TODO: move this to level
     return false;
 }
