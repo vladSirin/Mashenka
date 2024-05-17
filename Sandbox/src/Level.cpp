@@ -1,5 +1,6 @@
 ﻿#include "Level.h"
 
+#include "Random.h"
 #include "Reward.h"
 #include "glm/ext/matrix_transform.hpp"
 
@@ -11,20 +12,28 @@ void Level::Init()
     m_Player.LoadAssets();
     m_Background.LoadAssets();
     CreateObstacle(1);
-    CreateReward(1);
     Reset();
 }
 
 void Level::OnUpdate(Mashenka::TimeStep ts)
 {
+    // Update Player
     m_Player.OnUpdate(ts);
 
+    // Check for collision
     if (ObstacleCollideTest())
     {
         GameOver();
     }
     if (RewardCollideTest())
         m_Player.RewardHit();
+
+    // Generate reward check
+    if (m_Time - m_LastRewardTime > m_RewardSpawnInterval)
+    {
+        m_LastRewardTime = m_Time;
+        GenerateRewards();
+    }
 }
 
 void Level::OnRender()
@@ -51,6 +60,8 @@ void Level::Reset()
 {
     m_Player.Reset();
     m_GameOver = false;
+    m_Time = 0.0f;
+    m_LastRewardTime = 0.0f;
 }
 
 bool Level::ObstacleCollideTest()
@@ -103,12 +114,17 @@ void Level::CreateObstacle(int index)
 
 void Level::GenerateRewards()
 {
+    float distanceFromPlayer = Random::Float() * 2.0f + 0.5f;
+    float angle = Random::Float() * 2.0f * glm::pi<float>();
+
+    glm::vec2 rewardPosition = m_Player.GetPosition() + glm::vec2(distanceFromPlayer * glm::cos(angle),
+                                                                  distanceFromPlayer * glm::sin(angle));
+    CreateReward(rewardPosition);
 }
 
-void Level::CreateReward(int index)
+void Level::CreateReward(glm::vec2 position, glm::vec2 scale)
 {
-    //TODO: now it's a temp fixed reward to test function
-    auto reward = Reward({-1.0f, -1.0f}, {0.2f, 0.2f});
+    auto reward = Reward(position, scale);
     reward.Init();
     m_Rewards.emplace_back(reward);
 }

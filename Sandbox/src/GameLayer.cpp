@@ -30,6 +30,8 @@ void GameLayer::OnUpdate(TimeStep ts)
 
 
     m_Time += ts;
+    m_Level.SetGameTime(m_Time); // set time in level
+    
     if ((int)(m_Time * 10.0f) % 8 == 4)
     {
         m_Blink = !m_Blink;
