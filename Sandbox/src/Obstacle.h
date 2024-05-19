@@ -29,6 +29,11 @@ public:
     Type GetType() const {return m_Type;}
     AABB GetAABB() const { return m_AABB; }
 
+    glm::vec2 GetPosition() const {return m_Position;}
+    glm::vec2 GetScale() const {return m_Scale;}
+    float GetRotation() const {return m_Rotation;}
+    Mashenka::Ref<Mashenka::Texture2D> GetTexture() const {return m_Texture;}
+
 private:
     Type m_Type;
     glm::vec2 m_Position;

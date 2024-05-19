@@ -16,6 +16,7 @@ public:
 
     void OnEvent(Mashenka::Event& e);
     bool OnWindowResized(Mashenka::WindowResizeEvent& e);
+    float GetAspectRatio() const {return m_ScreenWidth / m_ScreenHeight;}
 
 private:
     Mashenka::Ref<Mashenka::Texture2D> m_BGTileTexture;

@@ -33,7 +33,7 @@ private:
     bool RewardCollideTest();
 
     void GenerateObstacles();
-    void CreateObstacle(int index);
+    void CreateObstacle(glm::vec2 position, float angle, glm::vec2 scale={1.0f, 1.0f});
     void GenerateRewards();
     void CreateReward(glm::vec2 position, glm::vec2 scale={0.2f, 0.2f});
     void GameOver();
@@ -44,10 +44,16 @@ private:
     std::vector<Obstacle> m_Obstacles;
     std::vector<Reward> m_Rewards;
 
+    // Game time control
+    float m_Time = 0.0f;
+    
     // Reward time control
     float m_RewardSpawnInterval = 10.0f;
-    float m_Time = 0.0f;
     float m_LastRewardTime = 0.0f;
 
+    // obstacle time control
+    float m_ObstacleSpawnInterval = 10.0f;
+    float m_LastObstacleSpawnTime = 0.0f;
+    
     Background m_Background; // for auto-scaling background in the level
 };

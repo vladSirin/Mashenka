@@ -23,6 +23,9 @@ public:
     AABB GetAABB() const { return m_AABB; }
     static float GetRotation() { return 0.0f; }
 
+    glm::vec2 GetPosition() const {return m_Position;}
+    glm::vec2 GetScale() const {return m_Scale;}
+
 private:
     AABB m_AABB;
     glm::vec2  m_Position;

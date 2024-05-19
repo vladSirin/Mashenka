@@ -7,7 +7,9 @@
 namespace Mashenka
 {
     Mashenka::OrthographicCameraController::OrthographicCameraController(float aspectRatio, bool rotation)
-    : m_AspectRatio(aspectRatio), m_Camera(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel), m_Rotation(rotation)
+        : m_AspectRatio(aspectRatio),
+          m_Camera(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel),
+          m_Rotation(rotation)
     {
     }
 
@@ -58,12 +60,12 @@ namespace Mashenka
 
             m_Camera.SetRotation(m_CameraRotation);
         }
-        
+
         // Set the camera position
         m_Camera.SetPosition(m_CameraPosition);
 
         // Set the camera translation speed based on zoom level, as the camera will move faster when zoomed out
-        m_CameraTranslationSpeed = m_ZoomLevel; 
+        m_CameraTranslationSpeed = m_ZoomLevel;
     }
 
     void Mashenka::OrthographicCameraController::OnEvent(Event& e)
@@ -94,4 +96,3 @@ namespace Mashenka
         return false;
     }
 }
-

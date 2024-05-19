@@ -4,6 +4,13 @@ using namespace Mashenka;
 
 GameLayer::GameLayer() : Layer("GameLayer"), m_CameraController(1280.0f / 720.0f)
 {
+    /** Due to the primitive framework of the engine this version, the actual projection is {-aspectRatio, aspectRatio, -1.0f, 1.0f}
+     ** Which leads to the smaller scale of the assets, which is not ideal
+     ** A More proper way would be setting up the projection in the constructor, also provide the getter and setter for the projection
+     */
+
+    //TODO: remove this when test is over.
+    m_CameraController.GetCamera().SetProjection(-16.0f, 16.0f, -9.0f, 9.0f); // this is for testing
 }
 
 void GameLayer::OnAttach()
@@ -31,7 +38,7 @@ void GameLayer::OnUpdate(TimeStep ts)
 
     m_Time += ts;
     m_Level.SetGameTime(m_Time); // set time in level
-    
+
     if ((int)(m_Time * 10.0f) % 8 == 4)
     {
         m_Blink = !m_Blink;
@@ -157,5 +164,6 @@ bool GameLayer::OnEnterKeyPressed(KeyPressedEvent& e)
 bool GameLayer::OnWindowResized(WindowResizeEvent& e)
 {
     m_CameraController.OnEvent(e);
+    m_CameraController.GetCamera().SetProjection(-16.0f, 16.0f, -9.0f, 9.0f);
     return false;
 }
