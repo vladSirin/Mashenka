@@ -52,7 +52,7 @@ private:
     float m_LastRewardTime = 0.0f;
 
     // obstacle time control
-    float m_ObstacleSpawnInterval = 10.0f;
+    float m_ObstacleSpawnInterval = 2.0f;
     float m_LastObstacleSpawnTime = 0.0f;
     
     Background m_Background; // for auto-scaling background in the level

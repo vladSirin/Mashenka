@@ -31,6 +31,7 @@ void Player::OnUpdate(Mashenka::TimeStep ts)
 
     m_Position += m_Velocity * (float)ts; // update the position of the snake
     m_BodySegments[0] = m_Position; // update the head
+    m_AABB = CalculateAABB(); // update the AABB
 
     // Update body segments positions based on the queued positions
     for (size_t i = 1; i < m_BodySegments.size(); ++i)
@@ -53,8 +54,6 @@ void Player::OnUpdate(Mashenka::TimeStep ts)
             positionsQueue.pop_back();
         }
     }
-
-    m_AABB = CalculateAABB(); // update the AABB
 }
 
 void Player::OnRender()
@@ -99,11 +98,6 @@ void Player::Reset()
     m_Direction = Direction::RIGHT;
     UpdateVelocity();
     m_AABB = CalculateAABB();
-
-    //TODO: Temp grow, will be fixed after the reward is working for the game
-    Grow(m_Position);
-    Grow(m_Position);
-    Grow(m_Position);
 }
 
 void Player::RewardHit()

@@ -14,8 +14,8 @@ public:
         //other types
     };
 
-    Obstacle(const std::vector<glm::vec4>& vertices, Type type, const glm::vec2& position, const glm::vec2& scale = {1.0f, 1.0f}, float rotation = 0.0f) :
-        m_Type(type), m_Position(position), m_Scale(scale), m_Rotation(rotation), m_Vertices(vertices)
+    Obstacle(Type type, const glm::vec2& position, const glm::vec2& scale = {1.0f, 1.0f}, float rotation = 0.0f) :
+        m_Type(type), m_Position(position), m_Scale(scale), m_Rotation(rotation)
     {
     }
     
@@ -40,10 +40,11 @@ private:
     glm::vec2 m_Scale;
     float m_Rotation;
     Mashenka::Ref<Mashenka::Texture2D> m_Texture;
-    std::vector<glm::vec4> m_Vertices;
+    glm::vec4 m_Vertices[3];
     AABB m_AABB;
 
 private:
     AABB CalculateAABB();
     bool PointInTriangle(const glm::vec2& p, const glm::vec2& a, const glm::vec2& b, const glm::vec2& c);
+    void CalculateTransformedVerts();
 };

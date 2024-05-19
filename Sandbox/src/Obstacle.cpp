@@ -2,6 +2,8 @@
 
 #include "Obstacle.h"
 
+#include "glm/ext/matrix_transform.hpp"
+
 void Obstacle::Init()
 {
     LoadAsset();
@@ -42,7 +44,7 @@ void Obstacle::Render() const
 
 void Obstacle::Update(Mashenka::TimeStep ts)
 {
-
+    CalculateAABB();
 }
 
 
@@ -50,11 +52,20 @@ void Obstacle::Update(Mashenka::TimeStep ts)
 AABB Obstacle::CalculateAABB()
 {
     // Calculate the AABB of the obstacle
+    CalculateTransformedVerts();
+    
     AABB aabb;
+    if (sizeof(m_Vertices) / sizeof(m_Vertices[0]) == 0) return aabb;
+
+    // Initialize AABB with the first vertex
     aabb.min = aabb.max = m_Vertices[0];
 
-    aabb.Encapsulate(m_Vertices[1]);
-    aabb.Encapsulate(m_Vertices[2]);
+    // Extend the AABB with the rest of the vertices
+    for (int i = 1; i < sizeof(m_Vertices) / sizeof(m_Vertices[0]); i++)
+    {
+        aabb.Encapsulate({m_Vertices[i].x, m_Vertices[i].y});
+    }
+
     return aabb;
 }
 
@@ -71,3 +82,24 @@ bool Obstacle::PointInTriangle(const glm::vec2& p, const glm::vec2& a, const glm
     // If the sum of the areas of the three triangles is equal to the area of the original triangle, the point is inside the triangle
     return (area1 + area2 + area3 == areaOrig);
 }
+
+void Obstacle::CalculateTransformedVerts()
+{
+    // Pillar vertices at 0,0
+    const std::vector<glm::vec4>& pillarVertices = {
+        {-0.5f + 0.1f, -0.5f + 0.1f, 0.0f, 1.0f},
+        {0.5f - 0.1f, -0.5f + 0.1f, 0.0f, 1.0f},
+        {0.0f + 0.0f, 0.5f - 0.1f, 0.0f, 1.0f},
+    };
+    
+    // translate the vertices based on the position
+    for (int i = 0; i < 3; i++)
+    {
+        m_Vertices[i] = glm::translate(glm::mat4(1.0f), {m_Position.x, m_Position.y, 0.0f})
+            * glm::rotate(glm::mat4(1.0f), glm::radians(GetRotation()), {0.0f, 0.0f, 1.0f})
+            * glm::scale(glm::mat4(1.0f), {m_Scale.x, m_Scale.y, 1.0f})
+            * pillarVertices[i];
+    }
+}
+
+

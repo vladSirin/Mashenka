@@ -24,6 +24,7 @@ public:
     static float GetRotation() { return 0.0f; }
 
     glm::vec2 GetPosition() const {return m_Position;}
+    void SetPosition(const glm::vec2& position) {m_Position = position;}
     glm::vec2 GetScale() const {return m_Scale;}
 
 private:
