@@ -10,7 +10,8 @@ GameLayer::GameLayer() : Layer("GameLayer"), m_CameraController(1280.0f / 720.0f
      */
 
     //TODO: remove this when test is over.
-    m_CameraController.GetCamera().SetProjection(-16.0f, 16.0f, -9.0f, 9.0f); // this is for testing
+    m_CameraController.GetCamera().SetProjection(CAMERA_PROJECTION[0], CAMERA_PROJECTION[1], CAMERA_PROJECTION[2], CAMERA_PROJECTION[3]);
+    
 }
 
 void GameLayer::OnAttach()
@@ -86,6 +87,9 @@ void GameLayer::OnUpdate(TimeStep ts)
 void GameLayer::OnImGuiRender()
 {
     Layer::OnImGuiRender();
+
+    //TODO: add a ui to indicate the next reward if outside of player view
+    ImGuiRenderRewardIndicator();
 
     {
         auto pos = ImGui::GetWindowPos();
@@ -164,6 +168,99 @@ bool GameLayer::OnEnterKeyPressed(KeyPressedEvent& e)
 bool GameLayer::OnWindowResized(WindowResizeEvent& e)
 {
     m_CameraController.OnEvent(e);
-    m_CameraController.GetCamera().SetProjection(-16.0f, 16.0f, -9.0f, 9.0f);
     return false;
+}
+
+void GameLayer::ImGuiRenderRewardIndicator()
+{
+    //Drawing an arrow if the reward is out of the player view
+    // Firstly we need to iterate through the rewards, then for each of them, we check:
+    // * if the reward is out of the player view
+    // * if so, we draw an arrow from the player position pointing to the reward
+    // * the arrow should be located on the edge of the player view, using a red color
+    for (auto& reward : m_Level.GetRewards())
+    {
+        if (m_Level.IsPositionOutofView(reward.GetPosition(), m_Level.GetPlayer().GetPosition(), {
+                                             CAMERA_PROJECTION[0], CAMERA_PROJECTION[1], CAMERA_PROJECTION[2],
+                                             CAMERA_PROJECTION[3]
+                                         }))
+        {
+            //DRAW ARROW
+            ImGuiRenderArrow(m_Level.GetPlayer().GetPosition(), reward.GetPosition());
+        }
+    }
+}
+
+
+void GameLayer::DrawArrow(ImDrawList* draw_list, const ImVec2& start, float angle, float arrow_size, ImU32 color) {
+    ImVec2 direction = ImVec2(cos(angle), sin(angle));
+    ImVec2 perp = ImVec2(-direction.y, direction.x);
+
+    ImVec2 arrow_tip = start;
+    ImVec2 arrow_base1 = ImVec2(start.x - arrow_size * direction.x + arrow_size * 1.0f * perp.x,
+                                start.y - arrow_size * direction.y + arrow_size * 1.0f * perp.y);
+    ImVec2 arrow_base2 = ImVec2(start.x - arrow_size * direction.x - arrow_size * 1.0f * perp.x,
+                                start.y - arrow_size * direction.y - arrow_size * 1.0f * perp.y);
+
+    draw_list->AddTriangleFilled(arrow_tip, arrow_base1, arrow_base2, color);
+}
+
+void GameLayer::ImGuiRenderArrow(const glm::vec2& playerPosition, const glm::vec2& rewardPosition) {
+
+
+    // Get the draw list
+    ImDrawList* draw_list = ImGui::GetForegroundDrawList();
+
+    // Get window size and center
+    ImVec2 windowSize = {1280, 720};
+    ImVec2 windowPos = ImGui::GetWindowPos();
+    ImVec2 windowCenter = ImVec2(windowPos.x + windowSize.x / 2, windowPos.y + windowSize.y / 2);
+
+    // Calculate the direction from the player to the reward
+    glm::vec2 direction = CalculateDirection(playerPosition, rewardPosition);
+
+    // Calculate the position on the edge of the window
+    ImVec2 arrowPos = CalculateArrowPosition(windowSize, windowCenter, direction);
+
+    // Calculate the angle of the arrow
+    float angle = atan2(direction.y, direction.x);
+
+    // Draw the arrow using the color red
+    ImU32 colorRed = IM_COL32(255, 0, 0, 255); // Fully opaque red
+    DrawArrow(draw_list, arrowPos, angle, 20.0f, colorRed);
+
+}
+
+glm::vec2 GameLayer::CalculateDirection(const glm::vec2& from, const glm::vec2& to) {
+    glm::vec2 direction = to - from;
+    return glm::normalize(direction);
+}
+
+ImVec2 GameLayer::CalculateArrowPosition(const ImVec2& windowSize, const ImVec2& center, const glm::vec2& direction) {
+    ImVec2 edgePosition = center;
+
+    // Determine which edge of the window to place the arrow
+    if (fabs(direction.x) > fabs(direction.y)) {
+        // Place on left or right edge
+        if (direction.x > 0) {
+            edgePosition.x = windowSize.x - 20.0f; // Right edge
+        } else {
+            edgePosition.x = 20.0f; // Left edge
+        }
+        edgePosition.y = center.y + direction.y * (windowSize.x / 2.0f - 20.0f) / fabs(direction.x);
+    } else {
+        // Place on top or bottom edge
+        if (direction.y > 0) {
+            edgePosition.y =  windowSize.y -20.0f; // Bottom edge
+        } else {
+            edgePosition.y = 20.0f; // Top edge
+        }
+        edgePosition.x = center.x + direction.x * (windowSize.y / 2.0f - 20.0f) / fabs(direction.y);
+    }
+
+    // Ensure the arrow stays within the window bounds
+    edgePosition.x = glm::clamp(edgePosition.x, 20.0f, windowSize.x - 20.0f);
+    edgePosition.y = glm::clamp(edgePosition.y, 20.0f, windowSize.y - 20.0f);
+
+    return edgePosition;
 }

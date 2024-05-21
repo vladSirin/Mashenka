@@ -22,7 +22,7 @@ public:
 
     bool OnEnterKeyPressed(KeyPressedEvent& e);
     bool OnWindowResized(WindowResizeEvent& e);
-    
+
 private:
     OrthographicCameraController m_CameraController;
     Ref<Texture2D> m_CheckerboardTexture;
@@ -43,5 +43,13 @@ private:
     GameState m_State = GameState::MainMenu;
     int m_FPS = 0;
 
-    
+    void ImGuiRenderRewardIndicator();
+    glm::vec2 CalculateDirection(const glm::vec2& from, const glm::vec2& to);
+    ImVec2 CalculateArrowPosition(const ImVec2& windowSize, const ImVec2& center, const glm::vec2& direction);
+    void DrawArrow(ImDrawList* draw_list, const ImVec2& start, float angle, float arrow_size, ImU32 color);
+    void ImGuiRenderArrow(const glm::vec2& playerPosition, const glm::vec2& rewardPosition);
+
+
+    static constexpr float CAMERA_PROJECTION[4] = {-1280.0f / 720.0f, 1280.0f / 720.0f, 1.0f, -1.0f};
+    //static constexpr float CAMERA_PROJECTION[4] = {16.0f / 9.0f, 16.0f / 9.0f, -1.0f, 1.0f};
 };

@@ -31,7 +31,10 @@ void Level::OnUpdate(Mashenka::TimeStep ts)
     if (m_Time - m_LastRewardTime > m_RewardSpawnInterval)
     {
         m_LastRewardTime = m_Time;
-        GenerateRewards();
+        if (m_Rewards.size() <= MAX_REWARD_COUNT)
+        {
+            GenerateRewards();
+        }
     }
 
     // Generate obstacle check
@@ -40,11 +43,20 @@ void Level::OnUpdate(Mashenka::TimeStep ts)
         m_LastObstacleSpawnTime = m_Time;
         GenerateObstacles();
     }
+
+    //TODO: the interval for the reward should be longer and the obstacle should be shorter based on time
+    
 }
 
 void Level::OnRender()
 {
-    m_Background.OnRender(m_Player.GetPosition());
+    // update background on interval
+    if (m_Time - m_LastBackgroundRefresh > m_backgroundRefreshInterval)
+    {
+        m_LastBackgroundRefresh = m_Time;
+        m_BackgroundPosition = m_Player.GetPosition();
+    }
+    m_Background.OnRender(m_BackgroundPosition);
 
     for (auto& element : m_Obstacles)
     {
@@ -59,7 +71,8 @@ void Level::OnRender()
 
 void Level::OnImGuiRender()
 {
-    //Most UI will be handled in GameLayer
+    // game hud should be handled in game layer or a hud manager
+    // this is for debug only
 }
 
 void Level::Reset()
@@ -191,4 +204,15 @@ void Level::GameOver()
 {
     m_GameOver = true;
     MK_CORE_WARN("Game Over!");
+}
+
+bool Level::IsPositionOutofView(const glm::vec2& position, const glm::vec2& playerPosition, const glm::vec4& projection)
+{
+    // check if given position is within the player view or not
+    float leftBoundary = playerPosition.x - projection[2] / 2.0f;
+    float rightBoundary = playerPosition.x + projection[2] / 2.0f;
+    float topBoundary = playerPosition.y + projection[3] / 2.0f;
+    float bottomBoundary = playerPosition.y - projection[3] / 2.0f;
+    return position.x < leftBoundary || position.x > rightBoundary || position.y < bottomBoundary || position.y > topBoundary;
+    
 }

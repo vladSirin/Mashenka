@@ -24,8 +24,11 @@ public:
 
     bool IsGameOver() const {return m_GameOver; }
     void Reset();
+    bool IsPositionOutofView(const glm::vec2& position, const glm::vec2& playerPosition, const glm::vec4& projection);
 
     Player& GetPlayer() {return m_Player;}
+    const std::vector<Reward>& GetRewards() {return m_Rewards;}
+    const std::vector<Obstacle>& GetObstacles() {return m_Obstacles;}
     void SetGameTime(float time) {m_Time = time;}
 
 private:
@@ -37,6 +40,7 @@ private:
     void GenerateRewards();
     void CreateReward(glm::vec2 position, glm::vec2 scale={0.2f, 0.2f});
     void GameOver();
+
 
 private:
     Player m_Player;
@@ -54,6 +58,14 @@ private:
     // obstacle time control
     float m_ObstacleSpawnInterval = 2.0f;
     float m_LastObstacleSpawnTime = 0.0f;
+
+    // Max reward count
+    static constexpr int MAX_REWARD_COUNT = 3;
+
     
+    // background
+    float m_backgroundRefreshInterval = 0.5f;
+    float m_LastBackgroundRefresh = 0.0f;
+    glm::vec2 m_BackgroundPosition = {0.0f, 0.0f};
     Background m_Background; // for auto-scaling background in the level
 };

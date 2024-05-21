@@ -7,8 +7,8 @@
 
 enum Direction : int
 {
-    UP = 0,
-    DOWN = 180,
+    UP = 180,
+    DOWN = 0,
     LEFT = 90,
     RIGHT = 270,
 };

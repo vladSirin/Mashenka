@@ -8,7 +8,7 @@
 class Background
 {
 public:
-    Background(float scale = 1.0f, float baseTileSize =1.0f, float screenWidth = 1280.0f, float screenHeight = 720.0f);
+    Background(float scale = 4.0f, float baseTileSize =1.0f, float screenWidth = 1280.0f, float screenHeight = 720.0f);
 
     void LoadAssets();
     void OnUpdate(Mashenka::TimeStep ts);

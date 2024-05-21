@@ -112,10 +112,10 @@ void Player::UpdateVelocity()
     switch (m_Direction)
     {
     case Direction::UP:
-        m_Velocity = {0.0f, m_DirectionalSpeed * 1.0f};
+        m_Velocity = {0.0f, m_DirectionalSpeed * -1.0f};
         break;
     case Direction::DOWN:
-        m_Velocity = {0.0f, m_DirectionalSpeed * -1.0f};
+        m_Velocity = {0.0f, m_DirectionalSpeed * 1.0f};
         break;
     case Direction::LEFT:
         m_Velocity = {m_DirectionalSpeed * -1.0f, 0.0f};

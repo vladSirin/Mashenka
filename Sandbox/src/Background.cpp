@@ -11,7 +11,7 @@ Background::Background(float scale, float baseTileSize, float screenWidth, float
 
 void Background::LoadAssets()
 {
-    m_BGTileTexture = Texture2D::Create("assets/textures/Checkerboard.png");
+    m_BGTileTexture = Texture2D::Create("assets/textures/bg_space_dalle.png");
 }
 
 void Background::OnUpdate(Mashenka::TimeStep ts)
