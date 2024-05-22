@@ -124,23 +124,17 @@ bool Level::RewardCollideTest()
 
 void Level::GenerateObstacles()
 {
-    // Calculate the spawn bounds
-    float spawnMargin = 5.0f;
-    glm::vec2 spawnTopLeft = {
-        m_Player.GetPosition().x - m_Background.GetAspectRatio() / 2.0f - spawnMargin,
-        m_Player.GetPosition().y + 1.0f + spawnMargin
-    };
-    glm::vec2 spawnBottomRight = {
-        m_Player.GetPosition().x + m_Background.GetAspectRatio() / 2.0f + spawnMargin,
-        m_Player.GetPosition().y - 1.0f - spawnMargin
-    };
-    glm::vec2 spawnPosition = {
-        Random::Range(spawnTopLeft.x, spawnBottomRight.x),
-        Random::Range(spawnTopLeft.y, spawnBottomRight.y)
-    };
+    
+    // Raise num based on player score
+    int obstacleNum = GetPlayerScore() % 3 + 1 + int(GetPlayerScore() / 3);
 
-    CreateObstacle(spawnPosition, Random::Range(0.0f, 360.0f));
-
+    // Create obstacles
+    for (int i = 0; i < obstacleNum; ++i)
+    {
+        glm::vec2 spawnPosition = CalculateObstcaleSpawnPosition();
+        CreateObstacle(spawnPosition, Random::Range(0.0f, 360.0f));
+    }
+    
     // clean up obstacles that are too far away from the player position
     for (auto it = m_Obstacles.begin(); it != m_Obstacles.end();)
     {
@@ -172,25 +166,16 @@ void Level::GenerateRewards()
                                                                   distanceFromPlayer * glm::sin(angle));
 
     // check if too close to any obstacle, if so retry
-    if (ObstacleCollideTest())
+    for (auto& obstacle : m_Obstacles)
     {
-        GenerateRewards();
-        return;
+        if (abs(obstacle.GetPosition().x - rewardPosition.x) < 1.0f && abs(obstacle.GetPosition().y - rewardPosition.y) < 1.0f)
+        {
+            GenerateRewards();
+            return;
+        }
     }
     
     CreateReward(rewardPosition);
-    // clean up rewards that are too far away from the player position or colliding with the obstacle
-    for (auto it = m_Rewards.begin(); it != m_Rewards.end();)
-    {
-        if (abs(it->GetPosition().x - m_Player.GetPosition().x) > m_Background.GetAspectRatio() * 3.0f)
-        {
-            it = m_Rewards.erase(it);
-        }
-        else
-        {
-            ++it;
-        }
-    }
 }
 
 void Level::CreateReward(glm::vec2 position, glm::vec2 scale)
@@ -204,6 +189,24 @@ void Level::GameOver()
 {
     m_GameOver = true;
     MK_CORE_WARN("Game Over!");
+}
+
+glm::vec2 Level::CalculateObstcaleSpawnPosition(float spawnMargin)
+{
+    glm::vec2 spawnTopLeft = {
+        m_Player.GetPosition().x - m_Background.GetAspectRatio() / 2.0f - spawnMargin,
+        m_Player.GetPosition().y + 1.0f + spawnMargin
+    };
+    glm::vec2 spawnBottomRight = {
+        m_Player.GetPosition().x + m_Background.GetAspectRatio() / 2.0f + spawnMargin,
+        m_Player.GetPosition().y - 1.0f - spawnMargin
+    };
+    glm::vec2 spawnPosition = {
+        Random::Range(spawnTopLeft.x, spawnBottomRight.x),
+        Random::Range(spawnTopLeft.y, spawnBottomRight.y)
+    };
+
+    return spawnPosition;
 }
 
 bool Level::IsPositionOutofView(const glm::vec2& position, const glm::vec2& playerPosition, const glm::vec4& projection)

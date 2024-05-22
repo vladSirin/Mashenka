@@ -28,6 +28,7 @@ public:
     glm::vec2 GetPosition() const { return m_Position; }
     AABB GetAABB() const { return m_AABB; }
     glm::vec2 GetVelocity() const { return m_Velocity; }
+    int GetBodySegmentCount() const { return m_BodySegments.size(); }
 
     void Reset();
     void RewardHit();

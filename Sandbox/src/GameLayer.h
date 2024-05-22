@@ -51,5 +51,5 @@ private:
 
 
     static constexpr float CAMERA_PROJECTION[4] = {-1280.0f / 720.0f, 1280.0f / 720.0f, 1.0f, -1.0f};
-    //static constexpr float CAMERA_PROJECTION[4] = {16.0f / 9.0f, 16.0f / 9.0f, -1.0f, 1.0f};
+    //static constexpr float CAMERA_PROJECTION[4] = {-16.0f, 16.0f, 9.0f, -9.0f};
 };

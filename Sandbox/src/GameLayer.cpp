@@ -88,15 +88,14 @@ void GameLayer::OnImGuiRender()
 {
     Layer::OnImGuiRender();
 
-    //TODO: add a ui to indicate the next reward if outside of player view
-    ImGuiRenderRewardIndicator();
+    ImGuiRenderRewardIndicator(); //TODO： fix bug that sometimes does not show indicator
 
     {
         auto pos = ImGui::GetWindowPos();
-        pos.x += 50.0f;
-        pos.y += 50.0f;
+        pos.x += -50.0f;
+        pos.y += -50.0f;
         std::string scoreStr = std::string("FPS: ") + std::to_string(m_FPS);
-        ImGui::GetForegroundDrawList()->AddText(m_Font, 60.0f, pos, 0xFFFF0000
+        ImGui::GetForegroundDrawList()->AddText(m_Font, 20.0f, pos, 0xFF808080
                                                 , scoreStr.c_str());
     }
 
@@ -104,8 +103,7 @@ void GameLayer::OnImGuiRender()
     {
     case GameState::Play:
         {
-            //TODO: display the player score when playing the game
-            uint32_t playerScore = 10;
+            uint32_t playerScore = m_Level.GetPlayerScore();
             std::string scoreStr = std::string("Score: ") + std::to_string(playerScore);
             ImGui::GetForegroundDrawList()->AddText(m_Font, 60.0f, ImGui::GetWindowPos(), 0xFFFF0000
                                                     , scoreStr.c_str());
@@ -117,8 +115,8 @@ void GameLayer::OnImGuiRender()
             auto pos = ImGui::GetWindowPos();
             auto width = Application::Get().GetWindow().GetWidth();
             auto height = Application::Get().GetWindow().GetHeight();
-            pos.x += width * 0.5f - 300.0f;
-            pos.y += 50.0f;
+            pos.x += width * 0.5 - 480.0f;
+            pos.y += height * 0.5;
             if (m_Blink)
                 ImGui::GetForegroundDrawList()->AddText(m_Font, 120.0f, pos, 0xFFFF0000
                                                         , "Press ENTER to Play!");
@@ -130,18 +128,16 @@ void GameLayer::OnImGuiRender()
             auto pos = ImGui::GetWindowPos();
             auto width = Application::Get().GetWindow().GetWidth();
             auto height = Application::Get().GetWindow().GetHeight();
-            pos.x += width * 0.5f - 300.0f;
-            pos.y += 50.0f;
+            pos.x += width * 0.5 - 560.0f;
+            pos.y += height * 0.2;
             if (m_Blink)
-                ImGui::GetForegroundDrawList()->AddText(m_Font, 120.0f, pos, 0xFFFF0000
-                                                        , "Press ENTER to Play!");
-
-            pos.x += 200.0f;
-            pos.y += 150.0f;
+                ImGui::GetForegroundDrawList()->AddText(m_Font, 80.0f, pos, 0xFF0000FF
+                                                        , "Game Over, Press Enter to Play Again!");
+            
             //TODO: display the player score when the game is over
-            uint32_t playerScore = 10;
-            std::string scoreStr = std::string("Score: ") + std::to_string(playerScore);
-            ImGui::GetForegroundDrawList()->AddText(m_Font, 20.0f, ImGui::GetWindowPos(), 0xFFFF0000
+            uint32_t playerScore = m_Level.GetPlayerScore();
+            std::string scoreStr = std::string("Final Score: ") + std::to_string(playerScore);
+            ImGui::GetForegroundDrawList()->AddText(m_Font, 80.0f, {pos.x, pos.y + 80.0f}, 0xFF0000FF
                                                     , scoreStr.c_str());
             break;
         }
@@ -168,6 +164,7 @@ bool GameLayer::OnEnterKeyPressed(KeyPressedEvent& e)
 bool GameLayer::OnWindowResized(WindowResizeEvent& e)
 {
     m_CameraController.OnEvent(e);
+    m_CameraController.GetCamera().SetProjection(-16.0f, 16.0f, 9.0f, -9.0f);
     return false;
 }
 

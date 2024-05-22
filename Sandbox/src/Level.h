@@ -31,6 +31,8 @@ public:
     const std::vector<Obstacle>& GetObstacles() {return m_Obstacles;}
     void SetGameTime(float time) {m_Time = time;}
 
+    int GetPlayerScore() const {return m_Player.GetBodySegmentCount() - 1; }
+
 private:
     bool ObstacleCollideTest();
     bool RewardCollideTest();
@@ -52,12 +54,13 @@ private:
     float m_Time = 0.0f;
     
     // Reward time control
-    float m_RewardSpawnInterval = 10.0f;
+    float m_RewardSpawnInterval = 8.0f;
     float m_LastRewardTime = 0.0f;
 
     // obstacle time control
     float m_ObstacleSpawnInterval = 2.0f;
     float m_LastObstacleSpawnTime = 0.0f;
+    glm::vec2 CalculateObstcaleSpawnPosition(float spawnMargin = 5.0f);
 
     // Max reward count
     static constexpr int MAX_REWARD_COUNT = 3;
