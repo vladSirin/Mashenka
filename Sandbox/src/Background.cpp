@@ -1,56 +1,56 @@
 ﻿#include "Background.h"
+#include "Mashenka.h"
 
 using namespace Mashenka;
 
-Background::Background(float scale, float baseTileSize, float screenWidth, float screenHeight)
-    : m_BaseTileSize(baseTileSize), m_Scale(scale), m_ScreenWidth(screenWidth), m_ScreenHeight(screenHeight)
-{
-    //
-}
-
-
-void Background::LoadAssets()
-{
-    m_BGTileTexture = Texture2D::Create("assets/textures/bg_space_dalle.png");
-}
-
-void Background::OnUpdate(Mashenka::TimeStep ts)
+BackgroundManager::BackgroundManager(float tileSize, const Mashenka::Ref<Mashenka::Texture2D>& texture) :
+    m_TileSize(tileSize),
+    m_Texture(texture),
+    m_LastPlayerPosition({0,0})
 {
 }
 
-void Background::OnRender(const glm::vec2& playerPosition) const
+void BackgroundManager::OnUpdate(const glm::vec2& playerPosition)
 {
-    //Render the background based on the current player position
-    //We need a 4x4 grid of tiles to cover the entire surrounding area
-    glm::vec2 topLeft = {playerPosition.x - 2.0f, playerPosition.y + 2.0f}; // top left corner of the grid
-
-    // Draw the tiles around the player
-    for (int i = 0; i < 5; ++i)
+    // check if player has moved enough to warrant loading new tiles
+    glm::vec2 delta = playerPosition - m_LastPlayerPosition;
+    if(glm::length(delta) > m_TileSize / 2.0f)
+        
     {
-        for (int j = 0; j < 5; ++j)
-        {
-            glm::vec2 tilePosition;
-            tilePosition.x = topLeft.x + 1.0f * i;
-            tilePosition.y = topLeft.y - 1.0f * j;
-            if (!((abs(tilePosition.x) == 2.0f && j != 0) || (abs(tilePosition.y) == 2.0f && i != 0)))
-            {
-                Renderer2D::DrawQuad({topLeft.x + 1.0f * i, topLeft.y - 1.0f * j, -0.1f}, m_Scale, m_BGTileTexture,
-                                     1.0f);
-            }
-        }
+        UpdateTiles(playerPosition);
+        m_LastPlayerPosition = playerPosition;
     }
 }
 
-void Background::OnEvent(Mashenka::Event& e)
+void BackgroundManager::OnRender() const
 {
-    EventDispatcher dispatcher(e);
-    dispatcher.Dispatch<WindowResizeEvent>(MK_BIND_EVENT_FN(Background::OnWindowResized));
+    for (const auto& tile : m_Tiles)
+    {
+        tile.OnRender();
+    }
 }
 
-// reset the screen size based on the new values
-bool Background::OnWindowResized(Mashenka::WindowResizeEvent& e)
+void BackgroundManager::AddTiles(const glm::vec2& tilePosition)
 {
-    m_ScreenHeight = (float)e.GetHeight();
-    m_ScreenWidth = (float)e.GetWidth();
-    return false;
+    m_Tiles.emplace_back(tilePosition, m_Texture, 1.0f);
+}
+
+void BackgroundManager::UpdateTiles(const glm::vec2& playerPosition)
+{
+    m_Tiles.clear();
+
+    int left = static_cast<int>(playerPosition.x / m_TileSize) - 3;
+    int right = static_cast<int>(playerPosition.x / m_TileSize) + 3;
+    int top = static_cast<int>(playerPosition.y / m_TileSize) - 3;
+    int bottom = static_cast<int>(playerPosition.y / m_TileSize) + 3;
+
+    for (int x=left; x<=right; ++x)
+    {
+        for (int y=top; y<=bottom; ++y)
+        {
+            glm::vec2 tilePos = glm::vec2(x * m_TileSize, y * m_TileSize);
+            AddTiles(tilePos);
+            MK_CORE_INFO("there are {0} tiles", m_Tiles.size());
+        }
+    }
 }

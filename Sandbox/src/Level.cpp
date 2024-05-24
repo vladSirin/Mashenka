@@ -10,7 +10,7 @@ using namespace Mashenka;
 void Level::Init()
 {
     m_Player.LoadAssets();
-    m_Background.LoadAssets();
+    m_BackgroundManager = Ref<BackgroundManager>(new BackgroundManager(1.0f, Texture2D::Create("assets/textures/bg_space_dalle.png.")));
     Reset();
 }
 
@@ -18,6 +18,9 @@ void Level::OnUpdate(Mashenka::TimeStep ts)
 {
     // Update Player
     m_Player.OnUpdate(ts);
+
+    // Update Background
+    m_BackgroundManager->OnUpdate(m_Player.GetPosition());
 
     // Check for collision
     if (ObstacleCollideTest())
@@ -43,21 +46,14 @@ void Level::OnUpdate(Mashenka::TimeStep ts)
         m_LastObstacleSpawnTime = m_Time;
         GenerateObstacles();
     }
-
-    //TODO: the interval for the reward should be longer and the obstacle should be shorter based on time
-    
 }
 
 void Level::OnRender()
 {
-    // update background on interval
-    if (m_Time - m_LastBackgroundRefresh > m_backgroundRefreshInterval)
-    {
-        m_LastBackgroundRefresh = m_Time;
-        m_BackgroundPosition = m_Player.GetPosition();
-    }
-    m_Background.OnRender(m_BackgroundPosition);
+    // render background
+    m_BackgroundManager->OnRender();
 
+    // render obstacles and rewards
     for (auto& element : m_Obstacles)
     {
         element.Render();
@@ -66,6 +62,8 @@ void Level::OnRender()
     {
         element.Render();
     }
+
+    // render player
     m_Player.OnRender();
 }
 
@@ -138,7 +136,7 @@ void Level::GenerateObstacles()
     // clean up obstacles that are too far away from the player position
     for (auto it = m_Obstacles.begin(); it != m_Obstacles.end();)
     {
-        if (abs(it->GetPosition().x - m_Player.GetPosition().x) > m_Background.GetAspectRatio() * 3.0f)
+        if (abs(it->GetPosition().x - m_Player.GetPosition().x) > m_CameraProjection.x * 3.0f)
         {
             it = m_Obstacles.erase(it);
         }
@@ -194,11 +192,11 @@ void Level::GameOver()
 glm::vec2 Level::CalculateObstcaleSpawnPosition(float spawnMargin)
 {
     glm::vec2 spawnTopLeft = {
-        m_Player.GetPosition().x - m_Background.GetAspectRatio() / 2.0f - spawnMargin,
+        m_Player.GetPosition().x - m_CameraProjection.x / 2.0f - spawnMargin,
         m_Player.GetPosition().y + 1.0f + spawnMargin
     };
     glm::vec2 spawnBottomRight = {
-        m_Player.GetPosition().x + m_Background.GetAspectRatio() / 2.0f + spawnMargin,
+        m_Player.GetPosition().x + m_CameraProjection.x  / 2.0f + spawnMargin,
         m_Player.GetPosition().y - 1.0f - spawnMargin
     };
     glm::vec2 spawnPosition = {

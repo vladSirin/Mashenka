@@ -30,6 +30,7 @@ public:
     const std::vector<Reward>& GetRewards() {return m_Rewards;}
     const std::vector<Obstacle>& GetObstacles() {return m_Obstacles;}
     void SetGameTime(float time) {m_Time = time;}
+    void SetCameraProjection(const glm::vec4& projection) {m_CameraProjection = projection;}
 
     int GetPlayerScore() const {return m_Player.GetBodySegmentCount() - 1; }
 
@@ -50,6 +51,12 @@ private:
     std::vector<Obstacle> m_Obstacles;
     std::vector<Reward> m_Rewards;
 
+    // Background
+    Mashenka::Ref<BackgroundManager> m_BackgroundManager;
+
+    // camera projection
+    glm::vec4 m_CameraProjection = {0.0f, 0.0f, 0.0f, 0.0f};
+
     // Game time control
     float m_Time = 0.0f;
     
@@ -64,11 +71,4 @@ private:
 
     // Max reward count
     static constexpr int MAX_REWARD_COUNT = 3;
-
-    
-    // background
-    float m_backgroundRefreshInterval = 0.5f;
-    float m_LastBackgroundRefresh = 0.0f;
-    glm::vec2 m_BackgroundPosition = {0.0f, 0.0f};
-    Background m_Background; // for auto-scaling background in the level
 };

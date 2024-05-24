@@ -5,25 +5,46 @@
 
 #include <glm/glm.hpp>
 
-class Background
+class BackgroundTile
 {
 public:
-    Background(float scale = 4.0f, float baseTileSize =1.0f, float screenWidth = 1280.0f, float screenHeight = 720.0f);
+    BackgroundTile(const glm::vec2& position, const Mashenka::Ref<Mashenka::Texture2D>& texture,
+                   float scale = 1.0f) : m_Position(position), m_Texture(texture), m_Scale(scale)
+    {
+    }
 
-    void LoadAssets();
-    void OnUpdate(Mashenka::TimeStep ts);
-    void OnRender(const glm::vec2& playerPosition) const;
+    void OnRender() const
+    {
+        Mashenka::Renderer2D::DrawQuad(m_Position, glm::vec2(m_Scale), m_Texture, 1.0f);
+    }
 
-    void OnEvent(Mashenka::Event& e);
-    bool OnWindowResized(Mashenka::WindowResizeEvent& e);
-    float GetAspectRatio() const {return m_ScreenWidth / m_ScreenHeight;}
+    glm::vec2 GetPosition() const
+    {
+        return m_Position;
+    }
 
 private:
-    Mashenka::Ref<Mashenka::Texture2D> m_BGTileTexture;
-    float m_BaseTileSize;
-    glm::vec2 m_Scale;
-    float m_ScreenWidth;
-    float m_ScreenHeight;
+    glm::vec2 m_Position;
+    Mashenka::Ref<Mashenka::Texture2D> m_Texture;
+    float m_Scale;
+};
+
+class BackgroundManager
+{
+public:
+    BackgroundManager(float tileSize, const Mashenka::Ref<Mashenka::Texture2D>& texture);
+    void OnUpdate(const glm::vec2& playerPosition);
+    void OnRender() const;
+
+private:
+    std::vector<BackgroundTile> m_Tiles;
+    float m_TileSize;
+    Mashenka::Ref<Mashenka::Texture2D> m_Texture;
+    glm::vec2 m_LastPlayerPosition;
+
+    void AddTiles(const glm::vec2& tilePosition);
+    void UpdateTiles(const glm::vec2& playerPosition);
+    
 };
 
 #endif // BACKGROUND_H

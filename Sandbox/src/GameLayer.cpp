@@ -11,7 +11,6 @@ GameLayer::GameLayer() : Layer("GameLayer"), m_CameraController(1280.0f / 720.0f
 
     //TODO: remove this when test is over.
     m_CameraController.GetCamera().SetProjection(CAMERA_PROJECTION[0], CAMERA_PROJECTION[1], CAMERA_PROJECTION[2], CAMERA_PROJECTION[3]);
-    
 }
 
 void GameLayer::OnAttach()
@@ -24,6 +23,7 @@ void GameLayer::OnAttach()
 
     // Init Level
     m_Level.Init();
+    m_Level.SetCameraProjection(CAMERA_PROJECTION);
 }
 
 void GameLayer::OnDetach()

@@ -31,7 +31,7 @@ private:
     float m_Time = 0.0f;
     bool m_Blink = false;
     Level m_Level;
-    glm::vec2 m_PlayerPos;
+    glm::vec2 m_PlayerPos = {0.0f, 0.0f};
 
     enum class GameState
     {
@@ -50,6 +50,6 @@ private:
     void ImGuiRenderArrow(const glm::vec2& playerPosition, const glm::vec2& rewardPosition);
 
 
-    static constexpr float CAMERA_PROJECTION[4] = {-1280.0f / 720.0f, 1280.0f / 720.0f, 1.0f, -1.0f};
-    //static constexpr float CAMERA_PROJECTION[4] = {-16.0f, 16.0f, 9.0f, -9.0f};
+    glm::vec4 CAMERA_PROJECTION = {-1280.0f / 720.0f, 1280.0f / 720.0f, 1.0f, -1.0f};
+    //glm::vec4 CAMERA_PROJECTION = {-16.0f, 16.0f, 9.0f, -9.0f};
 };
