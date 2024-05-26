@@ -14,7 +14,7 @@ public:
         //other types
     };
 
-    Obstacle(Type type, const glm::vec2& position, const glm::vec2& scale = {1.0f, 1.0f}, float rotation = 0.0f) :
+    Obstacle(Type type, const glm::vec3& position, const glm::vec2& scale = {1.0f, 1.0f}, float rotation = 0.0f) :
         m_Type(type), m_Position(position), m_Scale(scale), m_Rotation(rotation)
     {
     }
@@ -36,7 +36,7 @@ public:
 
 private:
     Type m_Type;
-    glm::vec2 m_Position;
+    glm::vec3 m_Position;
     glm::vec2 m_Scale;
     float m_Rotation;
     Mashenka::Ref<Mashenka::Texture2D> m_Texture;

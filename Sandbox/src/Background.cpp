@@ -50,7 +50,7 @@ void BackgroundManager::UpdateTiles(const glm::vec2& playerPosition)
         {
             glm::vec2 tilePos = glm::vec2(x * m_TileSize, y * m_TileSize);
             AddTiles(tilePos);
-            MK_CORE_INFO("there are {0} tiles", m_Tiles.size());
+            // MK_CORE_INFO("there are {0} tiles", m_Tiles.size());
         }
     }
 }

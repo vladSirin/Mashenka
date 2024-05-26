@@ -56,6 +56,7 @@ void Level::OnRender()
     // render obstacles and rewards
     for (auto& element : m_Obstacles)
     {
+        MK_CORE_INFO("Obstacle: {0}, {1}", element.GetPosition().x, element.GetPosition().y);
         element.Render();
     }
     for (auto& element : m_Rewards)
@@ -129,14 +130,14 @@ void Level::GenerateObstacles()
     // Create obstacles
     for (int i = 0; i < obstacleNum; ++i)
     {
-        glm::vec2 spawnPosition = CalculateObstcaleSpawnPosition();
+        glm::vec3 spawnPosition = CalculateObstcaleSpawnPosition();
         CreateObstacle(spawnPosition, Random::Range(0.0f, 360.0f));
     }
     
     // clean up obstacles that are too far away from the player position
     for (auto it = m_Obstacles.begin(); it != m_Obstacles.end();)
     {
-        if (abs(it->GetPosition().x - m_Player.GetPosition().x) > m_CameraProjection.x * 3.0f)
+        if (abs(it->GetPosition().x - m_Player.GetPosition().x) > abs(m_CameraProjection.x) * 3.0f)
         {
             it = m_Obstacles.erase(it);
         }
@@ -148,7 +149,7 @@ void Level::GenerateObstacles()
     
 }
 
-void Level::CreateObstacle(glm::vec2 position, float angle, glm::vec2 scale)
+void Level::CreateObstacle(glm::vec3 position, float angle, glm::vec2 scale)
 {
     auto obstacle = Obstacle(Obstacle::Type::Triangle, position, scale, angle);
     obstacle.Init();
@@ -189,7 +190,7 @@ void Level::GameOver()
     MK_CORE_WARN("Game Over!");
 }
 
-glm::vec2 Level::CalculateObstcaleSpawnPosition(float spawnMargin)
+glm::vec3 Level::CalculateObstcaleSpawnPosition(float spawnMargin)
 {
     glm::vec2 spawnTopLeft = {
         m_Player.GetPosition().x - m_CameraProjection.x / 2.0f - spawnMargin,
@@ -199,9 +200,10 @@ glm::vec2 Level::CalculateObstcaleSpawnPosition(float spawnMargin)
         m_Player.GetPosition().x + m_CameraProjection.x  / 2.0f + spawnMargin,
         m_Player.GetPosition().y - 1.0f - spawnMargin
     };
-    glm::vec2 spawnPosition = {
+    glm::vec3 spawnPosition = {
         Random::Range(spawnTopLeft.x, spawnBottomRight.x),
-        Random::Range(spawnTopLeft.y, spawnBottomRight.y)
+        Random::Range(spawnTopLeft.y, spawnBottomRight.y),
+        0.5f
     };
 
     return spawnPosition;

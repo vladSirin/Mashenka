@@ -15,7 +15,7 @@ public:
 
     void OnRender() const
     {
-        Mashenka::Renderer2D::DrawQuad(m_Position, glm::vec2(m_Scale), m_Texture, 1.0f);
+        Mashenka::Renderer2D::DrawQuad({m_Position.x, m_Position.y, 0.0f}, glm::vec2(m_Scale), m_Texture, 1.0f);
     }
 
     glm::vec2 GetPosition() const

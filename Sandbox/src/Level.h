@@ -39,7 +39,7 @@ private:
     bool RewardCollideTest();
 
     void GenerateObstacles();
-    void CreateObstacle(glm::vec2 position, float angle, glm::vec2 scale={1.0f, 1.0f});
+    void CreateObstacle(glm::vec3 position, float angle, glm::vec2 scale={1.0f, 1.0f});
     void GenerateRewards();
     void CreateReward(glm::vec2 position, glm::vec2 scale={0.2f, 0.2f});
     void GameOver();
@@ -67,7 +67,7 @@ private:
     // obstacle time control
     float m_ObstacleSpawnInterval = 2.0f;
     float m_LastObstacleSpawnTime = 0.0f;
-    glm::vec2 CalculateObstcaleSpawnPosition(float spawnMargin = 5.0f);
+    glm::vec3 CalculateObstcaleSpawnPosition(float spawnMargin = 5.0f);
 
     // Max reward count
     static constexpr int MAX_REWARD_COUNT = 3;
