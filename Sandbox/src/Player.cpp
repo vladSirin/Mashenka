@@ -36,24 +36,22 @@ void Player::OnUpdate(Mashenka::TimeStep ts)
     // Update body segments positions based on the queued positions
     for (size_t i = 1; i < m_BodySegments.size(); ++i)
     {
-        if (positionsQueue.size() > i * updateDelay * m_SegmentSpaceScale)
+        if (positionsQueue.size() > i * m_SegmentSpaceScale)
         {
-            m_BodySegments[i] = positionsQueue[i * updateDelay * m_SegmentSpaceScale];
+            m_BodySegments[i] = positionsQueue[i *  m_SegmentSpaceScale];
         }
     }
 
-    // queue the position every updateDelay frames
-    if (++frameCounter % updateDelay == 0)
+
+    // Add the new head position to the front of the queue
+    positionsQueue.push_front(m_BodySegments[0]);
+
+    // Ensure the queue does not grow indefinitely
+    if (positionsQueue.size() > m_BodySegments.size() * m_SegmentSpaceScale)
     {
-        // Add the new head position to the front of the queue
-        positionsQueue.push_front(m_BodySegments[0]);
-
-        // Ensure the queue does not grow indefinitely
-        if (positionsQueue.size() > m_BodySegments.size() * updateDelay * m_SegmentSpaceScale)
-        {
-            positionsQueue.pop_back();
-        }
+        positionsQueue.pop_back();
     }
+    
 }
 
 void Player::OnRender()

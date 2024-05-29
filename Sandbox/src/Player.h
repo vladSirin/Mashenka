@@ -52,7 +52,5 @@ private:
 
     // used for updating the body segments of the snake
     std::deque<glm::vec2> positionsQueue; // saving a queue of positions the head went based on the update delay
-    int updateDelay = 3;
-    int m_SegmentSpaceScale = 4;
-    int frameCounter = 0;
+    int m_SegmentSpaceScale = 5;
 };
