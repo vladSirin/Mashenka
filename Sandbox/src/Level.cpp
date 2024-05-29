@@ -56,7 +56,7 @@ void Level::OnRender()
     // render obstacles and rewards
     for (auto& element : m_Obstacles)
     {
-        MK_CORE_INFO("Obstacle: {0}, {1}", element.GetPosition().x, element.GetPosition().y);
+        // MK_CORE_INFO("Obstacle: {0}, {1}", element.GetPosition().x, element.GetPosition().y);
         element.Render();
     }
     for (auto& element : m_Rewards)

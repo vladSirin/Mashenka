@@ -10,7 +10,8 @@ GameLayer::GameLayer() : Layer("GameLayer"), m_CameraController(1280.0f / 720.0f
      */
 
     //TODO: remove this when test is over.
-    m_CameraController.GetCamera().SetProjection(CAMERA_PROJECTION[0], CAMERA_PROJECTION[1], CAMERA_PROJECTION[2], CAMERA_PROJECTION[3]);
+    m_CameraController.GetCamera().SetProjection(CAMERA_PROJECTION[0], CAMERA_PROJECTION[1], CAMERA_PROJECTION[2],
+                                                 CAMERA_PROJECTION[3]);
 }
 
 void GameLayer::OnAttach()
@@ -87,13 +88,13 @@ void GameLayer::OnUpdate(TimeStep ts)
 void GameLayer::OnImGuiRender()
 {
     Layer::OnImGuiRender();
-
+    
     ImGuiRenderRewardIndicator(); //TODO： fix bug that sometimes does not show indicator
 
     {
         auto pos = ImGui::GetWindowPos();
-        pos.x += -50.0f;
-        pos.y += -50.0f;
+        pos.x += 50.0f;
+        pos.y += 50.0f;
         std::string scoreStr = std::string("FPS: ") + std::to_string(m_FPS);
         ImGui::GetForegroundDrawList()->AddText(m_Font, 20.0f, pos, 0xFF808080
                                                 , scoreStr.c_str());
@@ -105,7 +106,11 @@ void GameLayer::OnImGuiRender()
         {
             uint32_t playerScore = m_Level.GetPlayerScore();
             std::string scoreStr = std::string("Score: ") + std::to_string(playerScore);
-            ImGui::GetForegroundDrawList()->AddText(m_Font, 60.0f, ImGui::GetWindowPos(), 0xFFFF0000
+
+            auto pos = ImGui::GetWindowPos();
+            pos.x += 100.0f;
+            pos.y += 100.0f;
+            ImGui::GetForegroundDrawList()->AddText(m_Font, 60.0f, pos, 0xFFFF0000
                                                     , scoreStr.c_str());
             break;
         }
@@ -133,7 +138,7 @@ void GameLayer::OnImGuiRender()
             if (m_Blink)
                 ImGui::GetForegroundDrawList()->AddText(m_Font, 80.0f, pos, 0xFF0000FF
                                                         , "Game Over, Press Enter to Play Again!");
-            
+
             //TODO: display the player score when the game is over
             uint32_t playerScore = m_Level.GetPlayerScore();
             std::string scoreStr = std::string("Final Score: ") + std::to_string(playerScore);
@@ -178,10 +183,11 @@ void GameLayer::ImGuiRenderRewardIndicator()
     for (auto& reward : m_Level.GetRewards())
     {
         if (m_Level.IsPositionOutofView(reward.GetPosition(), m_Level.GetPlayer().GetPosition(), {
-                                             CAMERA_PROJECTION[0], CAMERA_PROJECTION[1], CAMERA_PROJECTION[2],
-                                             CAMERA_PROJECTION[3]
-                                         }))
+                                            CAMERA_PROJECTION[0], CAMERA_PROJECTION[1], CAMERA_PROJECTION[2],
+                                            CAMERA_PROJECTION[3]
+                                        }))
         {
+            // MK_CORE_INFO("Reward Position: {0}, {1}, Out of View", reward.GetPosition().x, reward.GetPosition().y);
             //DRAW ARROW
             ImGuiRenderArrow(m_Level.GetPlayer().GetPosition(), reward.GetPosition());
         }
@@ -189,7 +195,8 @@ void GameLayer::ImGuiRenderRewardIndicator()
 }
 
 
-void GameLayer::DrawArrow(ImDrawList* draw_list, const ImVec2& start, float angle, float arrow_size, ImU32 color) {
+void GameLayer::DrawArrow(ImDrawList* draw_list, const ImVec2& start, float angle, float arrow_size, ImU32 color)
+{
     ImVec2 direction = ImVec2(cos(angle), sin(angle));
     ImVec2 perp = ImVec2(-direction.y, direction.x);
 
@@ -202,9 +209,8 @@ void GameLayer::DrawArrow(ImDrawList* draw_list, const ImVec2& start, float angl
     draw_list->AddTriangleFilled(arrow_tip, arrow_base1, arrow_base2, color);
 }
 
-void GameLayer::ImGuiRenderArrow(const glm::vec2& playerPosition, const glm::vec2& rewardPosition) {
-
-
+void GameLayer::ImGuiRenderArrow(const glm::vec2& playerPosition, const glm::vec2& rewardPosition)
+{
     // Get the draw list
     ImDrawList* draw_list = ImGui::GetForegroundDrawList();
 
@@ -225,39 +231,50 @@ void GameLayer::ImGuiRenderArrow(const glm::vec2& playerPosition, const glm::vec
     // Draw the arrow using the color red
     ImU32 colorRed = IM_COL32(255, 0, 0, 255); // Fully opaque red
     DrawArrow(draw_list, arrowPos, angle, 20.0f, colorRed);
-
 }
 
-glm::vec2 GameLayer::CalculateDirection(const glm::vec2& from, const glm::vec2& to) {
+glm::vec2 GameLayer::CalculateDirection(const glm::vec2& from, const glm::vec2& to)
+{
     glm::vec2 direction = to - from;
     return glm::normalize(direction);
 }
 
-ImVec2 GameLayer::CalculateArrowPosition(const ImVec2& windowSize, const ImVec2& center, const glm::vec2& direction) {
+ImVec2 GameLayer::CalculateArrowPosition(const ImVec2& windowSize, const ImVec2& center, const glm::vec2& direction)
+{
+    
     ImVec2 edgePosition = center;
 
     // Determine which edge of the window to place the arrow
-    if (fabs(direction.x) > fabs(direction.y)) {
+    if (fabs(direction.x) > fabs(direction.y))
+    {
         // Place on left or right edge
-        if (direction.x > 0) {
-            edgePosition.x = windowSize.x - 20.0f; // Right edge
-        } else {
-            edgePosition.x = 20.0f; // Left edge
+        if (direction.x > 0)
+        {
+            edgePosition.x += (windowSize.x / 2 - 20.0f); // Right edge, this is a magic fix, not sure why
+        }
+        else
+        {
+            edgePosition.x -= windowSize.x / 2 - 20.0f; // Left edge
         }
         edgePosition.y = center.y + direction.y * (windowSize.x / 2.0f - 20.0f) / fabs(direction.x);
-    } else {
+    }
+    else
+    {
         // Place on top or bottom edge
-        if (direction.y > 0) {
-            edgePosition.y =  windowSize.y -20.0f; // Bottom edge
-        } else {
-            edgePosition.y = 20.0f; // Top edge
+        if (direction.y > 0)
+        {
+            edgePosition.y += windowSize.y / 2 - 20.0f; // Bottom edge, this is a magic fix, not sure why
+        }
+        else
+        {
+            edgePosition.y -= windowSize.y / 2 - 20.0f; // Top edge
         }
         edgePosition.x = center.x + direction.x * (windowSize.y / 2.0f - 20.0f) / fabs(direction.y);
     }
 
     // Ensure the arrow stays within the window bounds
-    edgePosition.x = glm::clamp(edgePosition.x, 20.0f, windowSize.x - 20.0f);
-    edgePosition.y = glm::clamp(edgePosition.y, 20.0f, windowSize.y - 20.0f);
+    edgePosition.x = glm::clamp(edgePosition.x, center.x - windowSize.x / 2.0f + 20.0f, center.x + windowSize.x / 2.0f - 20.0f);
+    edgePosition.y = glm::clamp(edgePosition.y, center.y - windowSize.y / 2.0f + 20.0f, center.y + windowSize.y / 2.0f - 20.0f);
 
     return edgePosition;
 }
