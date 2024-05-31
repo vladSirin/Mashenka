@@ -35,7 +35,7 @@ public:
 
 private:
     std::vector<glm::vec2> m_BodySegments; // Store the body segments positions
-    inline static constexpr float DEFAULT_DIRECTIONAL_SPEED = 3.0f;
+    inline static constexpr float DEFAULT_DIRECTIONAL_SPEED = 1.5f;
     float m_DirectionalSpeed = DEFAULT_DIRECTIONAL_SPEED; //directional speed
     glm::vec2 m_Position = {-1.0f, 0.0f};
     glm::vec2 m_Velocity = {0.0f, 0.0f}; //this is updated based on the direction and m_Speed
@@ -52,5 +52,5 @@ private:
 
     // used for updating the body segments of the snake
     std::deque<glm::vec2> positionsQueue; // saving a queue of positions the head went based on the update delay
-    int m_SegmentSpaceScale = 5;
+    int m_SegmentSpaceScale = 10;
 };

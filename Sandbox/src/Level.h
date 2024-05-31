@@ -67,7 +67,7 @@ private:
     // obstacle time control
     float m_ObstacleSpawnInterval = 2.0f;
     float m_LastObstacleSpawnTime = 0.0f;
-    glm::vec3 CalculateObstcaleSpawnPosition(float spawnMargin = 5.0f);
+    glm::vec3 CalculateObstcaleSpawnPosition(float spawnMargin = 1.0f);
 
     // Max reward count
     static constexpr int MAX_REWARD_COUNT = 3;

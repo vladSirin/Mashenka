@@ -10,7 +10,8 @@ using namespace Mashenka;
 void Level::Init()
 {
     m_Player.LoadAssets();
-    m_BackgroundManager = Ref<BackgroundManager>(new BackgroundManager(1.0f, Texture2D::Create("assets/textures/bg_space_dalle.png.")));
+    m_BackgroundManager = Ref<BackgroundManager>(
+        new BackgroundManager(1.0f, Texture2D::Create("assets/textures/bg_space_dalle.png.")));
     Reset();
 }
 
@@ -88,7 +89,7 @@ bool Level::ObstacleCollideTest()
 {
     for (auto& obstacle : m_Obstacles)
     {
-        bool collision =  m_Player.GetAABB().Intersects(obstacle.GetAABB());
+        bool collision = m_Player.GetAABB().Intersects(obstacle.GetAABB());
 
         if (collision)
         {
@@ -123,7 +124,6 @@ bool Level::RewardCollideTest()
 
 void Level::GenerateObstacles()
 {
-    
     // Raise num based on player score
     int obstacleNum = GetPlayerScore() % 3 + 1 + int(GetPlayerScore() / 3);
 
@@ -133,7 +133,7 @@ void Level::GenerateObstacles()
         glm::vec3 spawnPosition = CalculateObstcaleSpawnPosition();
         CreateObstacle(spawnPosition, Random::Range(0.0f, 360.0f));
     }
-    
+
     // clean up obstacles that are too far away from the player position
     for (auto it = m_Obstacles.begin(); it != m_Obstacles.end();)
     {
@@ -146,7 +146,6 @@ void Level::GenerateObstacles()
             ++it;
         }
     }
-    
 }
 
 void Level::CreateObstacle(glm::vec3 position, float angle, glm::vec2 scale)
@@ -158,7 +157,7 @@ void Level::CreateObstacle(glm::vec3 position, float angle, glm::vec2 scale)
 
 void Level::GenerateRewards()
 {
-    float distanceFromPlayer = Random::Float() * 2.5f + 1.0f; 
+    float distanceFromPlayer = Random::Float() * 2.5f + 1.0f;
     float angle = Random::Float() * 2.0f * glm::pi<float>();
 
     glm::vec2 rewardPosition = m_Player.GetPosition() + glm::vec2(distanceFromPlayer * glm::cos(angle),
@@ -167,13 +166,14 @@ void Level::GenerateRewards()
     // check if too close to any obstacle, if so retry
     for (auto& obstacle : m_Obstacles)
     {
-        if (abs(obstacle.GetPosition().x - rewardPosition.x) < 1.0f && abs(obstacle.GetPosition().y - rewardPosition.y) < 1.0f)
+        if (abs(obstacle.GetPosition().x - rewardPosition.x) < 1.0f && abs(obstacle.GetPosition().y - rewardPosition.y)
+            < 1.0f)
         {
             GenerateRewards();
             return;
         }
     }
-    
+
     CreateReward(rewardPosition);
 }
 
@@ -192,21 +192,71 @@ void Level::GameOver()
 
 glm::vec3 Level::CalculateObstcaleSpawnPosition(float spawnMargin)
 {
-    glm::vec2 spawnTopLeft = {
-        m_Player.GetPosition().x - m_CameraProjection.x / 2.0f - spawnMargin,
-        m_Player.GetPosition().y + 1.0f + spawnMargin
+    // Player position and direction
+    glm::vec2 playerPosition = m_Player.GetPosition();
+    Direction playerDirection = m_Player.GetDirection();
+
+    // Camera projection size
+    float cameraWidth = m_CameraProjection[1];
+    float cameraHeight = m_CameraProjection[2];
+
+    // define the out of view bounds
+    glm::vec2 outOfViewTopLeft = {
+        playerPosition.x - cameraWidth / 2.0f - spawnMargin, playerPosition.y - cameraHeight / 2.0f - spawnMargin
     };
-    glm::vec2 spawnBottomRight = {
-        m_Player.GetPosition().x + m_CameraProjection.x  / 2.0f + spawnMargin,
-        m_Player.GetPosition().y - 1.0f - spawnMargin
+
+    glm::vec2 outOfViewBottomRight = {
+        playerPosition.x + cameraWidth / 2.0f + spawnMargin, playerPosition.y + cameraHeight / 2.0f + spawnMargin
     };
+
+    glm::vec2 spawnTopLeft, spawnBottomRight;
+
+    // Spawn areas biased towards the front
+    if (playerDirection == RIGHT)
+    {
+        spawnTopLeft.x = playerPosition.x + cameraWidth / 2.0f + spawnMargin;
+        spawnTopLeft.y = playerPosition.y - cameraHeight / 2.0f - spawnMargin;
+        spawnBottomRight.x = playerPosition.x + cameraWidth * 2.0f + spawnMargin; //further right.
+        spawnBottomRight.y = playerPosition.y + cameraHeight / 2.0f + spawnMargin;
+    }
+    else if (playerDirection == LEFT)
+    {
+        spawnTopLeft.x = playerPosition.x - cameraWidth * 2.0f - spawnMargin; //further left
+        spawnTopLeft.y = playerPosition.y - cameraHeight / 2.0f - spawnMargin;
+        spawnBottomRight.x = playerPosition.x - cameraWidth / 2.0f - spawnMargin;
+        spawnBottomRight.y = playerPosition.y + cameraHeight / 2.0f + spawnMargin;
+    }
+    else if (playerDirection == UP)
+    {
+        spawnTopLeft.x = playerPosition.x - cameraWidth / 2.0f - spawnMargin;
+        spawnTopLeft.y = playerPosition.y - cameraHeight / 2.0f - spawnMargin;
+        spawnBottomRight.x = playerPosition.x + cameraWidth / 2.0f + spawnMargin;
+        spawnBottomRight.y = playerPosition.y - cameraHeight * 2.0f - spawnMargin; //further up
+    }
+    else if (playerDirection == DOWN)
+    {
+        spawnTopLeft.x = playerPosition.x - cameraWidth / 2.0f - spawnMargin;
+        spawnTopLeft.y = playerPosition.y + cameraHeight * 2.0f + spawnMargin; //further down
+        spawnBottomRight.x = playerPosition.x + cameraWidth / 2.0f + spawnMargin;
+        spawnBottomRight.y = playerPosition.y + cameraHeight / 2.0f + spawnMargin;
+    }
+
+    // Generate a spawn position within the calculated bounds
     glm::vec3 spawnPosition = {
-        Random::Range(spawnTopLeft.x, spawnBottomRight.x),
-        Random::Range(spawnTopLeft.y, spawnBottomRight.y),
-        0.5f
+        Random::Range(spawnTopLeft.x, spawnBottomRight.x), Random::Range(spawnTopLeft.y, spawnBottomRight.y), 0.5f
+    };
+
+    // Ensure the spawn position is a minimum distance away from the player
+    float minDistance = cameraWidth;
+    while (glm::distance(playerPosition, {spawnPosition.x, spawnPosition.y}) < minDistance)
+    {
+        spawnPosition = {
+            Random::Range(spawnTopLeft.x, spawnBottomRight.x), Random::Range(spawnTopLeft.y, spawnBottomRight.y), 0.5f
+        };
     };
 
     return spawnPosition;
+    
 }
 
 bool Level::IsPositionOutofView(const glm::vec2& position, const glm::vec2& playerPosition, const glm::vec4& projection)
@@ -216,6 +266,6 @@ bool Level::IsPositionOutofView(const glm::vec2& position, const glm::vec2& play
     float rightBoundary = playerPosition.x + projection[2] / 2.0f;
     float topBoundary = playerPosition.y + projection[3] / 2.0f;
     float bottomBoundary = playerPosition.y - projection[3] / 2.0f;
-    return position.x < leftBoundary || position.x > rightBoundary || position.y < bottomBoundary || position.y > topBoundary;
-    
+    return position.x < leftBoundary || position.x > rightBoundary || position.y < bottomBoundary || position.y >
+        topBoundary;
 }
