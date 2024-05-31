@@ -93,8 +93,10 @@ bool Level::ObstacleCollideTest()
 
         if (collision)
         {
-            MK_CORE_INFO("Obstcale Collision detected!");
-            return true;
+            if (obstacle.CheckPointCollision(m_Player.GetPosition()))
+            {
+                return true;
+            }
         }
     }
     return false;
@@ -138,6 +140,10 @@ void Level::GenerateObstacles()
     for (auto it = m_Obstacles.begin(); it != m_Obstacles.end();)
     {
         if (abs(it->GetPosition().x - m_Player.GetPosition().x) > abs(m_CameraProjection.x) * 3.0f)
+        {
+            it = m_Obstacles.erase(it);
+        }
+        else if (m_Obstacles.size() > 20) //erase obstacles if too many
         {
             it = m_Obstacles.erase(it);
         }

@@ -8,8 +8,6 @@ GameLayer::GameLayer() : Layer("GameLayer"), m_CameraController(1280.0f / 720.0f
      ** Which leads to the smaller scale of the assets, which is not ideal
      ** A More proper way would be setting up the projection in the constructor, also provide the getter and setter for the projection
      */
-
-    //TODO: remove this when test is over.
     m_CameraController.GetCamera().SetProjection(CAMERA_PROJECTION[0], CAMERA_PROJECTION[1], CAMERA_PROJECTION[2],
                                                  CAMERA_PROJECTION[3]);
 }
@@ -88,7 +86,7 @@ void GameLayer::OnUpdate(TimeStep ts)
 void GameLayer::OnImGuiRender()
 {
     Layer::OnImGuiRender();
-    
+
     ImGuiRenderRewardIndicator(); //TODO： fix bug that sometimes does not show indicator
 
     {
@@ -154,22 +152,27 @@ void GameLayer::OnEvent(Event& event)
     Layer::OnEvent(event);
     EventDispatcher dispatcher(event);
     dispatcher.Dispatch<WindowResizeEvent>(MK_BIND_EVENT_FN(GameLayer::OnWindowResized));
-    dispatcher.Dispatch<KeyPressedEvent>(MK_BIND_EVENT_FN(GameLayer::OnEnterKeyPressed));
+    dispatcher.Dispatch<KeyPressedEvent>(MK_BIND_EVENT_FN(GameLayer::OnKeyPressed));
 }
 
-bool GameLayer::OnEnterKeyPressed(KeyPressedEvent& e)
+bool GameLayer::OnKeyPressed(KeyPressedEvent& e)
 {
-    if (m_State == GameState::GameOver)
-        m_Level.Reset();
-
-    m_State = GameState::Play;
+    // if the game is in menu or game over state
+    if (m_State == GameState::MainMenu || m_State == GameState::GameOver)
+    {
+        if (e.GetKeyCode() == Key::Enter)
+        {
+            m_State = GameState::Play;
+            m_Level.Reset();
+        }
+    }
     return false;
 }
 
 bool GameLayer::OnWindowResized(WindowResizeEvent& e)
 {
     m_CameraController.OnEvent(e);
-    m_CameraController.GetCamera().SetProjection(-16.0f, 16.0f, 9.0f, -9.0f);
+    //m_CameraController.GetCamera().SetProjection(-16.0f, 16.0f, 9.0f, -9.0f);
     return false;
 }
 
@@ -241,7 +244,6 @@ glm::vec2 GameLayer::CalculateDirection(const glm::vec2& from, const glm::vec2& 
 
 ImVec2 GameLayer::CalculateArrowPosition(const ImVec2& windowSize, const ImVec2& center, const glm::vec2& direction)
 {
-    
     ImVec2 edgePosition = center;
 
     // Determine which edge of the window to place the arrow
@@ -273,8 +275,10 @@ ImVec2 GameLayer::CalculateArrowPosition(const ImVec2& windowSize, const ImVec2&
     }
 
     // Ensure the arrow stays within the window bounds
-    edgePosition.x = glm::clamp(edgePosition.x, center.x - windowSize.x / 2.0f + 20.0f, center.x + windowSize.x / 2.0f - 20.0f);
-    edgePosition.y = glm::clamp(edgePosition.y, center.y - windowSize.y / 2.0f + 20.0f, center.y + windowSize.y / 2.0f - 20.0f);
+    edgePosition.x = glm::clamp(edgePosition.x, center.x - windowSize.x / 2.0f + 20.0f,
+                                center.x + windowSize.x / 2.0f - 20.0f);
+    edgePosition.y = glm::clamp(edgePosition.y, center.y - windowSize.y / 2.0f + 20.0f,
+                                center.y + windowSize.y / 2.0f - 20.0f);
 
     return edgePosition;
 }

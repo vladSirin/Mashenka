@@ -20,7 +20,7 @@ public:
     void OnImGuiRender() override;
     void OnEvent(Event& event) override;
 
-    bool OnEnterKeyPressed(KeyPressedEvent& e);
+    bool OnKeyPressed(KeyPressedEvent& e);
     bool OnWindowResized(WindowResizeEvent& e);
 
 private:

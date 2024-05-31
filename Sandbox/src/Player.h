@@ -43,7 +43,7 @@ private:
     Mashenka::Ref<Mashenka::Texture2D> m_SnakeTexture;
     AABB m_AABB; // used for collision detection
     glm::vec4 m_TransformedVertices[4]; // used for collision detection
-    glm::vec2 m_Size = {0.2f, 0.2f};
+    glm::vec2 m_Size = {0.3f, 0.3f};
 
     void UpdateVelocity();
     void CalculateTransformedVerts();
@@ -52,5 +52,5 @@ private:
 
     // used for updating the body segments of the snake
     std::deque<glm::vec2> positionsQueue; // saving a queue of positions the head went based on the update delay
-    int m_SegmentSpaceScale = 10;
+    int m_SegmentSpaceScale = 8;
 };
