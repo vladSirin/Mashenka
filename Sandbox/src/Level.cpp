@@ -133,7 +133,7 @@ void Level::GenerateObstacles()
     for (int i = 0; i < obstacleNum; ++i)
     {
         glm::vec3 spawnPosition = CalculateObstcaleSpawnPosition();
-        CreateObstacle(spawnPosition, Random::Range(0.0f, 360.0f));
+        CreateObstacle(spawnPosition, Random::Float() * 2.0f * glm::pi<float>(), {1.0f, 1.0f});
     }
 
     // clean up obstacles that are too far away from the player position
