@@ -8,6 +8,22 @@ using namespace Mashenka;
 Player::Player(): m_TransformedVertices{}
 {
     m_BodySegments.push_back(m_Position);
+    
+    // Smoke
+    m_SmokeParticle.Position = { 0.0f, 0.0f };
+    m_SmokeParticle.Velocity = { -0.17f, 0.0f }, m_SmokeParticle.VelocityVariation = { 4.0f, 2.0f };
+    m_SmokeParticle.SizeBegin = 0.05f, m_SmokeParticle.SizeEnd = 0.0f, m_SmokeParticle.SizeVariation = 0.01f;
+    m_SmokeParticle.ColorBegin = { 0.8f, 0.8f, 0.8f, 1.0f };
+    m_SmokeParticle.ColorEnd = { 0.6f, 0.6f, 0.6f, 1.0f };
+    m_SmokeParticle.LifeTime = 4.0f;
+
+    // Flames
+    m_EngineParticle.Position = { 0.0f, 0.0f };
+    m_EngineParticle.Velocity = { -0.18f, 0.0f }, m_EngineParticle.VelocityVariation = { 3.0f, 1.0f };
+    m_EngineParticle.SizeBegin = 0.07f, m_EngineParticle.SizeEnd = 0.0f, m_EngineParticle.SizeVariation = 0.02f;
+    m_EngineParticle.ColorBegin = { 254 / 255.0f, 109 / 255.0f, 41 / 255.0f, 1.0f };
+    m_EngineParticle.ColorEnd = { 254 / 255.0f, 212 / 255.0f, 123 / 255.0f , 1.0f };
+    m_EngineParticle.LifeTime = 1.0f;
 }
 
 void Player::LoadAssets()
@@ -17,6 +33,8 @@ void Player::LoadAssets()
 
 void Player::OnUpdate(Mashenka::TimeStep ts)
 {
+    m_Time += ts;
+    
     // based on the key that is pressed, I should swap the direction and reset the velocity of the snake
     if (Input::IsKeyPressed(MK_KEY_UP) && GetDirection() != DOWN)
         m_Direction = Direction::UP;
@@ -29,6 +47,27 @@ void Player::OnUpdate(Mashenka::TimeStep ts)
 
     UpdateVelocity(); // update the velocity
 
+    glm::vec2  particlePos = m_BodySegments[m_BodySegments.size() - 1];
+    m_SmokeParticle.Position = particlePos;
+    m_EngineParticle.Position = particlePos;
+    
+    // Flames
+    glm::vec2 emissionPoint = { 0.0f, -0.05f };
+    float rotation = glm::radians(GetRotation());
+    glm::vec4 rotated = glm::rotate(glm::mat4(1.0f), rotation, { 0.0f, 0.0f, 1.0f }) * glm::vec4(emissionPoint, 0.0f, 1.0f);
+    m_EngineParticle.Position = particlePos + glm::vec2{ rotated.x, rotated.y };
+    m_EngineParticle.Velocity.y = -m_Velocity.y * 0.2f - 0.2f;
+    m_ParticleSystem.Emit(m_EngineParticle);
+    // Particles
+    if (m_Time > m_SmokeNextEmitTime)
+    {
+        m_SmokeParticle.Position = m_Position;
+        m_ParticleSystem.Emit(m_SmokeParticle);
+        m_SmokeNextEmitTime += m_SmokeEmitInterval;
+    }
+    m_ParticleSystem.OnUpdate(ts);
+
+    m_ParticleSystem.OnUpdate(ts);
     m_Position += m_Velocity * (float)ts; // update the position of the snake
     m_BodySegments[0] = m_Position; // update the head
     m_AABB = CalculateAABB(); // update the AABB
@@ -56,6 +95,7 @@ void Player::OnUpdate(Mashenka::TimeStep ts)
 
 void Player::OnRender()
 {
+    m_ParticleSystem.OnRender();
     for (auto& segment : m_BodySegments)
     {
         Renderer2D::DrawRotatedQuad({segment.x, segment.y, 0.5f}, m_Size, glm::radians(GetRotation()),

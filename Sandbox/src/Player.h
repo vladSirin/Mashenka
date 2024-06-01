@@ -4,6 +4,7 @@
 #include <Mashenka.h>
 
 #include "AABB.h"
+#include "ParticleSystem.h"
 
 enum Direction : int
 {
@@ -53,4 +54,11 @@ private:
     // used for updating the body segments of the snake
     std::deque<glm::vec2> positionsQueue; // saving a queue of positions the head went based on the update delay
     int m_SegmentSpaceScale = 8;
+
+    // particle
+    float m_Time = 0.0f;
+    float m_SmokeEmitInterval = 0.5f;
+    float m_SmokeNextEmitTime = m_SmokeEmitInterval;
+    ParticleProps m_SmokeParticle, m_EngineParticle;
+    ParticleSystem m_ParticleSystem;
 };
