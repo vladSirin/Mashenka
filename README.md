@@ -9,7 +9,7 @@ Visual Studio 2022 or Rider is recommended, Mashenka is officially untested on o
 
 You can clone the repository to a local destination using git:
 
-`git clone --recursive https://github.com/vladimirSirin/Mashenka`
+`git clone --recursive https://github.com/vladSirin/Mashenka`
 
 Make sure that you do a `--recursive` clone to fetch all submodules!
 
