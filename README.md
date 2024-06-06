@@ -11,9 +11,12 @@ You can clone the repository to a local destination using git:
 
 `git clone --recursive https://github.com/vladimirSirin/Mashenka`
 
-Make sure that you do a `--recursive` clone to fetch all of the submodules!
+Make sure that you do a `--recursive` clone to fetch all submodules!
 
 ## Setting up the solution:
+- Download the latest premake pre-built version from https://premake.github.io/download or build it yourself.
+- Copy the premake files under `{localRepoName}\vendor\bin\premake`, create the folder if it does not exist.
+- The folder will not be included into the version control, if not, add the path to the `.gitignore` file.
 - Go to the Mashenka directory and run `scripts\Win-GenProjects.bat` to generate the Visual Studio solution.
 - Open the solution in Visual Studio and build the `Mashenka` target.
 - Set the `Sandbox` project as the startup project and run.
