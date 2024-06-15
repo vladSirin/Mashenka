@@ -7,75 +7,112 @@
 // #include "Platform/OpenGL/OpenGLShader.h", but we can't include it here because it will cause a circular dependency
 #include <glm/gtc/matrix_transform.hpp> // for glm::mat4
 
+#include "glm/gtx/string_cast.hpp"
+
 namespace Mashenka
 {
-    // Initialize the scene data
-    struct Render2DStorage
+    struct QuadVertex
     {
-        Ref<VertexArray> QuadVertexArray;
-        Ref<Shader> TextureShader;
-        Ref<Texture2D> WhiteTexture;
+        glm::vec3 Position;
+        glm::vec4 Color;
+        glm::vec2 TexCoord;
+        //TODO: texid
     };
 
-    // Initialize the scene data
-    static Render2DStorage* s_Data;
+    struct Renderer2DData
+    {
+        const uint32_t MaxQuads = 10000;
+        const uint32_t MaxVertices = MaxQuads * 4;
+        const uint32_t MaxIndices = MaxQuads * 6;
+
+        Ref<VertexArray> QuadVertexArray;
+        Ref<VertexBuffer> QuadVertexBuffer;
+        Ref<Shader> TextureShader;
+        Ref<Texture2D> WhiteTexture;
+
+        uint32_t QuadIndexCount = 0;
+        QuadVertex* QuadVertexBufferBase = nullptr;
+        QuadVertex* QuadVertexBufferPtr = nullptr;
+    };
+
+    static Renderer2DData s_Data;
 
     void Renderer2D::Init()
     {
         MK_PROFILE_FUNCTION(); // Profiling
-        // Initialize the renderer API
-        s_Data = new Render2DStorage();
 
-        s_Data->QuadVertexArray = VertexArray::Create();
+        s_Data.QuadVertexArray = VertexArray::Create(); // Create vertex array
+        s_Data.QuadVertexBuffer = VertexBuffer::Create(s_Data.MaxVertices * sizeof(QuadVertex)); // Create vertex buffer
 
-        float squareVertices[5 * 4] = {
-            -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, // 0
-            0.5f, -0.5f, 0.0f, 1.0f, 0.0f, // 1
-            0.5f, 0.5f, 0.0f, 1.0f, 1.0f, // 2
-            -0.5f, 0.5f, 0.0f, 0.0f, 1.0f // 3
-        };
-
-        // Create the vertex buffer
-        Ref<VertexBuffer> squareVB = VertexBuffer::Create(squareVertices, sizeof(squareVertices));
-        BufferLayout layout = {
+        // Set vertex buffer layout
+        s_Data.QuadVertexBuffer->SetLayout({
             {ShaderDataType::Float3, "a_Position"},
-            {ShaderDataType::Float2, "a_TexCoord"}
-        };
-        squareVB->SetLayout(layout);
-        s_Data->QuadVertexArray->AddVertexBuffer(squareVB);
+            {ShaderDataType::Float4, "a_Color"},
+            {ShaderDataType::Float2, "a_TexCoord"},
+        });
 
-        // Create the index buffer
-        uint32_t squareIndices[6] = {0, 1, 2, 2, 3, 0};
-        Ref<IndexBuffer> squareIB = IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t));
-        s_Data->QuadVertexArray->SetIndexBuffer(squareIB);
+        s_Data.QuadVertexArray->AddVertexBuffer(s_Data.QuadVertexBuffer); // Add vertex buffer to vertex array
+        s_Data.QuadVertexBufferBase = new QuadVertex[s_Data.MaxVertices]; // Create vertex buffer base
 
-        // Create the shaders
-        s_Data->WhiteTexture = Texture2D::Create(1, 1);
-        uint32_t whiteTextureData = 0xffffffff; // white
-        s_Data->WhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
+        uint32_t* quadIndices = new uint32_t[s_Data.MaxIndices]; // Create index buffer
 
-        s_Data->TextureShader = Shader::Create("assets/shaders/Texture.glsl");
-        s_Data->TextureShader->Bind();
-        s_Data->TextureShader->SetInt("u_Texture", 0);
-        // set the texture slot to 0, because we will always use slot 0 for textures
+        uint32_t offset = 0; // Offset for index buffer
+
+        for (uint32_t i = 0; i < s_Data.MaxIndices; i += 6)
+        {
+            quadIndices[i + 0] = offset + 0;
+            quadIndices[i + 1] = offset + 1;
+            quadIndices[i + 2] = offset + 2;
+
+            quadIndices[i + 3] = offset + 2;
+            quadIndices[i + 4] = offset + 3;
+            quadIndices[i + 5] = offset + 0;
+
+            offset += 4;
+        }
+
+        Ref<IndexBuffer> quadIB = IndexBuffer::Create(quadIndices, s_Data.MaxIndices);
+        s_Data.QuadVertexArray->SetIndexBuffer(quadIB); // Set index buffer to vertex array
+        delete[] quadIndices; // Delete index buffer
+
+        s_Data.WhiteTexture = Texture2D::Create(1, 1); // Create white texture
+        uint32_t whiteTextureData = 0xffffffff;
+        s_Data.WhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t)); // Set white texture data
+        s_Data.TextureShader = Shader::Create("assets/shaders/Texture.glsl"); // Create texture shader
+        s_Data.TextureShader->Bind();
+        s_Data.TextureShader->SetInt("u_Texture", 0); // Set texture uniform
     }
 
     void Renderer2D::Shutdown()
     {
         MK_PROFILE_FUNCTION(); // Profiling
-        delete s_Data;
+        delete[] s_Data.QuadVertexBufferBase;
     }
 
     void Renderer2D::BeginScene(const OrthographicCamera& camera)
     {
         MK_PROFILE_FUNCTION(); // Profiling
-        s_Data->TextureShader->Bind();
-        s_Data->TextureShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
+        s_Data.TextureShader->Bind();
+        s_Data.TextureShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
+
+        // reset index count and vertex buffer pointer
+        s_Data.QuadIndexCount = 0;
+        s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
     }
 
     void Renderer2D::EndScene()
     {
         MK_PROFILE_FUNCTION(); // Profiling
+
+        uint32_t dataSize = (uint32_t)((uintptr_t)s_Data.QuadVertexBufferPtr - (uintptr_t)s_Data.QuadVertexBufferBase);
+        s_Data.QuadVertexBuffer->SetData(s_Data.QuadVertexBufferBase, dataSize);
+
+        Flush();
+    }
+
+    void Renderer2D::Flush()
+    {
+        RenderCommand::DrawIndexed(s_Data.QuadVertexArray, s_Data.QuadIndexCount);
     }
 
     void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color)
@@ -86,18 +123,36 @@ namespace Mashenka
     void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color)
     {
         MK_PROFILE_FUNCTION(); // Profiling
-        s_Data->TextureShader->SetFloat4("u_Color", color); // set the color
-        s_Data->TextureShader->SetFloat("u_TilingFactor", 1.0f);
-        s_Data->WhiteTexture->Bind(); // bind the texture
 
-        // Create the transformation matrix
-        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(
-            glm::mat4(1.0f), {size.x, size.y, 1.0f});
-        s_Data->TextureShader->SetMat4("u_Transform", transform); // set the transformation matrix
+        //MK_CORE_INFO("Renderer2D::DrawQuad(position: {0}, size: {1},  {2})", glm::to_string(position), glm::to_string(size), glm::to_string(color));
 
-        // Draw the quad
-        s_Data->QuadVertexArray->Bind();
-        RenderCommand::DrawIndexed(s_Data->QuadVertexArray);
+        s_Data.QuadVertexBufferPtr->Position = position;
+        s_Data.QuadVertexBufferPtr->Color = color;
+        s_Data.QuadVertexBufferPtr->TexCoord = {0.0f, 0.0f};
+        s_Data.QuadVertexBufferPtr++;
+
+        s_Data.QuadVertexBufferPtr->Position = {position.x + size.x, position.y, 0.0f};
+        s_Data.QuadVertexBufferPtr->Color = color;
+        s_Data.QuadVertexBufferPtr->TexCoord = {1.0f, 0.0f};
+        s_Data.QuadVertexBufferPtr++;
+
+        s_Data.QuadVertexBufferPtr->Position = {position.x + size.x, position.y + size.y, 0.0f};
+        s_Data.QuadVertexBufferPtr->Color = color;
+        s_Data.QuadVertexBufferPtr->TexCoord = {1.0f, 1.0f};
+        s_Data.QuadVertexBufferPtr++;
+
+        s_Data.QuadVertexBufferPtr->Position = {position.x, position.y + size.y, 0.0f};
+        s_Data.QuadVertexBufferPtr->Color = color;
+        s_Data.QuadVertexBufferPtr->TexCoord = {0.0f, 1.0f};
+        s_Data.QuadVertexBufferPtr++;
+
+        s_Data.QuadIndexCount += 6;
+
+        /*glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
+            * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+        s_Data.TextureShader->SetMat4("u_Transform", transform);
+        s_Data.QuadVertexArray->Bind();
+        RenderCommand::DrawIndexed(s_Data.QuadVertexArray);*/
     }
 
     void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture,
@@ -110,16 +165,16 @@ namespace Mashenka
                               float tilingFactor, const glm::vec4& tintColor)
     {
         MK_PROFILE_FUNCTION(); // Profiling
-        s_Data->TextureShader->SetFloat4("u_Color", tintColor);
-        s_Data->TextureShader->SetFloat("u_TilingFactor", tilingFactor);
+        s_Data.TextureShader->SetFloat4("u_Color", tintColor);
+        s_Data.TextureShader->SetFloat("u_TilingFactor", tilingFactor);
         texture->Bind(); // bind the texture
 
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(
             glm::mat4(1.0f), glm::vec3(size.x, size.y, 1.0f));
-        s_Data->TextureShader->SetMat4("u_Transform", transform);
+        s_Data.TextureShader->SetMat4("u_Transform", transform);
 
-        s_Data->QuadVertexArray->Bind();
-        RenderCommand::DrawIndexed(s_Data->QuadVertexArray);
+        s_Data.QuadVertexArray->Bind();
+        RenderCommand::DrawIndexed(s_Data.QuadVertexArray);
     }
 
     void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation,
@@ -133,17 +188,17 @@ namespace Mashenka
     {
         MK_PROFILE_FUNCTION();
 
-        s_Data->TextureShader->SetFloat("u_TilingFactor", 1.0f);
-        s_Data->TextureShader->SetFloat4("u_Color", color);
-        s_Data->WhiteTexture->Bind();
+        s_Data.TextureShader->SetFloat("u_TilingFactor", 1.0f);
+        s_Data.TextureShader->SetFloat4("u_Color", color);
+        s_Data.WhiteTexture->Bind();
 
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
             * glm::rotate(glm::mat4(1.0f), rotation, {0.0f, 0.0f, 1.0f}) * glm::scale(
                 glm::mat4(1.0f), {size.x, size.y, 1.0f});
 
-        s_Data->TextureShader->SetMat4("u_Transform", transform);
-        s_Data->QuadVertexArray->Bind();
-        RenderCommand::DrawIndexed(s_Data->QuadVertexArray);
+        s_Data.TextureShader->SetMat4("u_Transform", transform);
+        s_Data.QuadVertexArray->Bind();
+        RenderCommand::DrawIndexed(s_Data.QuadVertexArray);
     }
 
     void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation,
@@ -157,15 +212,15 @@ namespace Mashenka
     {
         MK_PROFILE_FUNCTION();
 
-        s_Data->TextureShader->SetFloat("u_TilingFactor", tilingFactor);
-        s_Data->TextureShader->SetFloat4("u_Color", tintColor);
+        s_Data.TextureShader->SetFloat("u_TilingFactor", tilingFactor);
+        s_Data.TextureShader->SetFloat4("u_Color", tintColor);
         texture->Bind(); // bind the texture
 
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
             * glm::rotate(glm::mat4(1.0f), rotation, {0.0f, 0.0f, 1.0f}) * glm::scale(
                 glm::mat4(1.0f), {size.x, size.y, 1.0f});
-        s_Data->TextureShader->SetMat4("u_Transform", transform);
-        s_Data->QuadVertexArray->Bind();
-        RenderCommand::DrawIndexed(s_Data->QuadVertexArray);
+        s_Data.TextureShader->SetMat4("u_Transform", transform);
+        s_Data.QuadVertexArray->Bind();
+        RenderCommand::DrawIndexed(s_Data.QuadVertexArray);
     }
 }

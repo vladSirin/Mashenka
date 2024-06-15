@@ -4,6 +4,24 @@
 
 namespace Mashenka
 {
+    // This is the dynamic version of the creation of VB
+    // By only allocate the size needed but not provide the actual data
+    // The data will be provided later by SetData
+    OpenGLVertexBuffer::OpenGLVertexBuffer(uint32_t size)
+    {
+        MK_PROFILE_FUNCTION();
+
+        glCreateBuffers(1, &m_RendererID);
+        glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
+        glBufferData(GL_ARRAY_BUFFER, size, nullptr, GL_DYNAMIC_DRAW);
+    }
+
+    void OpenGLVertexBuffer::SetData(const void* data, uint32_t size)
+    {
+        glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, size, data);
+    }
+
     /*
      * VertexBuffer
      */

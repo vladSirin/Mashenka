@@ -76,11 +76,16 @@ namespace Mashenka
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
-    void OpenGLRendererAPI::DrawIndexed(const Ref<Mashenka::VertexArray>& vertexArray)
+    // Responsible for drawing the vertex array
+    void OpenGLRendererAPI::DrawIndexed(const Ref<Mashenka::VertexArray>& vertexArray, uint32_t indexCount)
     {
-        // Opengl function
-        glDrawElements(GL_TRIANGLES, vertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+        // determine the number of indices to draw
+        uint32_t count = indexCount ? indexCount: vertexArray->GetIndexBuffer()->GetCount();
 
-        glBindTexture(GL_TEXTURE_2D, 0); // unbind the texture, so that we can use the texture slot for other textures
+        // Issue the draw call
+        glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr);
+
+        // unbind the currently bound texture
+        glBindTexture(GL_TEXTURE_2D, 0);
     }
 }

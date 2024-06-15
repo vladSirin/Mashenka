@@ -202,7 +202,7 @@ namespace Mashenka
  * Using the FUNCTION to create scope for function with the name of the function
  * If MK_PROFILE is not defined, all marcos will be empty and not effective
  */
-#define MK_PROFILE 1
+#define MK_PROFILE 0
 #if MK_PROFILE
 // Resolve which function signature macro will be used based on the compiler that is using here
 // Note tha this only is resolved when the (pre)compiler starts

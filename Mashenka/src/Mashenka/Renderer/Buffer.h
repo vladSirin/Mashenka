@@ -158,16 +158,21 @@ namespace Mashenka
         virtual void Bind() const = 0;
         virtual void Unbind() const = 0;
 
+        // set the data of the buffer
+        virtual void SetData(const void* data, uint32_t size) = 0;
+
         // get the layout of the buffer
         virtual const BufferLayout& GetLayout() const = 0;
         virtual void SetLayout(const BufferLayout& layout) = 0;
 
         // create a new vertex buffer
         // the size is the size of the vertices
+        static Ref<VertexBuffer> Create(uint32_t size); // the size is the size of the vertices
         static Ref<VertexBuffer> Create(float* vertices, uint32_t size);
     };
 
     // base index buffer class
+    // currently Mashenka only supports 32-bit index buffers
     class IndexBuffer
     {
     public:

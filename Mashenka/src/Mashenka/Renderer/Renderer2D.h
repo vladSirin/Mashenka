@@ -4,15 +4,24 @@
 
 namespace Mashenka
 {
-    // This class will be used to render 2D objects
+    // This class will be used to render 2D objects including:
+    /*
+     * Initializing and shutting down the 2d renderer
+     * Managing the rendering pipeline for 2d objects
+     * Providing functions to draw 2d primitives(quads) and textured quads
+     * Handling transformations and scene setup
+     */
     class Renderer2D
     {
     public:
-        // basic functions:
-        static void Init();
-        static void Shutdown();
-        static void BeginScene(const OrthographicCamera& camera);
-        static void EndScene();
+        // Init and shutdown
+        static void Init();     // Sets up the vertex array, vertex buffer, index buffer, shaders and default white texture
+        static void Shutdown(); // cleans up any dynamic allocated memory
+
+        // Scene manage
+        static void BeginScene(const OrthographicCamera& camera); // Prepares the renderer for a new scene by setting the view-projection matrix from the camera
+        static void EndScene(); // Finalizes the scene, updates the vertex buffer with the new data, and flushes the draw calls
+        static void Flush();
 
         //primitive rendering functions:
         static void DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color);

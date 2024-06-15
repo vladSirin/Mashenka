@@ -5,6 +5,31 @@
 
 namespace Mashenka
 {
+    /**
+     * Create a new VertexBuffer based on the RendererAPI in use.
+     *
+     * @param size The size of the VertexBuffer.
+     *
+     * @return A reference to the created VertexBuffer.
+     *
+     * @throws Assertion error if RendererAPI is None or unknown.
+     */
+    Ref<VertexBuffer> VertexBuffer::Create(uint32_t size)
+    {
+        switch (RendererAPI::GetAPI())
+        {
+        case RendererAPI::API::None:
+            MK_CORE_ASSERT(false, "RendererAPI::None is currently not supported!")
+            return nullptr;
+        case RendererAPI::API::OpenGL:
+            return CreateRef<OpenGLVertexBuffer>(size);
+        }
+
+        MK_CORE_ASSERT(false, "Unknown RendererAPI!")
+
+        return nullptr;
+    }
+
     // Factory Method for different renderer API
     // Using create and raw ptr because we don't want to expose the implementation of the derived class
     // We only want to expose the interface of the base class
@@ -38,5 +63,3 @@ namespace Mashenka
         return nullptr;
     }
 }
-
-
