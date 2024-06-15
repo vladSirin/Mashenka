@@ -222,7 +222,7 @@ Draw Call: OpenGL uses the active program when performing draw calls.
     void OpenGLShader::SetIntArray(const std::string& name, int* values, uint32_t count)
     {
         MK_PROFILE_FUNCTION(); // Profiling
-        // TODO: UploadUniformIntArray
+        UploadUniformIntArray(name, values, count);
     }
 
     void OpenGLShader::SetFloat(const std::string& name, float value)
@@ -266,6 +266,13 @@ Draw Call: OpenGL uses the active program when performing draw calls.
             MK_CORE_ERROR("Uniform {0} not found!", name);
         }
         glUniform1i(location, value);
+    }
+
+    //
+    void OpenGLShader::UploadUniformIntArray(const std::string& name, int* values, uint32_t count) const
+    {
+        GLint location = glGetUniformLocation(m_RendererID, name.c_str());
+        glUniform1iv(location, count, values);
     }
 
     void OpenGLShader::UploadUniformFloat(const std::string& name, float value) const

@@ -23,6 +23,10 @@ namespace Mashenka
 
         virtual void Bind(uint32_t slot = 0) const override;
 
+        // compare the two texture2d by comparing the rendererID
+        virtual bool operator==(const Texture& other) const override {return  m_RendererID == ((OpenGLTexture2D&)other).m_RendererID;}
+
+
     private:
         std::string m_Path;
         uint32_t m_Width, m_Height;
