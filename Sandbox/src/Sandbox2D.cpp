@@ -44,12 +44,16 @@ void Sandbox2D::OnUpdate(Mashenka::TimeStep ts)
 
     // Begin scene
     {
+        static float rotation = 0.0f;
+        rotation += ts*50.0f;
+
+        
         MK_PROFILE_SCOPE("Render Draw");
         Mashenka::Renderer2D::BeginScene(m_CameraController.GetCamera());
-        // Mashenka::Renderer2D::DrawRotatedQuad({ -1.0f, 0.0f }, { 0.8f, 0.8f }, glm::radians(-45.0f), { 0.8f, 0.2f, 0.3f, 1.0f });
-        // Mashenka::Renderer2D::DrawRotatedQuad({ 0.5f, -0.5f }, { 0.5f, 0.75f }, 0.0f, { 0.2f, 0.3f, 0.8f, 1.0f });
-        Mashenka::Renderer2D::DrawQuad({-1.0f, 0.0f}, { 0.8f, 0.8f }, { 0.8f, 0.2f, 0.3f, 1.0f });
-        Mashenka::Renderer2D::DrawQuad({0.5f, -0.5f}, { 0.5f, 0.75f }, { 0.2f, 0.3f, 0.8f, 1.0f });
+        Mashenka::Renderer2D::DrawRotatedQuad({ -0.8f, 0.7f }, { 1.8f, 1.8f }, rotation, { 0.8f, 0.2f, 0.3f, 1.0f });
+        Mashenka::Renderer2D::DrawRotatedQuad({ 0.9f, -0.4f }, { 0.3f, 0.55f }, -rotation/2, { 0.2f, 0.3f, 0.8f, 1.0f });
+        //Mashenka::Renderer2D::DrawQuad({-1.0f, 0.0f}, { 0.8f, 0.8f }, { 0.8f, 0.2f, 0.3f, 1.0f });
+        //Mashenka::Renderer2D::DrawQuad({0.5f, -0.5f}, { 0.5f, 0.75f }, { 0.2f, 0.3f, 0.8f, 1.0f });
         Mashenka::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 10.0f, 10.0f }, m_CheckerboardTexture);
         Mashenka::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 5.0f, 5.0f }, m_CheckerboardTexture, 20.0f);
         Mashenka::Renderer2D::EndScene();
