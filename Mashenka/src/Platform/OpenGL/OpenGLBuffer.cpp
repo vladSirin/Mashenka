@@ -67,11 +67,13 @@ namespace Mashenka
         MK_PROFILE_FUNCTION(); // Profiling
         // create a buffer
         glGenBuffers(1, &m_RendererID);
-        // bind the index buffer TODO: why use GL_ELEMENT_ARRAY_BUFFER? why not GL_ARRAY_BUFFER? what is the difference?
-        // GL_ARRAY_BUFFER is used for vertex buffer, GL_ELEMENT_ARRAY_BUFFER is used for index buffer
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID);
+        
+		// GL_ELEMENT_ARRAY_BUFFER is not valid without an actively bound VAO
+		// Binding with GL_ARRAY_BUFFER allows the data to be loaded regardless of VAO state.
+		// Normally here GL_ELEMENT_ARRAY_BUFFER should be used
+        glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
         // allocate memory for the buffer
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32_t) * count, indices, GL_STATIC_DRAW);  // NOLINT(bugprone-narrowing-conversions)
+        glBufferData(GL_ARRAY_BUFFER, sizeof(uint32_t) * count, indices, GL_STATIC_DRAW);  // NOLINT(bugprone-narrowing-conversions)
     }
 
     OpenGLIndexBuffer::~OpenGLIndexBuffer()
