@@ -23,9 +23,10 @@ namespace Mashenka
 
     struct Renderer2DData
     {
-        const uint32_t MaxQuads = 10000;
-        const uint32_t MaxVertices = MaxQuads * 4;
-        const uint32_t MaxIndices = MaxQuads * 6;
+        // keep consistency for the struct and data as they are both static
+        static const uint32_t MaxQuads = 20000;
+        static const uint32_t MaxVertices = MaxQuads * 4;
+        static const uint32_t MaxIndices = MaxQuads * 6;
         static const uint32_t MaxTextureSlots = 32; //TODO: RenderCaps
 
         Ref<VertexArray> QuadVertexArray;
@@ -42,7 +43,11 @@ namespace Mashenka
 
         // Adding Vertex Position for transform
         glm::vec4 QuadVertexPositions[4];
+
+        // Saving the stats into the Renderer Data itself
+        Renderer2D::Statistics Stats;
     };
+
 
     static Renderer2DData s_Data;
 
@@ -150,7 +155,21 @@ namespace Mashenka
             s_Data.TextureSlots[i]->Bind(i);
         }
         RenderCommand::DrawIndexed(s_Data.QuadVertexArray, s_Data.QuadIndexCount);
+        s_Data.Stats.DrawCalls++; //adding up drawcalls count every time
     }
+
+
+    // This function is called when the max indices is reached for the current drawcall
+    void Renderer2D::FlushAndReset()
+    {
+        EndScene();
+
+        s_Data.QuadIndexCount = 0;
+        s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
+
+        s_Data.TextureSlotIndex = 1;
+    }
+    
 
     void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color)
     {
@@ -160,6 +179,9 @@ namespace Mashenka
     void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color)
     {
         MK_PROFILE_FUNCTION(); // Profiling
+
+        if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
+            FlushAndReset();
 
         //MK_CORE_INFO("Renderer2D::DrawQuad(position: {0}, size: {1},  {2})", glm::to_string(position), glm::to_string(size), glm::to_string(color));
         constexpr float textureIndex = 0.0f; // using white texture as it's a color Drawing
@@ -171,7 +193,8 @@ namespace Mashenka
             glm::mat4(1.0f), glm::radians(0.0f), {0.0f, 0.0f, 1.0f}) * glm::scale(
             glm::mat4(1.0f), {size.x, size.y, 1.0f});
 
-SubmitRendererData(transform, color, textureIndex, tilingFactor);    }
+        SubmitRendererData(transform, color, textureIndex, tilingFactor);
+    }
 
     void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture,
                               float tilingFactor, const glm::vec4& tintColor)
@@ -183,6 +206,9 @@ SubmitRendererData(transform, color, textureIndex, tilingFactor);    }
                               float tilingFactor, const glm::vec4& tintColor)
     {
         MK_PROFILE_FUNCTION();
+
+        if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
+            FlushAndReset();
 
         const glm::vec4 color = tintColor;
         float textureIndex = 0.0f;
@@ -215,7 +241,7 @@ SubmitRendererData(transform, color, textureIndex, tilingFactor);    }
             glm::mat4(1.0f), glm::radians(0.0f), {0.0f, 0.0f, 1.0f}) * glm::scale(
             glm::mat4(1.0f), {size.x, size.y, 1.0f});
 
-SubmitRendererData(transform, color, textureIndex, tilingFactor);
+        SubmitRendererData(transform, color, textureIndex, tilingFactor);
 #if OLD_PATH
         MK_PROFILE_FUNCTION(); // Profiling
         s_Data.TextureShader->SetFloat4("u_Color", tintColor);
@@ -242,6 +268,9 @@ SubmitRendererData(transform, color, textureIndex, tilingFactor);
     {
         MK_PROFILE_FUNCTION();
 
+        if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
+            FlushAndReset();
+
         constexpr float textureIndex = 0.0f; // using white texture as it's a color Drawing
         constexpr float tilingFactor = 1.0f; // no tiling for pure color
 
@@ -251,7 +280,8 @@ SubmitRendererData(transform, color, textureIndex, tilingFactor);
             glm::mat4(1.0f), glm::radians(rotation), {0.0f, 0.0f, 1.0f}) * glm::scale(
             glm::mat4(1.0f), {size.x, size.y, 1.0f});
 
-SubmitRendererData(transform, color, textureIndex, tilingFactor);    }
+        SubmitRendererData(transform, color, textureIndex, tilingFactor);
+    }
 
     void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation,
                                      const Ref<Texture2D>& texture, float tilingFactor, const glm::vec4& tintColor)
@@ -263,6 +293,9 @@ SubmitRendererData(transform, color, textureIndex, tilingFactor);    }
                                      const Ref<Texture2D>& texture, float tilingFactor, const glm::vec4& tintColor)
     {
         MK_PROFILE_FUNCTION();
+
+        if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
+            FlushAndReset();
 
         const glm::vec4 color = tintColor;
         const glm::vec2 texCoord = {0.0f, 0.0f};
@@ -296,7 +329,8 @@ SubmitRendererData(transform, color, textureIndex, tilingFactor);    }
             glm::mat4(1.0f), glm::radians(rotation), {0.0f, 0.0f, 1.0f}) * glm::scale(
             glm::mat4(1.0f), {size.x, size.y, 1.0f});
 
-SubmitRendererData(transform, color, textureIndex, tilingFactor);    }
+        SubmitRendererData(transform, color, textureIndex, tilingFactor);
+    }
 
     void Renderer2D::SubmitRendererData(glm::mat4 transform, glm::vec4 color, float textureIndex,
                                         float tilingFactor)
@@ -330,5 +364,22 @@ SubmitRendererData(transform, color, textureIndex, tilingFactor);    }
         s_Data.QuadVertexBufferPtr++;
 
         s_Data.QuadIndexCount += 6;
+
+        //adding up quad stat data
+        s_Data.Stats.QuadCount++;
     }
+
+
+    // Reset stats when the rendering starts every frame
+    void Renderer2D::ResetStats()
+    {
+        memset(&s_Data.Stats, 0, sizeof(Statistics));
+    }
+
+    Renderer2D::Statistics Renderer2D::GetStats()
+    {
+        return s_Data.Stats;
+    }
+
+
 }
