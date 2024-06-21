@@ -180,20 +180,20 @@ namespace Mashenka
     {
         MK_PROFILE_FUNCTION(); // Profiling
 
-        if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
-            FlushAndReset();
-
         //MK_CORE_INFO("Renderer2D::DrawQuad(position: {0}, size: {1},  {2})", glm::to_string(position), glm::to_string(size), glm::to_string(color));
         constexpr float textureIndex = 0.0f; // using white texture as it's a color Drawing
         constexpr float tilingFactor = 1.0f; // no tiling for pure color
         const glm::vec2 texCoord = {0.0f, 0.0f};
+        
+        if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
+            FlushAndReset();
 
         // Matrix, to comment and explain how does it work and why so
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::rotate(
             glm::mat4(1.0f), glm::radians(0.0f), {0.0f, 0.0f, 1.0f}) * glm::scale(
             glm::mat4(1.0f), {size.x, size.y, 1.0f});
 
-        SubmitRendererData(transform, color, textureIndex, tilingFactor);
+        SetupQaudVertexBuffer(transform, color, textureIndex, tilingFactor);
     }
 
     void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture,
@@ -241,7 +241,9 @@ namespace Mashenka
             glm::mat4(1.0f), glm::radians(0.0f), {0.0f, 0.0f, 1.0f}) * glm::scale(
             glm::mat4(1.0f), {size.x, size.y, 1.0f});
 
-        SubmitRendererData(transform, color, textureIndex, tilingFactor);
+        SetupQaudVertexBuffer(transform, color, textureIndex, tilingFactor);
+
+        
 #if OLD_PATH
         MK_PROFILE_FUNCTION(); // Profiling
         s_Data.TextureShader->SetFloat4("u_Color", tintColor);
@@ -280,7 +282,7 @@ namespace Mashenka
             glm::mat4(1.0f), glm::radians(rotation), {0.0f, 0.0f, 1.0f}) * glm::scale(
             glm::mat4(1.0f), {size.x, size.y, 1.0f});
 
-        SubmitRendererData(transform, color, textureIndex, tilingFactor);
+        SetupQaudVertexBuffer(transform, color, textureIndex, tilingFactor);
     }
 
     void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation,
@@ -329,39 +331,24 @@ namespace Mashenka
             glm::mat4(1.0f), glm::radians(rotation), {0.0f, 0.0f, 1.0f}) * glm::scale(
             glm::mat4(1.0f), {size.x, size.y, 1.0f});
 
-        SubmitRendererData(transform, color, textureIndex, tilingFactor);
+        SetupQaudVertexBuffer(transform, color, textureIndex, tilingFactor);
     }
 
-    void Renderer2D::SubmitRendererData(glm::mat4 transform, glm::vec4 color, float textureIndex,
+    void Renderer2D::SetupQaudVertexBuffer(glm::mat4 transform, glm::vec4 color, float textureIndex,
                                         float tilingFactor)
     {
-        s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[0];
-        s_Data.QuadVertexBufferPtr->Color = color;
-        s_Data.QuadVertexBufferPtr->TexCoord = {0.0f, 0.0f};
-        s_Data.QuadVertexBufferPtr->textureIndex = textureIndex;
-        s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-        s_Data.QuadVertexBufferPtr++;
+        constexpr size_t quadVertexCount = 4;
+        const glm::vec2 textureCoord[] = {{0.0f, 0.0f}, {1.0f, 0.0f}, {1.0f, 1.0f}, {0.0f, 1.0f}};
 
-        s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[1];
-        s_Data.QuadVertexBufferPtr->Color = color;
-        s_Data.QuadVertexBufferPtr->TexCoord = {1.0f, 0.0f};
-        s_Data.QuadVertexBufferPtr->textureIndex = textureIndex;
-        s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-        s_Data.QuadVertexBufferPtr++;
-
-        s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[2];
-        s_Data.QuadVertexBufferPtr->Color = color;
-        s_Data.QuadVertexBufferPtr->TexCoord = {1.0f, 1.0f};
-        s_Data.QuadVertexBufferPtr->textureIndex = textureIndex;
-        s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-        s_Data.QuadVertexBufferPtr++;
-
-        s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[3];
-        s_Data.QuadVertexBufferPtr->Color = color;
-        s_Data.QuadVertexBufferPtr->TexCoord = {0.0f, 1.0f};
-        s_Data.QuadVertexBufferPtr->textureIndex = textureIndex;
-        s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-        s_Data.QuadVertexBufferPtr++;
+        for (size_t i = 0; i < quadVertexCount; i++)
+        {
+            s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[i];
+            s_Data.QuadVertexBufferPtr->Color = color;
+            s_Data.QuadVertexBufferPtr->TexCoord = textureCoord[i];
+            s_Data.QuadVertexBufferPtr->textureIndex = textureIndex;
+            s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
+            s_Data.QuadVertexBufferPtr++;
+        }
 
         s_Data.QuadIndexCount += 6;
 

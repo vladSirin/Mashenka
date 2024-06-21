@@ -63,6 +63,6 @@ namespace Mashenka
         static void FlushAndReset();
         
         // Submit data to Renderer2D data
-        static void SubmitRendererData(glm::mat4 transform, glm::vec4 color, float textureIndex=0.0f, float tilingFactor=1.0f);
+        static void SetupQaudVertexBuffer(glm::mat4 transform, glm::vec4 color, float textureIndex=0.0f, float tilingFactor=1.0f);
     };
 }
