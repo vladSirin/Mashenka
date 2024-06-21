@@ -3,8 +3,6 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <gl/GL.h>
-
 namespace Mashenka
 {
     OpenGLContext::OpenGLContext(GLFWwindow* windowHandle)

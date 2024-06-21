@@ -6,7 +6,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 Sandbox2D::Sandbox2D()
-    : Layer("Sandbox2D"), m_CameraController(1280.0f / 720.0f) // 1280.0f / 720.0f is the aspect ratio
+    : Layer("Sandbox2D"), m_CameraController(1280.0f / 720.0f), m_SquareColor({0.2, 0.3, 0.8, 1.0f}) // 1280.0f / 720.0f is the aspect ratio
 {
     m_CameraController.GetCamera().SetPosition({0.0f, 0.0f, 0.0f});
 }
@@ -52,7 +52,7 @@ void Sandbox2D::OnUpdate(Mashenka::TimeStep ts)
         MK_PROFILE_SCOPE("Render Draw");
         Mashenka::Renderer2D::BeginScene(m_CameraController.GetCamera());
         Mashenka::Renderer2D::DrawRotatedQuad({-0.8f, 0.7f}, {1.8f, 1.8f}, rotation, {0.8f, 0.2f, 0.3f, 1.0f});
-        Mashenka::Renderer2D::DrawRotatedQuad({0.9f, -0.4f}, {0.3f, 0.55f}, -rotation / 2, {0.2f, 0.3f, 0.8f, 1.0f});
+        Mashenka::Renderer2D::DrawRotatedQuad({0.9f, -0.4f}, {0.3f, 0.55f}, -rotation / 2, m_SquareColor);
         //Mashenka::Renderer2D::DrawQuad({-1.0f, 0.0f}, { 0.8f, 0.8f }, { 0.8f, 0.2f, 0.3f, 1.0f });
         //Mashenka::Renderer2D::DrawQuad({0.5f, -0.5f}, { 0.5f, 0.75f }, { 0.2f, 0.3f, 0.8f, 1.0f });
         Mashenka::Renderer2D::DrawQuad({0.0f, 0.0f, -0.1f}, {10.0f, 10.0f}, m_CheckerboardTexture);

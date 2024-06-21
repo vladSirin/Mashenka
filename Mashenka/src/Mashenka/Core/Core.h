@@ -3,31 +3,31 @@
 
 // Platform detection using predefined macros
 #ifdef _WIN32
-    /* Windows x64/x86 */
-    #ifdef _WIN64
-        /* Windows x64  */
-        #define MK_PLATFORM_WINDOWS
-    #else
+/* Windows x64/x86 */
+#ifdef _WIN64
+/* Windows x64  */
+#define MK_PLATFORM_WINDOWS
+#else
         /* Windows x86 */
         #error "x86 Builds are not supported!"
-    #endif
+#endif
 #elif defined(__APPLE__) || defined(__MACH__)
     #include <TargetConditionals.h>
     /* TARGET_OS_MAC exists on all the platforms
     * so we must check all of them (in this order)
     * to ensure that we're running on MAC
     * and not some other Apple platform */
-    #if TARGET_IPHONE_SIMULATOR == 1
+#if TARGET_IPHONE_SIMULATOR == 1
         #error "IOS simulator is not supported!"
-    #elif TARGET_OS_IPHONE == 1
+#elif TARGET_OS_IPHONE == 1
         #define MK_PLATFORM_IOS
         #error "IOS is not supported!"
-    #elif TARGET_OS_MAC == 1
+#elif TARGET_OS_MAC == 1
         #define MK_PLATFORM_MACOS
         #error "MacOS is not supported!"
-    #else
+#else
         #error "Unknown Apple platform!"
-    #endif
+#endif
 /* We also have to check __ANDROID__ before __linux__
  * since android is based on the linux kernel
  * it has __linux__ defined */
@@ -49,12 +49,22 @@
  */
 
 #ifdef MK_DEBUG
+    #if defined(MK_PLATFORM_WINDOWS)
+    #define MK_DEBUGBREAK() __debugbreak()
+    #elif defined(MK_PLATFORM_LINUX)
+    #include <signal.h>
+    #define MK_DEBUGBREAK() raise(SIGTRAP)
+    #else
+    #error "Platform doesn't support debugbreak yet"
+    #endif
     #define MK_ENABLE_ASSERTS
+#else
+    #defined MK_DEBUGBREAK()
 #endif
 
 #ifdef MK_ENABLE_ASSERTS
-    #define MK_ASSERT(x, ...) {if (!(x)) {MK_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); }}
-    #define MK_CORE_ASSERT(x, ...) {if(!(x)) {MK_CORE_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); }}
+#define MK_ASSERT(x, ...) {if (!(x)) {MK_ERROR("Assertion Failed: {0}", __VA_ARGS__); MK_DEBUGBREAK(); }}
+#define MK_CORE_ASSERT(x, ...) {if(!(x)) {MK_CORE_ERROR("Assertion Failed: {0}", __VA_ARGS__); MK_DEBUGBREAK(); }}
 #else
 #define MK_ASSERT(x, ...)
 #define MK_CORE_ASSERT(x, ...)
@@ -77,16 +87,17 @@ namespace Mashenka
 
     // Template alias for creating a scope
     // Using Args&& ... args to forward the arguments so it supports variadic arguments
-    template<typename T, typename ... Args>
-    constexpr Scope<T> CreateScope(Args&& ... args)
+    template <typename T, typename... Args>
+    constexpr Scope<T> CreateScope(Args&&... args)
     {
         return std::make_unique<T>(std::forward<Args>(args)...); //perfect forwarding for variadic arguments
     }
 
     template <typename T>
     using Ref = std::shared_ptr<T>;
-    template<typename T, typename ... Args>
-    constexpr Ref<T> CreateRef(Args&& ... args)
+
+    template <typename T, typename... Args>
+    constexpr Ref<T> CreateRef(Args&&... args)
     {
         return std::make_shared<T>(std::forward<Args>(args)...);
     }
@@ -112,5 +123,3 @@ BIT(2) would be 4 (binary 0100), and so on.
  *and when it is called, it will invoke the fn member function of the parent object,
  *passing along the given argument.*/
 #define MK_BIND_EVENT_FN(fn) std::bind(&fn, this, std::placeholders::_1)
-
-
