@@ -318,8 +318,8 @@ namespace Mashenka
         // Set the current Index to the new texture
         if (!textureFound)
         {
-            if (s_Data.TextureSlotIndex >= s_Data.MaxTextureSlots)
-                return;
+            if (s_Data.TextureSlotIndex >= Renderer2DData::MaxTextureSlots)
+                FlushAndReset();
 
             textureIndex = (float)s_Data.TextureSlotIndex;
             s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture;
