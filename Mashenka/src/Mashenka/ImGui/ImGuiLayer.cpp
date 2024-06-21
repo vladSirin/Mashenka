@@ -72,6 +72,16 @@ namespace Mashenka
         ImGui::DestroyContext(); // free up the ImGui context, which is used for state track
     }
 
+    void ImGuiLayer::OnEvent(Event& e)
+    {
+        ImGuiIO& io = ImGui::GetIO();
+
+        // bitwise condition, if both conditions are met, @e.Handled will be set to true
+        // @|= is an OR assignment, it sets things to be true if the expression evaluates true, OR it's true already
+        e.Handled |= e.IsInCategory(EventCategoryMouse) & io.WantCaptureMouse;
+        e.Handled |= e.IsInCategory(EventCategoryKeyboard) & io.WantCaptureKeyboard;
+    }
+
     void ImGuiLayer::Begin()
     {
         MK_PROFILE_FUNCTION(); // profiling

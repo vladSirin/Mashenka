@@ -11,6 +11,7 @@ namespace Mashenka
 
         void OnAttach() override;
         void OnDetach() override;
+        void OnEvent(Event& e) override;
         void OnImGuiRender() override; // for render specific things and debugging UI
 
         // Begin and End for the rendering prepare and execution.

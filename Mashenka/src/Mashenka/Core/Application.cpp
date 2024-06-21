@@ -77,11 +77,11 @@ namespace Mashenka
          * If the event is handled, then the event will not be passed to the layers above
          * This is done by checking the event handled flag
          */
-        for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();)
+        for(auto& it = m_LayerStack.rbegin(); it != m_LayerStack.rend(); ++it)
         {
-            (*--it)->OnEvent(e);
-            if (e.Handled)
-                break;
+            if(e.Handled)
+                break;;
+            (*it)->OnEvent(e);
         }
 
         MK_CORE_TRACE("OnEvent {0}", e);
