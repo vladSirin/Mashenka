@@ -63,35 +63,79 @@ namespace Mashenka
         m_IndexBuffer = indexBuffer;
     }
 
+    /* This function is used to bind and config the data for the vertex buffer object
+     * that is used for the current renderer*/
     void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer)
     {
         MK_PROFILE_FUNCTION(); // Profiling
-        // add vertex buffer into the vertex array
+
+        // Ensure the buffer has a layout
         MK_CORE_ASSERT(vertexBuffer->GetLayout().GetElements().size(), "Vertex Buffer has no layout!")
-        
+
+        // binds renderer to make sure it is the current vertex array
         glBindVertexArray(m_RendererID);
+        // binds the VBO
         vertexBuffer->Bind();
 
-        // initialize a index and inject the vertex buffer into the vertex array
+        // processing vertex buffer layout
         uint32_t index = 0;
         const auto& layout = vertexBuffer->GetLayout();
         for (const auto& element : layout)
         {
-            // enable the vertex attribute array
-            glEnableVertexAttribArray(index + m_VertexBufferIndex);
-            // set the vertex attribute pointer
-            glVertexAttribPointer(
-                index + m_VertexBufferIndex,
-                static_cast<GLint>(element.GetComponentCount()),
-                ShaderDataTypeToOpenGLBaseType(element.Type),
-                element.Normalized ? GL_TRUE : GL_FALSE,
-                layout.GetStride(),
-                reinterpret_cast<const void*>(element.
-                    Offset) // the offset of the element in the buffer. removing intptr_t because it is not defined in this scope
-                // intptr_t is a signed integer type with the property that any valid pointer to void can be converted to this type, then converted back to pointer to void, and the result will compare equal to the original pointer.
-                // intptr_t is used to represent the difference between two pointers, thus the size of intptr_t is the same as the size of a pointer.
-            );
-            index++;
+            switch (element.Type)
+            {
+            // for scalar and vector types
+            case ShaderDataType::Float:
+            case ShaderDataType::Float2:
+            case ShaderDataType::Float3:
+            case ShaderDataType::Float4:
+            case ShaderDataType::Int:
+            case ShaderDataType::Int2:
+            case ShaderDataType::Int3:
+            case ShaderDataType::Int4:
+            case ShaderDataType::Bool:
+                {
+                    glEnableVertexAttribArray(m_VertexBufferIndex); //enable vertex attribute array
+
+                    /* Specifies the layout of the vertex attribute data.
+                     * 'element.GetComponentCount()' returns the num of components (eg: 1 for float, 3 for float3)
+                     * 'ShaderDataTypeToOpenGLBaseType(element.Type)' converts the type to openGL type
+                     * 'element.Normalized' specifics whether data should be normalized
+                     * @layout.GetStride(), specifies the byte offset between consecutive vertex attributions
+                     * @element.Offset specifies the offset of the first component.
+                     */
+                    glVertexAttribPointer(m_VertexBufferIndex, element.GetComponentCount(),
+                                          ShaderDataTypeToOpenGLBaseType(element.Type),
+                                          element.Normalized ? GL_TRUE : GL_FALSE, layout.GetStride(),
+                                          (const void*)element.Offset);
+                    m_VertexBufferIndex++; // increment attribute index
+                    break;
+                }
+
+            // for matrix types
+            case ShaderDataType::Mat3:
+            case ShaderDataType::Mat4:
+                {
+                    // Matrices are handled as multiple attribute pointers, one for each column of the matrix
+                    uint8_t count = element.GetComponentCount();
+
+                    // using loop to process data
+                    for (uint8_t i = 0; i < count; i++)
+                    {
+                        glEnableVertexAttribArray(m_VertexBufferIndex);
+                        glVertexAttribPointer(m_VertexBufferIndex, count,
+                                              ShaderDataTypeToOpenGLBaseType(element.Type),
+                                              element.Normalized ? GL_TRUE : GL_FALSE,
+                                              layout.GetStride(),
+                                              (const void*)(sizeof(float) * count * i));
+                        glVertexAttribDivisor(m_VertexBufferIndex, 1);
+                        m_VertexBufferIndex++;
+                    }
+                    break;
+                }
+            default:
+                MK_CORE_ASSERT(false, "Unknow ShaderDataType!") // error handling 
+            }
         }
 
         m_VertexBuffers.push_back(vertexBuffer);
