@@ -106,7 +106,7 @@ namespace Mashenka
             json << ",{";
             json << "\"cat\":\"function\",";
             json << "\"dur\":" << (result.ElapsedTime.count()) << ',';
-            json << "\"name\":\"" << name << "\",";
+            json << "\"name\":\"" << result.Name << "\",";
             json << "\"ph\":\"X\",";
             json << "\"pid\":0,";
             json << "\"tid\":" << result.ThreadID << ",";
@@ -194,6 +194,65 @@ namespace Mashenka
     };
 }
 
+namespace InstrumentorUtils
+{
+    // This is a template struct with a parameter of N.
+    // This contains a character array @Size of N;
+    template <size_t N>
+    struct ChangeResult
+    {
+        char Data[N];
+    };
+
+    /* This is a template function that takes into 2 parameters, N & K, which are the sizes of two strings
+     * The size of the array will be evaluated at compile time, this allows compiler optimization
+     * This allows the function to work with array of any size and remove dependencies to things like std::string
+     */
+    template <size_t N, size_t K>
+    constexpr auto CleanupOutputString(const char (&expr)[N], const char (&remove)[K])
+    {
+        // initialize the result arary
+        ChangeResult<N> result = {};
+
+        // index initialization
+        size_t srcIndex = 0;
+        size_t dstIndex = 0;
+
+        // Loop go through the 'expr' array until 'srcIndex' reaches N
+        while (srcIndex < N)
+        {
+            // Initialize matchIndex, this tracks how many characters of the 'remove' string have been matched
+            size_t matchIndex = 0;
+
+            // Substring main loop
+            // 'matchIndex < K-1' ensures we don't go out of the bounds of the 'remove' string
+            // 'srcIndex + matchIndex < N - 1' ensures we don't go out of bounds of the 'expr' string
+            // 'expr[srcIndex+matchIndex] == remove[matchIndex] checks if the characters match
+            // if it matches, increment matchIndex
+            while (matchIndex < K - 1 && srcIndex + matchIndex < N - 1 && expr[srcIndex + matchIndex] == remove[
+                matchIndex])
+                matchIndex++;
+
+            // if a full match of the 'remove' substring is found, 'srcIndex' is incremented by 'matchIndex' to skip over the matched substring
+            if (matchIndex == K - 1)
+            {
+                srcIndex += matchIndex;
+            }
+            else
+            {
+                if (srcIndex < N - 1) //Ensure we don't access out of bounds
+
+                    // Ternary operator, condition ? value_if_true : value_if_false;
+                    // this line copies the indexed data from expr to result.Data, and replace " with '
+                    // in C++ single quote ' is used to denote character literals, that you cannot denote ' itself using '''
+                    // which will leads to error, a backlash is used to escape this
+                    result.Data[dstIndex++] = expr[srcIndex] == '"' ? '\'' : expr[srcIndex];
+            }
+            srcIndex++;
+        }
+        return result;
+    }
+}
 
 /*
  * Macros for profiling
@@ -212,7 +271,7 @@ namespace Mashenka
     #define MK_FUNC_SIG __PRETTY_FUNCTION__
 #elif defined(__DMC__) && (__DMC__ >= 0x810)
     #define MK_FUNC_SIG __PRETTY_FUNCTION__
-#elif (defined(__FUNCSIG__))
+#elif (defined(__FUNCSIG__)) || (_MSC_VER) // checking MSVC version or FUNCSIG defined
     #define MK_FUNC_SIG __FUNCSIG__
 #elif (defined(__INTEL_COMPILER) && (__INTEL_COMPILER >= 600)) || (defined(__IBMC__) && (__IBMC__ >= 500))
     #define MK_FUNC_SIG __FUNCTION__
@@ -228,11 +287,14 @@ namespace Mashenka
 
 #define MK_PROFILE_BEGIN_SESSION(name, filepath) ::Mashenka::Instrumentor::Get().BeginSession(name, filepath)
 #define MK_PROFILE_END_SESSION() ::Mashenka::Instrumentor::Get().EndSession()
-#define MK_PROFILE_SCOPE(name) ::Mashenka::InstrumentorTimer timer##__LINE__(name);
+
+// the purpose of this marco is to create a scope-based profiling timer with a cleanup-up function name.
+#define MK_PROFILE_SCOPE(name) constexpr auto fixedName = ::Mashenka::InstrumentorUtils::CleanupOutputString(name, "__cdecl ");\
+    ::Mashenka::InstrumentationTimer timer##__LINE__(fixedName.Data)
 #define MK_PROFILE_FUNCTION() MK_PROFILE_SCOPE(MK_FUNC_SIG)
 #else
-    #define MK_PROFILE_BEGIN_SESSION(name, filepath)
-    #define MK_PROFILE_END_SESSION()
-    #define MK_PROFILE_SCOPE(name)
-    #define MK_PROFILE_FUNCTION()
+#define MK_PROFILE_BEGIN_SESSION(name, filepath)
+#define MK_PROFILE_END_SESSION()
+#define MK_PROFILE_SCOPE(name)
+#define MK_PROFILE_FUNCTION()
 #endif
