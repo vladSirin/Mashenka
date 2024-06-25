@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Mashenka/Core/Core.h"
+#include "Mashenka/Core/Base.h"
 
 /*
  * 2. **Creating an Entry Point**: An entry point is created in the Hazel engine.

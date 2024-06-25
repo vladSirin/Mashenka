@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Mashenka/Core/Core.h"
+#include "Mashenka/Core/Base.h"
 #include "Mashenka/Core/KeyCodes.h"
 #include "Mashenka/Core/MouseCode.h"
 

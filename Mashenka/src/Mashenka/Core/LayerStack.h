@@ -9,7 +9,7 @@
  */
 #pragma once
 
-#include "Mashenka/Core/Core.h"
+#include "Mashenka/Core/Base.h"
 #include "Mashenka/Core/Layer.h"
 #include <vector>
 

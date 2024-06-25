@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Mashenka/Core/Core.h"
+#include "Mashenka/Core/Base.h"
 #include "Mashenka/Core/Window.h"
 #include "Mashenka/Events/ApplicationEvent.h"
 #include "LayerStack.h"

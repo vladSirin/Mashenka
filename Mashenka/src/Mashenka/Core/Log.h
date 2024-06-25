@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Mashenka/Core/Core.h"
+#include "Mashenka/Core/Base.h"
 #include <spdlog/spdlog.h>
 #include <spdlog/fmt/ostr.h>
 // ReSharper disable once CppUnusedIncludeDirective

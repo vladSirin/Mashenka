@@ -4,7 +4,7 @@
 #include "Mashenka/Core/Application.h"
 #include "Mashenka/Core/Layer.h"
 #include "Mashenka/Core/Log.h"
-#include "Mashenka/Core/Core.h"
+#include "Mashenka/Core/Base.h"
 
 // PRODUCT_CORE
 #include "Mashenka/Core/Timestep.h"
