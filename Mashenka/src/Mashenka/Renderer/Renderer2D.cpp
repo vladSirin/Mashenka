@@ -149,6 +149,10 @@ namespace Mashenka
 
     void Renderer2D::Flush()
     {
+        // Nothing to draw, avoiding drawing an empty vertex array
+        if (s_Data.QuadIndexCount == 0)
+            return;
+        
         // bind textures for render
         for (uint32_t i = 0; i < s_Data.TextureSlotIndex; ++i)
         {
