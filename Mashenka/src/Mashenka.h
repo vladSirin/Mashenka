@@ -29,6 +29,7 @@
 #include "Mashenka/Renderer/Shader.h"
 #include "Mashenka/Renderer/Texture.h"
 #include "Mashenka/Renderer/VertexArray.h"
+#include "Mashenka/Renderer/Framebuffer.h"
 
 // Camera
 #include "Mashenka/Renderer/Camera.h"

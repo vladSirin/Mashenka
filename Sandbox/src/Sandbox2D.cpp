@@ -16,6 +16,11 @@ void Sandbox2D::OnAttach()
 {
     MK_PROFILE_FUNCTION(); // Profiling
     m_CheckerboardTexture = Mashenka::Texture2D::Create("assets/textures/Checkerboard.png");
+
+    Mashenka::FramebufferSpecification fbSpec;
+    fbSpec.Width = 1280;
+    fbSpec.Height = 720;
+    m_Framebuffer = Mashenka::Framebuffer::Create(fbSpec);
 }
 
 void Sandbox2D::OnDetach()
@@ -39,6 +44,7 @@ void Sandbox2D::OnUpdate(Mashenka::TimeStep ts)
     Mashenka::Renderer2D::ResetStats();
     {
         MK_PROFILE_SCOPE("Render Prep");
+        m_Framebuffer->Bind();
         Mashenka::RenderCommand::SetClearColor({0.1f, 0.1f, 0.1f, 1});
         Mashenka::RenderCommand::Clear();
     }
@@ -60,6 +66,7 @@ void Sandbox2D::OnUpdate(Mashenka::TimeStep ts)
         Mashenka::Renderer2D::DrawQuad({0.0f, 0.0f, 0.0f}, {5.0f, 5.0f}, m_CheckerboardTexture, 20.0f);
         Mashenka::Renderer2D::EndScene();
 
+
         // Trying to draw a big num of quads for the drawcall
         Mashenka::Renderer2D::BeginScene(m_CameraController.GetCamera());
         for (float y = -5.0f; y < 5.0f; y += 0.5f)
@@ -71,6 +78,7 @@ void Sandbox2D::OnUpdate(Mashenka::TimeStep ts)
             }
         }
         Mashenka::Renderer2D::EndScene();
+        m_Framebuffer->Unbind();
     }
 }
 
@@ -172,8 +180,9 @@ void Sandbox2D::OnImGuiRender()
 
             ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
 
-            uint32_t textureID = m_CheckerboardTexture->GetRendererID();
-            ImGui::Image((void*)textureID, ImVec2(256.0f, 256.0f));
+            // getting the RendererID from the framebuffer, and render the texture to the ImGui Window
+            uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
+            ImGui::Image((void*)textureID, ImVec2{1280, 720});
             ImGui::End();
         }
 
@@ -195,7 +204,7 @@ void Sandbox2D::OnImGuiRender()
         ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
 
         uint32_t textureID = m_CheckerboardTexture->GetRendererID();
-        ImGui::Image((void*)textureID, ImVec2(256.0f, 256.0f));
+        ImGui::Image((void*)textureID, ImVec2{1280, 720});
         ImGui::End();
     }
 }
