@@ -32,6 +32,7 @@ namespace Mashenka
         //Using a static function to get the sole instance of the application
         inline Window& GetWindow() const {return *m_Window;}
         inline static Application& Get() {return *s_Instance;}
+        void Close();
 
     private:
         void Run(); // making the main loop private to make sure it is only called from the main function

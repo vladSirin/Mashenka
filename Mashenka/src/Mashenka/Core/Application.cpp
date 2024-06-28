@@ -103,6 +103,11 @@ namespace Mashenka
     }
 
 
+    void Application::Close()
+    {
+        m_Running = false;
+    }
+
     /*
      * 4. **Running the Application**:
      * The application is run by calling the `run` function on the application instance.
