@@ -17,7 +17,7 @@ namespace Mashenka
     class Application
     {
     public:
-        Application();
+        Application(const std::string& name = "Mashenka App");
 
         // virtual destructor to make sure the derived class destructor is called
         // explain this: https://stackoverflow.com/questions/461203/when-to-use-virtual-destructors

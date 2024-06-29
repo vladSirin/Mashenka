@@ -157,3 +157,51 @@ project "Sandbox"
         defines "MK_DIST"
         runtime "Release"
         optimize "On"
+        
+
+project "Mashenka-Editor"
+    location "Mashenka-Editor"
+    kind "ConsoleApp"
+    language "C++"
+    cppdialect "C++17"
+    staticruntime "on"
+    
+    targetdir ("bin/" .. outputdir .. "/%/{prj.name}")
+    objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+    
+    files
+    {
+        "%{prj.name}/src/**.h",
+        "%{prj.name}/src/**.cpp"
+    }
+
+    includedirs
+    {
+        "Mashenka/vendor/spdlog/include",
+        "Mashenka/src",
+        "Mashenka/vendor",
+        "%{IncludeDir.glm}"
+    }
+
+    links
+    {
+        "Mashenka"
+    }
+
+    filter "system:windows"
+        systemversion "latest"
+
+    filter "configurations:Debug"
+        defines "MK_DEBUG"
+        runtime "Debug"
+        symbols "On"
+
+    filter "configurations:Release"             
+        defines "MK_RELEASE"
+        runtime "Release"
+        optimize "On"
+
+    filter "configurations:Dist"  
+        defines "MK_DIST"
+        runtime "Release"
+        optimize "On"

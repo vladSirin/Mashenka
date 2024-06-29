@@ -22,7 +22,7 @@ Make sure that you do a `--recursive` clone to fetch all submodules!
 - Set the `Sandbox` project as the startup project and run.
 - Make sure to set the working directory to `Mashenka\Sandbox\assets` in the project settings.
 - If you get an error about missing DLLs, make sure you have the Visual C++ Runtime installed.
-- If having LINKER errors, make sure you setup the multi-threaded debugger (no DLL) runtime library for all projects (included dependencies, Glad/GLFW/ImGui etc.)
+- If having LINKER errors, make sure you setup the multi-threaded debugger (no DLL) runtime library for GLFW and all other projects (included dependencies, Glad/GLFW/ImGui etc.)
 
 ## The Plan
 This is a demo engine for me to mainly learning Game Engine Architecture and C++.

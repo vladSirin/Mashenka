@@ -14,7 +14,7 @@ namespace Mashenka
     Application* Application::s_Instance = nullptr;
 
     // this is the constructor of the application class
-    Application::Application()
+    Application::Application(const std::string& name)
     {
         // Profiling
         MK_PROFILE_FUNCTION();
@@ -24,7 +24,7 @@ namespace Mashenka
         s_Instance = this;
 
         // Create the window
-        m_Window = Window::Create();
+        m_Window = Window::Create(WindowProps(name));
         m_Window->SetVSync(false);
 
 
