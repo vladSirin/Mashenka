@@ -43,6 +43,8 @@ namespace Mashenka
         // The friend class can access the private and protected data from this
         // friend class EventDispatcher;
     public:
+        virtual ~Event() = default;
+                
         bool Handled = false;
 
         // virtual functions that must be overriden by derived classes
