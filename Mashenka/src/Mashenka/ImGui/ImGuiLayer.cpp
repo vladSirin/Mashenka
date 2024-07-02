@@ -76,10 +76,16 @@ namespace Mashenka
     {
         ImGuiIO& io = ImGui::GetIO();
 
+        /*
+         * This part is commented out because we want the mouse and keyboard actions are properly handled both in Imgui
+         * and by the application when ImGui is active
+         * The commented out code will make sure that if Imgui is already handling the events, they will not be passed
+         * to the application too.
+         */
         // bitwise condition, if both conditions are met, @e.Handled will be set to true
         // @|= is an OR assignment, it sets things to be true if the expression evaluates true, OR it's true already
-        e.Handled |= e.IsInCategory(EventCategoryMouse) & io.WantCaptureMouse;
-        e.Handled |= e.IsInCategory(EventCategoryKeyboard) & io.WantCaptureKeyboard;
+        //e.Handled |= e.IsInCategory(EventCategoryMouse) & io.WantCaptureMouse;
+        //e.Handled |= e.IsInCategory(EventCategoryKeyboard) & io.WantCaptureKeyboard;
     }
 
     void ImGuiLayer::Begin()

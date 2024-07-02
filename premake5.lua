@@ -1,6 +1,6 @@
 workspace "Mashenka"
     architecture "x64"
-    startproject "Sandbox"
+    startproject "Tamara"
 
     configurations
     {
@@ -105,11 +105,13 @@ project "Mashenka"
         defines "MK_RELEASE"
         runtime "Release"
         optimize "On"
+        links "glfw3"
 
     filter "configurations:Dist"  
         defines "MK_DIST"
         runtime "Release"
         optimize "On"
+        links "glfw3"
 
 project "Sandbox"
     location "Sandbox"
@@ -159,8 +161,8 @@ project "Sandbox"
         optimize "On"
         
 
-project "Mashenka-Editor"
-    location "Mashenka-Editor"
+project "Tamara"
+    location "Tamara"
     kind "ConsoleApp"
     language "C++"
     cppdialect "C++17"

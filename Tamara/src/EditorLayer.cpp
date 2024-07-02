@@ -173,11 +173,41 @@ namespace Mashenka
 
 
                 ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
-
-                // getting the RendererID from the framebuffer, and render the texture to the ImGui Window
-                uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
-                ImGui::Image((void*)textureID, ImVec2{1280, 720});
                 ImGui::End();
+
+                /* Adapting to the window resize of Imgui viewport.
+                 * Maintaining the aspect ratio of the rendered image in an efficient way.
+                 * This routine gets the size of the available space of the Imgui viewport and compare it with the
+                 * current framebuffer size, if they are not matching, resize the framebuffer to the space
+                 * then rendering it without padding
+                 */
+                {
+                    // pushing the style variable to make sure there is no padding for the window
+                    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{0,0});
+                    ImGui::Begin("Viewport"); // start the viewport
+
+                    // retrieve the size of the available content region within the "viewport" window
+                    ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
+
+                    // Cast viewportPanelSize to glm::vec2* and dereference for comparison
+                    if (m_ViewportSize != *(glm::vec2*)&viewportPanelSize)
+                    {
+                        // size is different, resize the buffer
+                        m_Framebuffer->Resize((uint32_t)viewportPanelSize.x, (uint32_t)viewportPanelSize.y);
+                        m_ViewportSize = {viewportPanelSize.x, viewportPanelSize.y};
+
+                        // update camera controller along with it
+                        m_CameraController.OnResize(viewportPanelSize.x, viewportPanelSize.y);
+                    }
+
+                    // Get the texture ID and render it into the viewport
+                    uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
+
+                    // Draw the image with the texture from the framebuffer.
+                    ImGui::Image((void*)textureID, ImVec2{m_ViewportSize.x, m_ViewportSize.y}, ImVec2{0,1}, ImVec2{1,0});
+                    ImGui::End();
+                    ImGui::PopStyleVar();
+                }
             }
 
             // Ending the "Dockspace Demo" ImGui Window

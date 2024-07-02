@@ -75,6 +75,13 @@ namespace Mashenka
         dispatcher.Dispatch<WindowResizeEvent>(MK_BIND_EVENT_FN(OrthographicCameraController::OnWindowResized));
     }
 
+    void OrthographicCameraController::OnResize(float width, float height)
+    {
+        m_AspectRatio = width / height;
+        m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
+    }
+
+
     bool Mashenka::OrthographicCameraController::OnMouseScrolled(MouseScrolledEvent& e)
     {
         MK_PROFILE_FUNCTION(); // Profiling
@@ -89,8 +96,7 @@ namespace Mashenka
     {
         MK_PROFILE_FUNCTION(); // Profiling
         // Resizing the camera
-        m_AspectRatio = (float)e.GetWidth() / (float)e.GetHeight();
-        m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
+        OnResize((float)e.GetWidth(), (float)e.GetHeight());
         return false;
     }
 }

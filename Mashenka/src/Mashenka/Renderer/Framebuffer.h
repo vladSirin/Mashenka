@@ -22,6 +22,9 @@ namespace Mashenka
         virtual void Bind() = 0;
         virtual void Unbind() = 0;
 
+        // resize the framebuffer
+        virtual void Resize(uint32_t width, uint32_t height) = 0;
+
         /* @brief: In OpenGL, framebuffers can have multiple types of attachments,
          * each serving different purposes for rendering. The most common attachments are color attachments,
          * depth attachments, and stencil attachments. Here’s a detailed explanation of each:

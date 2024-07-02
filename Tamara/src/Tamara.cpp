@@ -6,22 +6,22 @@
 
 namespace Mashenka
 {
-    class MashenkaEditor : public Application
+    class Tamara : public Application
     {
     public:
-        MashenkaEditor() : Application("Mashenka Editor")
+        Tamara() : Application("Tamara Editor")
         {
             PushLayer(new EditorLayer());
         }
 
-        ~MashenkaEditor() = default;
+        ~Tamara() = default;
     };
 
     // This is a free function, needs to be defined outside of the scope of the class
     // This function then is actually called by the int main() from the EntryPoint.h which starts the application
     Application* CreateApplication()
     {
-        printf("MashenkaEditor is now on!");
-        return new MashenkaEditor();
+        printf("Mashenka is a twin sister of my Tamara!");
+        return new Tamara();
     }
 }
