@@ -3,7 +3,7 @@
 
 namespace Mashenka
 {
-    class ImGuiLayer: public Layer
+    class ImGuiLayer : public Layer
     {
     public:
         ImGuiLayer();
@@ -18,9 +18,11 @@ namespace Mashenka
         void Begin();
         void End();
 
+        // setting if ImGui will block events
+        void BlockEvents(bool block) { m_BlockEvents = block; }
+
     private:
-        // float m_Time = 0.0f;
-        
+        bool m_BlockEvents = true;
+        float m_Time = 0.0f;
     };
 }
-

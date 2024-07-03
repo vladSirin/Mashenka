@@ -27,12 +27,14 @@ namespace Mashenka
 
         void PushLayer(Layer* layer);
         void PushOverlay(Layer* layer);
-        
+
 
         //Using a static function to get the sole instance of the application
-        inline Window& GetWindow() const {return *m_Window;}
-        inline static Application& Get() {return *s_Instance;}
+        inline Window& GetWindow() const { return *m_Window; }
+        inline static Application& Get() { return *s_Instance; }
         void Close();
+
+        ImGuiLayer* GetImGuiLayer() { return m_ImGuiLayer; }
 
     private:
         void Run(); // making the main loop private to make sure it is only called from the main function
@@ -43,11 +45,12 @@ namespace Mashenka
         bool m_Running = true;
         bool m_Minimized = false;
         LayerStack m_LayerStack;
-        ImGuiLayer* m_ImGuiLayer; //adding ImGuiLayer variable for the application as it should be handled inside the engine
+        ImGuiLayer* m_ImGuiLayer;
+        //adding ImGuiLayer variable for the application as it should be handled inside the engine
 
         // declare a static global single instance to access
         static Application* s_Instance;
-        friend int::main(int argc, char** argv); // declare the main function as a friend of the Application class
+        friend int ::main(int argc, char** argv); // declare the main function as a friend of the Application class
 
         // define the last frame time
         float m_LastFrameTime = 0.0f;

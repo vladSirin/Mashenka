@@ -25,6 +25,7 @@ namespace Mashenka
         Ref<Framebuffer> m_Framebuffer;
 
         Ref<Texture2D> m_CheckerboardTexture;
+        bool m_ViewportFocused = false, m_ViewportHovered = false;
         glm::vec2 m_ViewportSize = {0.0f, 0.0f}; // used for sizing to match the viewport of imgui
         glm::vec4 m_SquareColor = {0.2 ,0.3, 0.8, 1.0};
         

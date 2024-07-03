@@ -35,8 +35,12 @@ namespace Mashenka
         MK_PROFILE_FUNCTION();
         Layer::OnUpdate(ts);
 
-        //update
-        m_CameraController.OnUpdate(ts);
+        // update camera if focused
+        if (m_ViewportFocused)
+        {
+            m_CameraController.OnUpdate(ts);
+        }
+        
 
         //render
         Renderer2D::ResetStats();
@@ -185,6 +189,11 @@ namespace Mashenka
                     // pushing the style variable to make sure there is no padding for the window
                     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{0,0});
                     ImGui::Begin("Viewport"); // start the viewport
+
+                    // Getting the states for the viewport and BlockEvents if neither state are true
+                    m_ViewportFocused = ImGui::IsWindowFocused();
+                    m_ViewportHovered = ImGui::IsWindowHovered();
+                    Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocused || !m_ViewportHovered);
 
                     // retrieve the size of the available content region within the "viewport" window
                     ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
