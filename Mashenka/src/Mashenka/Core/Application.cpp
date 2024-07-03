@@ -126,10 +126,6 @@ namespace Mashenka
             TimeStep timeStep = time - m_LastFrameTime;
             m_LastFrameTime = time;
 
-
-            // Poll Input, this is the polling of the input system
-            Input::Poll();
-
             // Go through all the layers, as each layer can handle its own update
             if (!m_Minimized)
             {

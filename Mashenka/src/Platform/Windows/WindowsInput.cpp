@@ -1,5 +1,5 @@
 ﻿#include "mkpch.h"
-#include "Platform/Windows/WindowsInput.h"
+#include "Mashenka/Core/Input.h"
 #include <GLFW/glfw3.h>
 #include <map>
 
@@ -10,56 +10,37 @@
 
 namespace Mashenka
 {
-    void Mashenka::WindowsInput::PollImpl()
+    bool Input::IsKeyPressed(KeyCode key)
     {
-        auto m_window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
-
-        // POll Keyboard state
-        for (int key = static_cast<int>(MK_KEY_SPACE); key <= static_cast<int>(MK_KEY_LAST); ++key)
-        {
-            keyState[key] = glfwGetKey(m_window, key) == GLFW_PRESS;
-        }
-
-        // Poll mouse state
-        for (int button = 0; button <= static_cast<int>(MK_MOUSE_BUTTON_LAST); ++button)
-        {
-            mouseState[button] = glfwGetMouseButton(m_window, button) == GLFW_PRESS;
-        }
-
-        // Poll Mouse positions
-        double x, y;
-        glfwGetCursorPos(m_window, &x, &y);
-        mouseX = static_cast<float>(x);
-        mouseY = static_cast<float>(y);
+        auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
+        auto state = glfwGetKey(window, static_cast<int32_t>(key));
+        return state == GLFW_PRESS || state == GLFW_REPEAT;
     }
 
-    // Check if the key is pressed, if it is return true
-    bool Mashenka::WindowsInput::IsKeyPressedImpl(Key keycode)
+    bool Input::IsMouseButtonPressed(MouseCode button)
     {
-        return keyState[static_cast<int>(keycode)]; // return true if the key is pressed, else false
-        // using this because the keyState is a map, and the key is the index of the map
-        // the map is being updated by the PollImpl function
+        auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
+        auto state = glfwGetMouseButton(window, static_cast<int32_t>(button));
+        return state == GLFW_PRESS;
     }
 
-    bool Mashenka::WindowsInput::IsMouseButtonPressedImpl(Mouse button)
+    std::pair<float, float> Input::GetMousePosition()
     {
-        return mouseState[static_cast<int>(button)];
+        auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
+        double xpos, ypos;
+        glfwGetCursorPos(window, &xpos, &ypos);
+        return {(float)xpos, (float)ypos};
     }
 
-    std::pair<float, float> Mashenka::WindowsInput::GetMousePositionImpl()
+    float Input::GetMouseX()
     {
-        return {mouseX, mouseY};
+        auto [x,y] = GetMousePosition();
+        return x;
     }
 
-    float Mashenka::WindowsInput::GetMouseXImpl()
+    float Input::GetMouseY()
     {
-        return mouseX;
-    }
-
-    float Mashenka::WindowsInput::GetMouseYImpl()
-    {
-        return mouseY;
+        auto [x,y] = GetMousePosition();
+        return y;
     }
 }
-
-
