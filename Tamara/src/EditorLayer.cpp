@@ -35,6 +35,18 @@ namespace Mashenka
         MK_PROFILE_FUNCTION();
         Layer::OnUpdate(ts);
 
+        // Resize
+        // Check if the framebuffer size are not matching the viewport size and resize the buffer
+        // This is handled in update before rendering to avoid glitch
+        if(Mashenka::FramebufferSpecification spec = m_Framebuffer->GetSpecification(); m_ViewportSize.x > 0.0f &&
+            m_ViewportSize.y > 0.0f && // zero sized frame buffer is invalid
+            (spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
+        {
+            // Resize the framebuffer and camera
+            m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+            m_CameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
+        }
+
         // update camera if focused
         if (m_ViewportFocused)
         {
@@ -199,15 +211,7 @@ namespace Mashenka
                     ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
 
                     // Cast viewportPanelSize to glm::vec2* and dereference for comparison
-                    if (m_ViewportSize != *(glm::vec2*)&viewportPanelSize)
-                    {
-                        // size is different, resize the buffer
-                        m_Framebuffer->Resize((uint32_t)viewportPanelSize.x, (uint32_t)viewportPanelSize.y);
-                        m_ViewportSize = {viewportPanelSize.x, viewportPanelSize.y};
-
-                        // update camera controller along with it
-                        m_CameraController.OnResize(viewportPanelSize.x, viewportPanelSize.y);
-                    }
+                    m_ViewportSize = {viewportPanelSize.x, viewportPanelSize.y};
 
                     // Get the texture ID and render it into the viewport
                     uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
