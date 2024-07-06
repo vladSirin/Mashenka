@@ -62,6 +62,7 @@
     #defined MK_DEBUGBREAK()
 #endif
 
+// TODO: make this marco able to take in arguments except condition
 #ifdef MK_ENABLE_ASSERTS
 #define MK_ASSERT(x, ...) {if (!(x)) {MK_ERROR("Assertion Failed: {0}", __VA_ARGS__); MK_DEBUGBREAK(); }}
 #define MK_CORE_ASSERT(x, ...) {if(!(x)) {MK_CORE_ERROR("Assertion Failed: {0}", __VA_ARGS__); MK_DEBUGBREAK(); }}

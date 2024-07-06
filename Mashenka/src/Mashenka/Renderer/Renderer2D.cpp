@@ -9,6 +9,7 @@
 
 #include "glm/gtx/quaternion.hpp"
 #include "glm/gtx/string_cast.hpp"
+#include "Mashenka/Scene/Component.h"
 
 namespace Mashenka
 {
@@ -152,7 +153,7 @@ namespace Mashenka
         // Nothing to draw, avoiding drawing an empty vertex array
         if (s_Data.QuadIndexCount == 0)
             return;
-        
+
         // bind textures for render
         for (uint32_t i = 0; i < s_Data.TextureSlotIndex; ++i)
         {
@@ -173,8 +174,11 @@ namespace Mashenka
 
         s_Data.TextureSlotIndex = 1;
     }
-    
 
+
+    /* DrawQuad with Color
+     * 
+     */
     void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color)
     {
         DrawQuad({position.x, position.y, 0.0f}, size, color);
@@ -184,22 +188,33 @@ namespace Mashenka
     {
         MK_PROFILE_FUNCTION(); // Profiling
 
-        //MK_CORE_INFO("Renderer2D::DrawQuad(position: {0}, size: {1},  {2})", glm::to_string(position), glm::to_string(size), glm::to_string(color));
-        constexpr float textureIndex = 0.0f; // using white texture as it's a color Drawing
-        constexpr float tilingFactor = 1.0f; // no tiling for pure color
-        const glm::vec2 texCoord = {0.0f, 0.0f};
-        
-        if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
-            FlushAndReset();
-
         // Matrix, to comment and explain how does it work and why so
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::rotate(
             glm::mat4(1.0f), glm::radians(0.0f), {0.0f, 0.0f, 1.0f}) * glm::scale(
             glm::mat4(1.0f), {size.x, size.y, 1.0f});
 
+        DrawQuad(transform, color);
+    }
+
+    void Renderer2D::DrawQuad(const glm::mat4& transform, const glm::vec4& color)
+    {
+        MK_PROFILE_FUNCTION(); // Profiling
+
+        //MK_CORE_INFO("Renderer2D::DrawQuad(position: {0}, size: {1},  {2})", glm::to_string(position), glm::to_string(size), glm::to_string(color));
+        constexpr float textureIndex = 0.0f; // using white texture as it's a color Drawing
+        constexpr float tilingFactor = 1.0f; // no tiling for pure color
+        const glm::vec2 texCoord = {0.0f, 0.0f};
+
+        if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
+            FlushAndReset();
+
         SetupQaudVertexBuffer(transform, color, textureIndex, tilingFactor);
     }
 
+
+    /* DrawQuad with Texture
+     * 
+     */
     void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture,
                               float tilingFactor, const glm::vec4& tintColor)
     {
@@ -208,6 +223,20 @@ namespace Mashenka
 
     void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture,
                               float tilingFactor, const glm::vec4& tintColor)
+    {
+        MK_PROFILE_FUNCTION();
+
+        // Matrix, to comment and explain how does it work and why so
+        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::rotate(
+            glm::mat4(1.0f), glm::radians(0.0f), {0.0f, 0.0f, 1.0f}) * glm::scale(
+            glm::mat4(1.0f), {size.x, size.y, 1.0f});
+
+        DrawQuad(transform, texture, tilingFactor, tintColor);
+    }
+
+
+    void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture, float tilingFactor,
+                              const glm::vec4& tintColor)
     {
         MK_PROFILE_FUNCTION();
 
@@ -240,14 +269,9 @@ namespace Mashenka
             s_Data.TextureSlotIndex++; // Move to next slot
         }
 
-        // Matrix, to comment and explain how does it work and why so
-        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::rotate(
-            glm::mat4(1.0f), glm::radians(0.0f), {0.0f, 0.0f, 1.0f}) * glm::scale(
-            glm::mat4(1.0f), {size.x, size.y, 1.0f});
-
         SetupQaudVertexBuffer(transform, color, textureIndex, tilingFactor);
 
-        
+
 #if OLD_PATH
         MK_PROFILE_FUNCTION(); // Profiling
         s_Data.TextureShader->SetFloat4("u_Color", tintColor);
@@ -263,6 +287,10 @@ namespace Mashenka
 #endif
     }
 
+
+    /* Draw rotate Quad with Color
+     * 
+     */
     void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation,
                                      const glm::vec4& color)
     {
@@ -339,7 +367,7 @@ namespace Mashenka
     }
 
     void Renderer2D::SetupQaudVertexBuffer(glm::mat4 transform, glm::vec4 color, float textureIndex,
-                                        float tilingFactor)
+                                           float tilingFactor)
     {
         constexpr size_t quadVertexCount = 4;
         const glm::vec2 textureCoord[] = {{0.0f, 0.0f}, {1.0f, 0.0f}, {1.0f, 1.0f}, {0.0f, 1.0f}};
@@ -371,6 +399,4 @@ namespace Mashenka
     {
         return s_Data.Stats;
     }
-
-
 }

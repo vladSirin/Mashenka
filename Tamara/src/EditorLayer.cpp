@@ -22,6 +22,15 @@ namespace Mashenka
         fbSpec.Width = 1280;
         fbSpec.Height = 720;
         m_Framebuffer = Framebuffer::Create(fbSpec);
+
+        // Create Scene and entity, attach transform and spriteRender Component
+        m_ActiveScene = CreateRef<Scene>();
+
+        auto square = m_ActiveScene->CreateEntity();
+        m_ActiveScene->Reg().emplace<TransformComponent>(square);
+        m_ActiveScene->Reg().emplace<SpriteRenderComponent>(square, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+
+        m_SquareEntity = square;
     }
 
     void EditorLayer::OnDetach()
@@ -38,7 +47,7 @@ namespace Mashenka
         // Resize
         // Check if the framebuffer size are not matching the viewport size and resize the buffer
         // This is handled in update before rendering to avoid glitch
-        if(Mashenka::FramebufferSpecification spec = m_Framebuffer->GetSpecification(); m_ViewportSize.x > 0.0f &&
+        if (Mashenka::FramebufferSpecification spec = m_Framebuffer->GetSpecification(); m_ViewportSize.x > 0.0f &&
             m_ViewportSize.y > 0.0f && // zero sized frame buffer is invalid
             (spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
         {
@@ -52,18 +61,15 @@ namespace Mashenka
         {
             m_CameraController.OnUpdate(ts);
         }
-        
+
 
         //render
         Renderer2D::ResetStats();
-        {
-            MK_PROFILE_SCOPE("Renderer Prep");
-            m_Framebuffer->Bind();
-            RenderCommand::SetClearColor({0.1f, 0.1f, 0.1f, 1});
-            RenderCommand::Clear();
-        }
+        m_Framebuffer->Bind();
+        RenderCommand::SetClearColor({0.1f, 0.1f, 0.1f, 1});
+        RenderCommand::Clear();
 
-        {
+        /*{
             static float rotation = 0.0f;
             rotation += ts * 50.0f;
 
@@ -87,7 +93,14 @@ namespace Mashenka
             }
             Renderer2D::EndScene();
             m_Framebuffer->Unbind();
-        }
+        }*/
+
+        Renderer2D::BeginScene(m_CameraController.GetCamera());
+
+        // update scene
+        m_ActiveScene->OnUpdate(ts);
+        Renderer2D::EndScene();
+        m_Framebuffer->Unbind();
     }
 
     void EditorLayer::OnImGuiRender()
@@ -187,8 +200,9 @@ namespace Mashenka
                 ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
                 ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
 
-
-                ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
+                // update the component with the imgui color edit
+                auto& squareColor = m_ActiveScene->Reg().get<SpriteRenderComponent>(m_SquareEntity).Color;
+                ImGui::ColorEdit4("Square Color", glm::value_ptr(squareColor));
                 ImGui::End();
 
                 /* Adapting to the window resize of Imgui viewport.
@@ -199,7 +213,7 @@ namespace Mashenka
                  */
                 {
                     // pushing the style variable to make sure there is no padding for the window
-                    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{0,0});
+                    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{0, 0});
                     ImGui::Begin("Viewport"); // start the viewport
 
                     // Getting the states for the viewport and BlockEvents if neither state are true
@@ -217,7 +231,8 @@ namespace Mashenka
                     uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
 
                     // Draw the image with the texture from the framebuffer.
-                    ImGui::Image((void*)textureID, ImVec2{m_ViewportSize.x, m_ViewportSize.y}, ImVec2{0,1}, ImVec2{1,0});
+                    ImGui::Image((void*)textureID, ImVec2{m_ViewportSize.x, m_ViewportSize.y}, ImVec2{0, 1},
+                                 ImVec2{1, 0});
                     ImGui::End();
                     ImGui::PopStyleVar();
                 }

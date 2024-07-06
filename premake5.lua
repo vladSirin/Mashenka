@@ -24,6 +24,7 @@ IncludeDir["Glad"] = "Mashenka/vendor/Glad/include"
 IncludeDir["ImGui"] = "Mashenka/vendor/imgui"
 IncludeDir["glm"] = "Mashenka/vendor/glm"
 IncludeDir["stb_image"] = "Mashenka/vendor/stb_image"
+IncludeDir["entt"] = "Mashenka/vendor/entt/include"
 
 -- Include the premake config for GLFW from the submodule, which contains how to build it --
 -- Group Dependencies
@@ -72,7 +73,8 @@ project "Mashenka"
         "%{IncludeDir.Glad}",
         "%{IncludeDir.ImGui}",
         "%{IncludeDir.glm}",
-        "%{IncludeDir.stb_image}"
+        "%{IncludeDir.stb_image}",
+        "%{IncludeDir.entt}"
     }
 
 -- Links the GLFW and opengl lib --
@@ -134,7 +136,8 @@ project "Sandbox"
         "Mashenka/vendor/spdlog/include",
         "Mashenka/src",
         "%{IncludeDir.glm}",
-        "Mashenka/vendor"
+        "Mashenka/vendor",
+        "%{IncludeDir.entt}"
     }
 
     links
@@ -182,7 +185,8 @@ project "Tamara"
         "Mashenka/vendor/spdlog/include",
         "Mashenka/src",
         "Mashenka/vendor",
-        "%{IncludeDir.glm}"
+        "%{IncludeDir.glm}",
+        "%{IncludeDir.entt}"
     }
 
     links

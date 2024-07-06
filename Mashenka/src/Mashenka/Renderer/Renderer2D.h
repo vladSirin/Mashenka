@@ -15,12 +15,14 @@ namespace Mashenka
     {
     public:
         // Init and shutdown
-        static void Init();     // Sets up the vertex array, vertex buffer, index buffer, shaders and default white texture
+        static void Init(); // Sets up the vertex array, vertex buffer, index buffer, shaders and default white texture
         static void Shutdown(); // cleans up any dynamic allocated memory
 
         // Scene manage
-        static void BeginScene(const OrthographicCamera& camera); // Prepares the renderer for a new scene by setting the view-projection matrix from the camera
-        static void EndScene(); // Finalizes the scene, updates the vertex buffer with the new data, and flushes the draw calls
+        static void BeginScene(const OrthographicCamera& camera);
+        // Prepares the renderer for a new scene by setting the view-projection matrix from the camera
+        static void EndScene();
+        // Finalizes the scene, updates the vertex buffer with the new data, and flushes the draw calls
         static void Flush();
 
         //primitive rendering functions:
@@ -31,6 +33,11 @@ namespace Mashenka
                              const glm::vec4& tintColor = glm::vec4(1.0f));
         static void DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture,
                              float tilingFactor = 1.0f,
+                             const glm::vec4& tintColor = glm::vec4(1.0f));
+
+        // ECS rendering based on transform
+        static void DrawQuad(const glm::mat4& transform, const glm::vec4& color);
+        static void DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture, float tilingFactor = 1.0f,
                              const glm::vec4& tintColor = glm::vec4(1.0f));
 
         // Draw rotated Quad, rotation in degree
@@ -59,10 +66,10 @@ namespace Mashenka
         static Statistics GetStats();
 
     private:
-
         static void FlushAndReset();
-        
+
         // Submit data to Renderer2D data
-        static void SetupQaudVertexBuffer(glm::mat4 transform, glm::vec4 color, float textureIndex=0.0f, float tilingFactor=1.0f);
+        static void SetupQaudVertexBuffer(glm::mat4 transform, glm::vec4 color, float textureIndex = 0.0f,
+                                          float tilingFactor = 1.0f);
     };
 }

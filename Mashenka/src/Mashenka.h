@@ -19,6 +19,10 @@
 // GUI
 #include "Mashenka/ImGui/ImGuiLayer.h"
 
+// ECS
+#include "Mashenka/Scene/Scene.h"
+#include "Mashenka/Scene/Component.h"
+
 // --------Renderer-------------------
 #include "Mashenka/Renderer/Renderer.h"
 #include "Mashenka/Renderer/Renderer2D.h"
