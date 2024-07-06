@@ -302,21 +302,18 @@ namespace Mashenka
     {
         MK_PROFILE_FUNCTION();
 
-        if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
-            FlushAndReset();
-
-        constexpr float textureIndex = 0.0f; // using white texture as it's a color Drawing
-        constexpr float tilingFactor = 1.0f; // no tiling for pure color
-
         // Transform matrix, typically calculated as Translate * Rotation * Scale
         // The order of the matrix operations matter!
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::rotate(
             glm::mat4(1.0f), glm::radians(rotation), {0.0f, 0.0f, 1.0f}) * glm::scale(
             glm::mat4(1.0f), {size.x, size.y, 1.0f});
 
-        SetupQaudVertexBuffer(transform, color, textureIndex, tilingFactor);
+        DrawQuad(transform, color);
     }
 
+    /* Draw rotate Quad with texture
+     * 
+     */
     void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation,
                                      const Ref<Texture2D>& texture, float tilingFactor, const glm::vec4& tintColor)
     {
@@ -328,42 +325,12 @@ namespace Mashenka
     {
         MK_PROFILE_FUNCTION();
 
-        if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
-            FlushAndReset();
-
-        const glm::vec4 color = tintColor;
-        const glm::vec2 texCoord = {0.0f, 0.0f};
-        float textureIndex = 0.0f;
-        bool textureFound = false;
-
-        // Check if the texture is already pointed by any slot
-        for (uint32_t i = 0; i < s_Data.TextureSlotIndex; ++i)
-        {
-            if (*s_Data.TextureSlots[i].get() == *texture.get())
-            {
-                textureIndex = float(i); // use it if true
-                textureFound = true;
-                break;
-            }
-        }
-
-        // Set the current Index to the new texture
-        if (!textureFound)
-        {
-            if (s_Data.TextureSlotIndex >= Renderer2DData::MaxTextureSlots)
-                FlushAndReset();
-
-            textureIndex = (float)s_Data.TextureSlotIndex;
-            s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture;
-            s_Data.TextureSlotIndex++; // Move to next slot
-        }
-
         // Matrix, to comment and explain how does it work and why so
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::rotate(
             glm::mat4(1.0f), glm::radians(rotation), {0.0f, 0.0f, 1.0f}) * glm::scale(
             glm::mat4(1.0f), {size.x, size.y, 1.0f});
 
-        SetupQaudVertexBuffer(transform, color, textureIndex, tilingFactor);
+        DrawQuad(transform, texture, tilingFactor, tintColor);
     }
 
     void Renderer2D::SetupQaudVertexBuffer(glm::mat4 transform, glm::vec4 color, float textureIndex,
