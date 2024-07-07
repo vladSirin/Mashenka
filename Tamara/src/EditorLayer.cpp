@@ -26,9 +26,9 @@ namespace Mashenka
         // Create Scene and entity, attach transform and spriteRender Component
         m_ActiveScene = CreateRef<Scene>();
 
-        auto square = m_ActiveScene->CreateEntity();
-        m_ActiveScene->Reg().emplace<TransformComponent>(square);
-        m_ActiveScene->Reg().emplace<SpriteRenderComponent>(square, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+        // Entity Create and Add SpriteRenderComponent
+        auto square = m_ActiveScene->CreateEntity("Green Square");
+        square.AddComponent<SpriteRenderComponent>(glm::vec4{0.0f, 1.0f, 0.0f, 1.0f});
 
         m_SquareEntity = square;
     }
@@ -200,9 +200,17 @@ namespace Mashenka
                 ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
                 ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
 
-                // update the component with the imgui color edit
-                auto& squareColor = m_ActiveScene->Reg().get<SpriteRenderComponent>(m_SquareEntity).Color;
-                ImGui::ColorEdit4("Square Color", glm::value_ptr(squareColor));
+                if (m_SquareEntity)
+                {
+                    // Getting the tag and display it in the Color picking ImGui window
+                    ImGui::Separator();
+                    auto& tag = m_SquareEntity.GetComponent<TagComponent>().Tag;
+                    ImGui::Text("%s", tag.c_str());
+
+                    auto& squareColor = m_SquareEntity.GetComponent<SpriteRenderComponent>().Color;
+                    ImGui::ColorEdit4("Square Color", glm::value_ptr(squareColor));
+                    ImGui::Separator();
+                }
                 ImGui::End();
 
                 /* Adapting to the window resize of Imgui viewport.
@@ -231,6 +239,7 @@ namespace Mashenka
                     uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
 
                     // Draw the image with the texture from the framebuffer.
+                    // converts textureID to void* as this is the format for Imgui to support cross-platform agnostic
                     ImGui::Image((void*)textureID, ImVec2{m_ViewportSize.x, m_ViewportSize.y}, ImVec2{0, 1},
                                  ImVec2{1, 0});
                     ImGui::End();

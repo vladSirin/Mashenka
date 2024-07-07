@@ -1,5 +1,6 @@
 ﻿#include "mkpch.h"
 #include "Scene.h"
+#include "Entity.h"
 
 #include "Component.h"
 #include "Mashenka/Renderer/Renderer2D.h"
@@ -37,7 +38,7 @@ namespace Mashenka
     Scene::Scene()
     {
         // Example code demonstrating various EnTT functionalities
-#if ENTT_EXAMPLE_CODE = 0
+#if ENTT_EXAMPLE_CODE
 
         // Define a temporary component for demonstration purposes
         struct MeshComponent
@@ -102,12 +103,16 @@ namespace Mashenka
 
     /**
      * @brief Creates a new entity within the scene.
-     *
+     * @param name for TagComponenet of the entity, if left empty, "Entity" will be used
      * @return The handle to the newly created entity.
      */
-    entt::entity Scene::CreateEntity()
+    Entity Scene::CreateEntity(const std::string& name)
     {
-        return m_Registry.create();
+        Entity entity = {m_Registry.create(), this};
+        entity.AddComponent<TransformComponent>();
+        auto& tag = entity.AddComponent<TagComponent>();
+        tag.Tag = name.empty() ? "Entity" : name;
+        return entity;
     }
 
     /**

@@ -13,6 +13,8 @@ namespace Mashenka
      * and their associated components within a scene. It utilizes the EnTT library for
      * efficient entity-component-system (ECS) management.
      */
+    class Entity;
+
     class Scene
     {
     public:
@@ -35,14 +37,7 @@ namespace Mashenka
          *
          * @return The handle to the newly created entity.
          */
-        entt::entity CreateEntity();
-
-        /**
-         * @brief TEMP: Provides access to the internal registry.
-         *
-         * @return A reference to the internal EnTT registry.
-         */
-        entt::registry& Reg() { return m_Registry; }
+        Entity CreateEntity(const std::string& name = std::string());
 
         /**
          * @brief Updates the scene based on the elapsed time.
@@ -54,6 +49,6 @@ namespace Mashenka
 
     private:
         entt::registry m_Registry; /**< The internal registry for managing entities and components. */
+        friend class Entity; /**< Grants scene the access to the private members of Entity class> */
     };
 }
-

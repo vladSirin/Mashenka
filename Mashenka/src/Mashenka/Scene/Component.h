@@ -6,6 +6,19 @@
  */
 namespace Mashenka
 {
+
+    // Tag component is used to label entities with a string tag=
+    struct TagComponent
+    {
+        std::string Tag; // the tag
+
+        TagComponent() = default;
+        TagComponent(const TagComponent&) = default; // copy
+        TagComponent(const std::string& tag) // parameterized constructor
+            : Tag(tag) {}
+    };
+
+    
     struct TransformComponent
     {
         glm::mat4 Transform{1.0f};
