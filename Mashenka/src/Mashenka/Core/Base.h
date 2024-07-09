@@ -115,6 +115,7 @@ For example, if x is 2, then 1 << 2 would shift the bits of 1 two places to the 
 So, BIT(x) essentially creates a number that has its xth bit set (counting from 0).
 This can be useful for creating bitmasks, which are often used in programming to
 manipulate specific bits of a number.
+
 For example, BIT(0) would be 1 (binary 0001), BIT(1) would be 2 (binary 0010),
 BIT(2) would be 4 (binary 0100), and so on.
  */
@@ -123,4 +124,12 @@ BIT(2) would be 4 (binary 0100), and so on.
 /*The resulting callable object can be called with one argument,
  *and when it is called, it will invoke the fn member function of the parent object,
  *passing along the given argument.*/
-#define MK_BIND_EVENT_FN(fn) std::bind(&fn, this, std::placeholders::_1)
+// #define MK_BIND_EVENT_FN(fn) std::bind(&fn, this, std::placeholders::_1)
+
+/* Lambda function
+ * Capturing 'this' and packing all the parameters, using the return type of fn by -> decltype(auto)
+ * Forwarding all the arguments to the member function fn by std::forward
+ * decltype(x) is a function to runtime deduct the type, -> in lambda is to specify the return type
+ * [] is for capturing, empty means it captures nothing, [this] it is capturing current object members
+ */ 
+#define MK_BIND_EVENT_FN(fn) [this](auto&&... args) -> decltype(auto) { return this->fn(std::forward<decltype(args)>(args)...); }
