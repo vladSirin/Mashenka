@@ -57,6 +57,18 @@ namespace Mashenka
         {
         }
 
+        // make sure the object is destroyed when out of scope, which is the profiling tool
+        ~Instrumentor()
+        {
+            EndSession();
+        }
+
+        // delete copy to ensure the session is unique for the scope.
+        Instrumentor(const Instrumentor&) = delete;
+
+        // delete move, prevent transferring of ownership which might lead to memory leak
+        Instrumentor(Instrumentor&&) = delete;
+
         // BeginSession and EndSession are used to start and end the profiling session
         void BeginSession(const std::string& name, const std::string& filepath = "results.json")
         {
