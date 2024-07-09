@@ -288,9 +288,15 @@ namespace InstrumentorUtils
 #define MK_PROFILE_BEGIN_SESSION(name, filepath) ::Mashenka::Instrumentor::Get().BeginSession(name, filepath)
 #define MK_PROFILE_END_SESSION() ::Mashenka::Instrumentor::Get().EndSession()
 
-// the purpose of this marco is to create a scope-based profiling timer with a cleanup-up function name.
-#define MK_PROFILE_SCOPE(name) constexpr auto fixedName = ::Mashenka::InstrumentorUtils::CleanupOutputString(name, "__cdecl ");\
-    ::Mashenka::InstrumentationTimer timer##__LINE__(fixedName.Data)
+// The purpose of this macro is to create a scope-based profiling timer with a cleaned-up function name,
+// ensuring unique variable names by including the line number in the identifiers.
+
+#define HZ_PROFILE_SCOPE(name) \
+constexpr auto fixedName##__LINE__ = ::Hazel::InstrumentorUtils::CleanupOutputString(name, "__cdecl "); \
+::Hazel::InstrumentationTimer timer##__LINE__(fixedName##__LINE__.Data)
+
+
+
 #define MK_PROFILE_FUNCTION() MK_PROFILE_SCOPE(MK_FUNC_SIG)
 #else
 #define MK_PROFILE_BEGIN_SESSION(name, filepath)
