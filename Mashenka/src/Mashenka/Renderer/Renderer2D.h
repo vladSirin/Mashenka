@@ -19,7 +19,8 @@ namespace Mashenka
         static void Shutdown(); // cleans up any dynamic allocated memory
 
         // Scene manage
-        static void BeginScene(const OrthographicCamera& camera);
+        static void BeginScene(const OrthographicCamera& camera); //TODO: to remove
+        static void BeginScene(const Camera& camera, const glm::mat4& transform);
         // Prepares the renderer for a new scene by setting the view-projection matrix from the camera
         static void EndScene();
         // Finalizes the scene, updates the vertex buffer with the new data, and flushes the draw calls

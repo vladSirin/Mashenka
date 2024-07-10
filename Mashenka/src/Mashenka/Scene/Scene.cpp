@@ -123,14 +123,38 @@ namespace Mashenka
      */
     void Scene::OnUpdate(TimeStep ts)
     {
-        // Create a group with entities that have both TransformComponent and SpriteRenderComponent
-        auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRenderComponent>);
-
-        // Iterate over the group and update the entities
-        for (auto entity : group)
+        // Render 2D
+        Camera* mainCamera = nullptr;
+        glm::mat4* cameraTransform = nullptr;
         {
-            auto& [transform, sprite] = group.get<TransformComponent, SpriteRenderComponent>(entity);
-            Renderer2D::DrawQuad(transform, sprite.Color);
+            // Iterate through transform and camera componenets to find primary and retrieve data
+            auto group = m_Registry.view<TransformComponent, CameraComponent>();
+            for (auto entity: group)
+            {
+                auto& [transform, camera] = group.get<TransformComponent, CameraComponent>(entity);
+                if (camera.Primary)
+                {
+                    mainCamera = &camera.Camera;
+                    cameraTransform = &transform.Transform;
+                    break;
+                }
+            }
+            
+        }
+
+        // Render the scene based on the main Camera
+        if (mainCamera)
+        {
+            Renderer2D::BeginScene(mainCamera->GetProjectionMatrix(), *cameraTransform);
+
+            auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRenderComponent>);
+            for (auto entity:group)
+            {
+                auto& [transform, sprite] = group.get<TransformComponent, SpriteRenderComponent>(entity);
+                Renderer2D::DrawQuad(transform, sprite.Color);
+            }
+
+            Renderer2D::EndScene();
         }
     }
 }

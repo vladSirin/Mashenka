@@ -31,6 +31,14 @@ namespace Mashenka
         square.AddComponent<SpriteRenderComponent>(glm::vec4{0.0f, 1.0f, 0.0f, 1.0f});
 
         m_SquareEntity = square;
+
+        // Creating main camera
+        m_CameraEntity = m_ActiveScene->CreateEntity("Camera Entity");
+        m_CameraEntity.AddComponent<CameraComponent>(glm::ortho(-16.0f, 16.0f, -9.0f, 9.0f, -1.0f, 1.0f));
+        // Clip Space second camera with normalized projection, use of UI etc.
+        m_SecondCamera = m_ActiveScene->CreateEntity("Clip-Space Entity");
+        auto& cc = m_SecondCamera.AddComponent<CameraComponent>(glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f));
+        cc.Primary = false;
     }
 
     void EditorLayer::OnDetach()
@@ -47,7 +55,7 @@ namespace Mashenka
         // Resize
         // Check if the framebuffer size are not matching the viewport size and resize the buffer
         // This is handled in update before rendering to avoid glitch
-        if (Mashenka::FramebufferSpecification spec = m_Framebuffer->GetSpecification(); m_ViewportSize.x > 0.0f &&
+        if (FramebufferSpecification spec = m_Framebuffer->GetSpecification(); m_ViewportSize.x > 0.0f &&
             m_ViewportSize.y > 0.0f && // zero sized frame buffer is invalid
             (spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
         {
@@ -95,11 +103,8 @@ namespace Mashenka
             m_Framebuffer->Unbind();
         }*/
 
-        Renderer2D::BeginScene(m_CameraController.GetCamera());
 
-        // update scene
         m_ActiveScene->OnUpdate(ts);
-        Renderer2D::EndScene();
         m_Framebuffer->Unbind();
     }
 
@@ -211,6 +216,15 @@ namespace Mashenka
                     ImGui::ColorEdit4("Square Color", glm::value_ptr(squareColor));
                     ImGui::Separator();
                 }
+
+                //Adding drag float function for the camera and checkbox to select primary camera
+                ImGui::DragFloat3("Camera Transform", glm::value_ptr(m_CameraEntity.GetComponent<TransformComponent>().Transform[3]));
+                if (ImGui::Checkbox("Camera A", &m_PrimaryCamera))
+                {
+                    m_CameraEntity.GetComponent<CameraComponent>().Primary = m_PrimaryCamera;
+                    m_SecondCamera.GetComponent<CameraComponent>().Primary = !m_PrimaryCamera;
+                }
+                
                 ImGui::End();
 
                 /* Adapting to the window resize of Imgui viewport.

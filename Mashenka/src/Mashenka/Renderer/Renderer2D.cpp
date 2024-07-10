@@ -138,6 +138,38 @@ namespace Mashenka
         s_Data.TextureSlotIndex = 1;
     }
 
+    // Begin the scene rendering process with the given camera and transformation matrix
+    void Renderer2D::BeginScene(const Camera& camera, const glm::mat4& transform)
+    {
+        MK_PROFILE_FUNCTION(); // Profile the function for performance monitoring
+
+        // Calculate the view-projection matrix
+        // The view-projection matrix is obtained by multiplying the camera's projection matrix
+        // with the inverse of the given transformation matrix (which represents the camera's transform)
+        glm::mat4 viewProj = camera.GetProjectionMatrix() * glm::inverse(transform);
+
+        // Bind the texture shader to the rendering pipeline
+        s_Data.TextureShader->Bind();
+
+        // Set the view-projection matrix in the shader to the calculated viewProj matrix
+        // The shader will use this matrix to transform vertex positions from world space to clip space
+        s_Data.TextureShader->SetMat4("u_ViewProjection", viewProj);
+
+        // Reset the quad index count to zero
+        // This counter will track the number of quads rendered in the current scene
+        s_Data.QuadIndexCount = 0;
+
+        // Reset the quad vertex buffer pointer to the base of the vertex buffer
+        // This pointer will be used to store vertex data for rendering quads
+        s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
+
+        // Reset the texture slot index to 1
+        // Texture slot 0 is typically reserved for the default white texture
+        // Subsequent texture slots will be used for additional textures
+        s_Data.TextureSlotIndex = 1;
+    }
+
+
     void Renderer2D::EndScene()
     {
         MK_PROFILE_FUNCTION(); // Profiling
