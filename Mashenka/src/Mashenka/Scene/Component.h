@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include <glm/glm.hpp>
-#include "Mashenka/Renderer/Camera.h"
+#include "SceneCamera.h"
 
 /* This is the component class for ECS system, utilizing ENTT module
  * Setup the basic components for transform and SpriteRender
@@ -56,18 +56,14 @@ namespace Mashenka
         {
         }
     };
-
+    
     struct CameraComponent
     {
-        Camera Camera;
+        SceneCamera Camera;
         bool Primary = true; //TODO: think about moving to Scene
+        bool FixedAspectRatio = false; // To control aspect ratio
 
-        CameraComponent() = default;
+        CameraComponent() = default;  //using default as constructor will calculate projection
         CameraComponent(const CameraComponent&) = default;
-
-        CameraComponent(const glm::mat4& projection)
-            : Camera(projection)
-        {
-        }
     };
 }

@@ -47,8 +47,12 @@ namespace Mashenka
          */
         void OnUpdate(TimeStep ts);
 
+        void OnViewportResize(uint32_t width, uint32_t height);
+
     private:
         entt::registry m_Registry; /**< The internal registry for managing entities and components. */
+        uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
+
         friend class Entity; /**< Grants scene the access to the private members of Entity class> */
     };
 }

@@ -34,10 +34,10 @@ namespace Mashenka
 
         // Creating main camera
         m_CameraEntity = m_ActiveScene->CreateEntity("Camera Entity");
-        m_CameraEntity.AddComponent<CameraComponent>(glm::ortho(-16.0f, 16.0f, -9.0f, 9.0f, -1.0f, 1.0f));
+        m_CameraEntity.AddComponent<CameraComponent>();
         // Clip Space second camera with normalized projection, use of UI etc.
         m_SecondCamera = m_ActiveScene->CreateEntity("Clip-Space Entity");
-        auto& cc = m_SecondCamera.AddComponent<CameraComponent>(glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f));
+        auto& cc = m_SecondCamera.AddComponent<CameraComponent>();
         cc.Primary = false;
     }
 
@@ -62,6 +62,7 @@ namespace Mashenka
             // Resize the framebuffer and camera
             m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
             m_CameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
+            m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
         }
 
         // update camera if focused
@@ -179,7 +180,7 @@ namespace Mashenka
                 ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags); // create the dockspace
             }
 
-            // Menubar and fil->exit function
+            // Menubar and file->exit function
             if (ImGui::BeginMenuBar())
             {
                 if (ImGui::BeginMenu("File"))
@@ -219,10 +220,25 @@ namespace Mashenka
 
                 //Adding drag float function for the camera and checkbox to select primary camera
                 ImGui::DragFloat3("Camera Transform", glm::value_ptr(m_CameraEntity.GetComponent<TransformComponent>().Transform[3]));
-                if (ImGui::Checkbox("Camera A", &m_PrimaryCamera))
+                if (ImGui::Checkbox
+                    ("Camera A", &m_PrimaryCamera))
                 {
                     m_CameraEntity.GetComponent<CameraComponent>().Primary = m_PrimaryCamera;
                     m_SecondCamera.GetComponent<CameraComponent>().Primary = !m_PrimaryCamera;
+                }
+
+                /* This routine get the camera ref and set size by imgui*/
+                {
+                    // Getting reference of the second cam
+                    auto& camera = m_SecondCamera.GetComponent<CameraComponent>().Camera;
+
+                    // define orthoSize from the cam size, use DragFloat which will be true if ref is changed
+                    float orthoSize = camera.GetOrthographicSize();
+                    if (ImGui::DragFloat("Second Camera Ortho Size", &orthoSize))
+                    {
+                        // modify the size by the new value
+                        camera.SetOrthographicSize(orthoSize);
+                    }
                 }
                 
                 ImGui::End();
