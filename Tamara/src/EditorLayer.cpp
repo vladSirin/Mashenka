@@ -39,7 +39,49 @@ namespace Mashenka
         m_SecondCamera = m_ActiveScene->CreateEntity("Clip-Space Entity");
         auto& cc = m_SecondCamera.AddComponent<CameraComponent>();
         cc.Primary = false;
+
+
+        // Example ScripEntity
+        class CameraController : public ScriptEntity
+        {
+        public:
+            void OnCreate()
+            {
+            }
+
+            void OnDestroy()
+            {
+            }
+
+            void OnUpdate(TimeStep ts)
+            {
+                auto& transform = GetComponent<TransformComponent>().Transform;
+                float speed = 5.0f;
+
+                if (Input::IsKeyPressed(KeyCode::A))
+                {
+                    transform[3][0] -= speed * ts;
+                }
+                if (Input::IsKeyPressed(KeyCode::D))
+                {
+                    transform[3][0] += speed * ts;
+                }
+                if (Input::IsKeyPressed(KeyCode::W))
+                {
+                    transform[3][1] += speed * ts;
+                }
+                if (Input::IsKeyPressed(KeyCode::S))
+                {
+                    transform[3][1] -= speed * ts;
+                }
+            }
+        };
+
+        // Key Step to add a NativeScriptComponent and bind it with a cameraController Class
+        m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
     }
+
+
 
     void EditorLayer::OnDetach()
     {
@@ -219,7 +261,8 @@ namespace Mashenka
                 }
 
                 //Adding drag float function for the camera and checkbox to select primary camera
-                ImGui::DragFloat3("Camera Transform", glm::value_ptr(m_CameraEntity.GetComponent<TransformComponent>().Transform[3]));
+                ImGui::DragFloat3("Camera Transform",
+                                  glm::value_ptr(m_CameraEntity.GetComponent<TransformComponent>().Transform[3]));
                 if (ImGui::Checkbox
                     ("Camera A", &m_PrimaryCamera))
                 {
@@ -240,7 +283,7 @@ namespace Mashenka
                         camera.SetOrthographicSize(orthoSize);
                     }
                 }
-                
+
                 ImGui::End();
 
                 /* Adapting to the window resize of Imgui viewport.

@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <glm/glm.hpp>
 #include "SceneCamera.h"
+#include "ScriptEntity.h"
 
 /* This is the component class for ECS system, utilizing ENTT module
  * Setup the basic components for transform and SpriteRender
@@ -56,14 +57,51 @@ namespace Mashenka
         {
         }
     };
-    
+
     struct CameraComponent
     {
         SceneCamera Camera;
         bool Primary = true; //TODO: think about moving to Scene
         bool FixedAspectRatio = false; // To control aspect ratio
 
-        CameraComponent() = default;  //using default as constructor will calculate projection
+        CameraComponent() = default; //using default as constructor will calculate projection
         CameraComponent(const CameraComponent&) = default;
+    };
+
+
+    /* @brief This ia a component class to support C++ scripting
+     * It can be bound to any ScriptEntity so the scripts can be invoked on Events
+     */
+    struct NativeScriptComponent
+    {
+        ScriptEntity* Instance = nullptr;
+
+
+        // encapsulates callable entity for the ScriptEntity when bound
+        std::function<void()> InstantiateFunction;
+        std::function<void()> DestroyInstanceFunction;
+
+        std::function<void(ScriptEntity*)> OnCreateFunction;
+        std::function<void(ScriptEntity*)> OnDestroyFunction;
+        std::function<void(ScriptEntity*, TimeStep)> OnUpdateFunction;
+
+
+        // Bind functions when called with a callable object type
+        template <typename T>
+        void Bind()
+        {
+            // Capture by ref since they need to modify Instance itself
+            InstantiateFunction = [&]() { Instance = new T(); };
+            DestroyInstanceFunction = [&]()
+            {
+                delete (T*)Instance;
+                Instance = nullptr;
+            };
+
+            // Capture by value as they are just calling the method
+            OnCreateFunction = [](ScriptEntity* instance) { ((T*)instance)->OnCreate(); };
+            OnDestroyFunction = [](ScriptEntity* instance) { ((T*)instance)->OnDestroy(); };
+            OnUpdateFunction = [](ScriptEntity* instance, TimeStep ts) { ((T*)instance)->OnUpdate(ts); };
+        }
     };
 }

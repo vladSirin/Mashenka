@@ -123,6 +123,34 @@ namespace Mashenka
      */
     void Scene::OnUpdate(TimeStep ts)
     {
+        // Update all script components
+        {
+            // Iterate over all entities with a NativeScriptComponent
+            m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
+            {
+                // If the script instance is not yet created
+                if (!nsc.Instance)
+                {
+                    // Instantiate the script instance
+                    nsc.InstantiateFunction();
+                    // Associate the script instance with the entity
+                    nsc.Instance->m_Entity = Entity{ entity, this };
+
+                    // If there is an OnCreate function, call it
+                    if (nsc.OnCreateFunction)
+                    {
+                        nsc.OnCreateFunction(nsc.Instance);
+                    }
+                }
+
+                // If there is an OnUpdate function, call it to update the script instance
+                if (nsc.OnUpdateFunction)
+                {
+                    nsc.OnUpdateFunction(nsc.Instance, ts);
+                }
+            });
+        }
+
         // Render 2D
         Camera* mainCamera = nullptr;
         glm::mat4* cameraTransform = nullptr;

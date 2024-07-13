@@ -22,7 +22,8 @@
 // ECS
 #include "Mashenka/Scene/Scene.h"
 #include "Mashenka/Scene/Component.h"
-#include "Mashenka/Scene/Entity.h"
+#include "Mashenka/Scene/Entity.h"'
+#include "Mashenka/Scene/ScriptEntity.h"
 
 // --------Renderer-------------------
 #include "Mashenka/Renderer/Renderer.h"
