@@ -50,7 +50,9 @@ Draw Call: OpenGL uses the active program when performing draw calls.
         MK_PROFILE_FUNCTION(); // Profiling
         // read the file
         std::string result;
-        std::ifstream in(filepath, std::ios::in | std::ios::binary);
+
+        //ifstream close itself due to RAII (Resource Acquisition is Initialization)
+        std::ifstream in(filepath, std::ios::in | std::ios::binary); 
         if (in)
         {
             // read the file
@@ -61,7 +63,7 @@ Draw Call: OpenGL uses the active program when performing draw calls.
                 result.resize(size); // resize the result string to the size of the file
                 in.seekg(0, std::ios::beg); // seek to the beginning of the file
                 in.read(&result[0], size); // read the file
-                in.close(); // close the file
+                // in.close(); useless as RAII
             }
             else
             {

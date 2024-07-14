@@ -282,7 +282,8 @@ namespace Mashenka
         // Check if the texture is already pointed by any slot
         for (uint32_t i = 0; i < s_Data.TextureSlotIndex; ++i)
         {
-            if (*s_Data.TextureSlots[i].get() == *texture.get())
+            // does not need Get() to get raw ptr as they of same type smart ptr
+            if (*s_Data.TextureSlots[i] == *texture) 
             {
                 textureIndex = float(i); // use it if true
                 textureFound = true;

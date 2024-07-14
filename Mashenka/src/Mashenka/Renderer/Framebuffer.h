@@ -6,7 +6,7 @@ namespace Mashenka
     // Specs for the framebuffer, later used in creating the frame buffer
     struct FramebufferSpecification
     {
-        uint32_t Width, Height;
+        uint32_t Width = 0, Height = 0; //initialize variables
         // FramebufferFormat Format =
         uint32_t Samples = 1; // MSAA sample
 
