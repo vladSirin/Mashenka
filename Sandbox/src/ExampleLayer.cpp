@@ -221,7 +221,7 @@ void ExampleLayer::OnEvent(Mashenka::Event& event)
     if (event.GetEventType() == Mashenka::EventType::KeyPressed)
     {
         const auto& e = dynamic_cast<Mashenka::KeyPressedEvent&>(event);
-        if (e.GetKeyCode() == MK_KEY_TAB)
+        if (e.GetKeyCode() == Mashenka::Key::Tab)
         {
             MK_TRACE("Tab Key is Pressed (event)!");
         }

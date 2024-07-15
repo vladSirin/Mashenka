@@ -58,19 +58,19 @@ namespace Mashenka
                 auto& transform = GetComponent<TransformComponent>().Transform;
                 float speed = 5.0f;
 
-                if (Input::IsKeyPressed(KeyCode::A))
+                if (Input::IsKeyPressed(Key::A))
                 {
                     transform[3][0] -= speed * ts;
                 }
-                if (Input::IsKeyPressed(KeyCode::D))
+                if (Input::IsKeyPressed(Key::D))
                 {
                     transform[3][0] += speed * ts;
                 }
-                if (Input::IsKeyPressed(KeyCode::W))
+                if (Input::IsKeyPressed(Key::W))
                 {
                     transform[3][1] += speed * ts;
                 }
-                if (Input::IsKeyPressed(KeyCode::S))
+                if (Input::IsKeyPressed(Key::S))
                 {
                     transform[3][1] -= speed * ts;
                 }
@@ -80,7 +80,6 @@ namespace Mashenka
         // Key Step to add a NativeScriptComponent and bind it with a cameraController Class
         m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
     }
-
 
 
     void EditorLayer::OnDetach()
@@ -313,7 +312,13 @@ namespace Mashenka
 
                     // Draw the image with the texture from the framebuffer.
                     // converts textureID to void* as this is the format for Imgui to support cross-platform agnostic
-                    ImGui::Image((void*)textureID, ImVec2{m_ViewportSize.x, m_ViewportSize.y}, ImVec2{0, 1},
+                    /* @brief:
+                    * static_cast<uintptr_t>(textureID): This converts the uint32_t texture ID to uintptr_t, which is an unsigned integer type capable of holding a pointer.
+                    * reinterpret_cast<void*>: This converts the uintptr_t value to a void*, ensuring no loss of information and avoiding the warning.
+                    */
+                    ImGui::Image(reinterpret_cast<void*>(static_cast<uintptr_t>(textureID)),
+                                 ImVec2{m_ViewportSize.x, m_ViewportSize.y},
+                                 ImVec2{0, 1},
                                  ImVec2{1, 0});
                     ImGui::End();
                     ImGui::PopStyleVar();
@@ -338,7 +343,7 @@ namespace Mashenka
             ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
 
             uint32_t textureID = m_CheckerboardTexture->GetRendererID();
-            ImGui::Image((void*)textureID, ImVec2{1280, 720});
+            ImGui::Image(reinterpret_cast<void*>(static_cast<uintptr_t>(textureID)), ImVec2{1280, 720});
             ImGui::End();
         }
     }

@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "Mashenka/Events/Event.h"
-#include "Mashenka/Core/Input.h"
+#include "Mashenka/Core/KeyCodes.h"
 
 // For key events, there should be key pressed and releases as major public classes
 // As the normal logic for applications are based on those too
@@ -17,19 +17,19 @@ namespace Mashenka
         EVENT_CLASS_CATEGORY(EventCategoryApplication | EventCategoryInput)
 
     protected:
-        KeyEvent(Key Keycode)
-            : m_KeyCode(Keycode){}
+        KeyEvent(const KeyCode keycode)
+            : m_KeyCode(keycode){}
 
-        Key m_KeyCode;
+        KeyCode m_KeyCode;
     };
 
     class KeyPressedEvent: public KeyEvent
     {
     public:
-        KeyPressedEvent(Key keycode, int repeatCount)
+        KeyPressedEvent(const KeyCode keycode, const uint16_t repeatCount)
             :KeyEvent(keycode), m_RepeatCount(repeatCount) {}
 
-        inline int GetRepeatCount() const {return m_RepeatCount;}
+        uint16_t GetRepeatCount() const {return m_RepeatCount;}
 
         std::string ToString() const override
         {
@@ -41,13 +41,13 @@ namespace Mashenka
         EVENT_CLASS_TYPE(KeyPressed)
 
     private:
-        int m_RepeatCount;
+        uint16_t m_RepeatCount;
     };
 
     class KeyReleasedEvent: public KeyEvent
     {
     public:
-        KeyReleasedEvent(Key keycode)
+        KeyReleasedEvent(const KeyCode keycode)
             :KeyEvent(keycode) {}
 
         std::string ToString() const override
@@ -65,7 +65,7 @@ namespace Mashenka
     class KeyTypedEvent: public KeyEvent
     {
     public:
-        KeyTypedEvent(Key keycode)
+        KeyTypedEvent(const KeyCode keycode)
             :KeyEvent(keycode){}
 
         std::string ToString() const override

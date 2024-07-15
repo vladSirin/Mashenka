@@ -15,13 +15,13 @@ namespace Mashenka
     {
         MK_PROFILE_FUNCTION(); // Profiling
         // Camera controls, WASD
-        if (Input::IsKeyPressed(MK_KEY_A))
+        if (Input::IsKeyPressed(Key::A))
         {
             // based on rotation in radians so the camera will move regardless of the rotation
             m_CameraPosition.x -= cos(glm::radians(m_CameraRotation)) * m_CameraTranslationSpeed * ts;
             m_CameraPosition.y -= sin(glm::radians(m_CameraRotation)) * m_CameraTranslationSpeed * ts;
         }
-        else if (Input::IsKeyPressed(MK_KEY_D))
+        else if (Input::IsKeyPressed(Key::D))
         {
             // based on rotation in radians
             m_CameraPosition.x += cos(glm::radians(m_CameraRotation)) * m_CameraTranslationSpeed * ts;
@@ -29,13 +29,13 @@ namespace Mashenka
         }
 
         // Camera controls, WASD
-        if (Input::IsKeyPressed(MK_KEY_W))
+        if (Input::IsKeyPressed(Key::W))
         {
             // based on rotation in radians
             m_CameraPosition.x += -sin(glm::radians(m_CameraRotation)) * m_CameraTranslationSpeed * ts;
             m_CameraPosition.y += cos(glm::radians(m_CameraRotation)) * m_CameraTranslationSpeed * ts;
         }
-        else if (Input::IsKeyPressed(MK_KEY_S))
+        else if (Input::IsKeyPressed(Key::S))
         {
             // based on rotation in radians
             m_CameraPosition.x -= -sin(glm::radians(m_CameraRotation)) * m_CameraTranslationSpeed * ts;
@@ -45,9 +45,9 @@ namespace Mashenka
         // Camera rotations
         if (m_Rotation)
         {
-            if (Input::IsKeyPressed(MK_KEY_Q))
+            if (Input::IsKeyPressed(Key::Q))
                 m_CameraRotation += m_CameraRotationSpeed * ts;
-            else if (Input::IsKeyPressed(MK_KEY_E))
+            else if (Input::IsKeyPressed(Key::E))
                 m_CameraRotation -= m_CameraRotationSpeed * ts;
 
             // Why? Because we don't want the camera rotation to be too big

@@ -34,8 +34,8 @@ namespace Mashenka
         MK_CORE_INFO(" Renderer: {0}", reinterpret_cast<const char*>(glGetString(GL_RENDERER))); //eg: RTX 4060
         MK_CORE_INFO(" Version: {0}", reinterpret_cast<const char*>(glGetString(GL_VERSION))); //eg: OPENGL Version
 
-        // Enable OpenGL Debug Context
-        MK_CORE_ASSERT(GLVersion.major > 4 || (GLVersion.major == 4 && GLVersion.major >= 5),
+        // Enable OpenGL Debug Context, the version should be major over 4 or major is 4 but minor is above 0.5
+        MK_CORE_ASSERT(GLVersion.major > 4 || (GLVersion.major == 4 && GLVersion.minor >= 5),
                        "Mashenka requires at least OpenGL version 4.5!");
     }
 
