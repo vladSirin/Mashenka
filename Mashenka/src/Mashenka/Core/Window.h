@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "mkpch.h"
+#include <sstream>
 
 #include "Mashenka/Core/Base.h"
 #include "Mashenka/Events/Event.h"

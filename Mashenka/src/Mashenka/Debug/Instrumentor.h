@@ -7,6 +7,9 @@
 #include <iomanip>
 
 #include <thread>
+#include <mutex>
+#include <sstream>
+#include "Mashenka/Core/Log.h"
 
 /*
  * SUMMARY:

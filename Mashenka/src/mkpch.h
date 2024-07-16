@@ -19,6 +19,8 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#include "Mashenka/Core/Base.h"
+
 #include "Mashenka/Core/Log.h"
 #include "Mashenka/Debug/Instrumentor.h"
 #ifdef MK_PLATFORM_WINDOWS

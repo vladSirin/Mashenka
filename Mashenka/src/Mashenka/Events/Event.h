@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include <functional>
+#include "Mashenka/Debug/Instrumentor.h"
 #include "Mashenka/Core/Base.h"
 
 namespace Mashenka
