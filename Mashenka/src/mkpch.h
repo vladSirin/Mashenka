@@ -1,5 +1,14 @@
 ﻿#pragma once
 
+#include "Mashenka/Core/PlatformDetection.h"
+
+#ifdef MK_PLATFORM_WINDOWS
+    #ifdef NOMINMAX
+        // See github.com/skypjack/entt/wiki/Frequently-Asked-Questions#warning-c4003-the-min-the-max-and-the-macro
+        #define NOMINMAX
+    #endif
+#endif
+
 // Suppress warnings
 #pragma warning(disable : 4251) //supress warnings about dll interface
 #pragma warning(disable : 4996) //supress warnings about dll interface
@@ -28,4 +37,3 @@
 #endif
 
 #define IMGUI_IMPL_OPENGL_LOADER_CUSTOM "Mashenka/Vendor/Glad/include/glad/glad.h"
-

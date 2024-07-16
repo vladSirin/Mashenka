@@ -134,7 +134,8 @@ project "Sandbox"
 
     defines
     {
-        "_SILENCE_CXX17_RESULT_OF_DEPRECATION_WARNING"
+        "_SILENCE_CXX17_RESULT_OF_DEPRECATION_WARNING",
+        "_SILENCE_ALL_MS_EXT_DEPRECATION_WARNINGS"
     }
     
     includedirs
