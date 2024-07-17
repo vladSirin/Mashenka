@@ -47,6 +47,8 @@ namespace Mashenka
         public:
             void OnCreate()
             {
+            	auto& transform = GetComponent<TransformComponent>().Transform;
+            	transform[3][0] = rand() % 10 - 5.0f; // random assign position on x-axis
             }
 
             void OnDestroy()
@@ -79,6 +81,8 @@ namespace Mashenka
 
         // Key Step to add a NativeScriptComponent and bind it with a cameraController Class
         m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
+
+    	m_SecondCamera.AddComponent<NativeScriptComponent>().Bind<CameraController>();
     }
 
 

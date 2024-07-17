@@ -8,12 +8,18 @@ namespace Mashenka
     class ScriptEntity
     {
     public:
+    	virtual ~ScriptEntity() {}
         // Getting the designated component from the associated entity
         template<typename T>
         T& GetComponent()
         {
             return m_Entity.GetComponent<T>();
         }
+
+    protected:
+    	virtual void OnCreate() {}
+    	virtual void OnDestroy() {}
+    	virtual void OnUpdate(TimeStep ts) {}
 
     private:
         Entity m_Entity;

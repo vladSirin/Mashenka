@@ -10,27 +10,6 @@
 namespace Mashenka
 {
     /**
-     * @brief A helper function to perform mathematical operations on a transform matrix.
-     *
-     * @param transform The transform matrix to perform operations on.
-     */
-    static void DoMath(const glm::mat4& transform)
-    {
-        // Placeholder function for performing mathematical operations on a transform matrix
-    }
-
-    /**
-     * @brief Callback function to be called when a TransformComponent is constructed.
-     *
-     * @param registry The registry containing the entities and components.
-     * @param entity The entity to which the TransformComponent was added.
-     */
-    static void OnTransformConstruct(entt::registry& registry, entt::entity entity)
-    {
-        // Placeholder function for handling logic when a TransformComponent is constructed
-    }
-
-    /**
      * @brief Constructs a new Scene object.
      *
      * Initializes the scene, setting up the internal registry for managing entities and components.
@@ -129,25 +108,20 @@ namespace Mashenka
             m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
             {
                 // If the script instance is not yet created
+            	// TODO: move to Scene::OnScenePlay
                 if (!nsc.Instance)
                 {
                     // Instantiate the script instance
-                    nsc.InstantiateFunction();
+                    nsc.Instance = nsc.InstantiateScript();
                     // Associate the script instance with the entity
                     nsc.Instance->m_Entity = Entity{ entity, this };
 
                     // If there is an OnCreate function, call it
-                    if (nsc.OnCreateFunction)
-                    {
-                        nsc.OnCreateFunction(nsc.Instance);
-                    }
+                    nsc.Instance->OnCreate();
                 }
 
                 // If there is an OnUpdate function, call it to update the script instance
-                if (nsc.OnUpdateFunction)
-                {
-                    nsc.OnUpdateFunction(nsc.Instance, ts);
-                }
+                nsc.Instance->OnUpdate(ts);
             });
         }
 
@@ -159,7 +133,7 @@ namespace Mashenka
             auto view = m_Registry.view<TransformComponent, CameraComponent>();
             for (auto entity: view)
             {
-                auto& [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
+                auto&& [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
                 if (camera.Primary)
                 {
                     mainCamera = &camera.Camera;
@@ -178,7 +152,7 @@ namespace Mashenka
             auto view = m_Registry.group<TransformComponent>(entt::get<SpriteRenderComponent>);
             for (auto entity:view)
             {
-                auto& [transform, sprite] = view.get<TransformComponent, SpriteRenderComponent>(entity);
+                auto&& [transform, sprite] = view.get<TransformComponent, SpriteRenderComponent>(entity);
                 Renderer2D::DrawQuad(transform, sprite.Color);
             }
 
