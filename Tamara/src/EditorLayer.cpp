@@ -81,8 +81,9 @@ namespace Mashenka
 
         // Key Step to add a NativeScriptComponent and bind it with a cameraController Class
         m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
-
     	m_SecondCamera.AddComponent<NativeScriptComponent>().Bind<CameraController>();
+
+    	m_SceneHierarchyPanel.SetConText(m_ActiveScene);
     }
 
 
@@ -242,6 +243,8 @@ namespace Mashenka
 
             // The original settings imgui window
             {
+				m_SceneHierarchyPanel.OnImGuiRender();
+            	
                 ImGui::Begin("Settings");
 
                 auto stats = Mashenka::Renderer2D::GetStats();

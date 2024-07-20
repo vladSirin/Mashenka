@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Mashenka.h"
+#include "Panels/SceneHierarchyPanel.h"
 
 namespace Mashenka
 {
@@ -35,6 +36,9 @@ namespace Mashenka
         bool m_ViewportFocused = false, m_ViewportHovered = false;
         glm::vec2 m_ViewportSize = {0.0f, 0.0f}; // used for sizing to match the viewport of imgui
         glm::vec4 m_SquareColor = {0.2 ,0.3, 0.8, 1.0};
+
+    	// panels
+    	SceneHierarchyPanel m_SceneHierarchyPanel;
         
     };
 }
