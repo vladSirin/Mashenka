@@ -1,6 +1,7 @@
 ﻿#include "SceneHierarchyPanel.h"
 #include <imgui/imgui.h>
 #include "Mashenka/Scene/Component.h"
+#include <glm/gtc/type_ptr.hpp>
 
 namespace Mashenka
 {
@@ -29,6 +30,21 @@ namespace Mashenka
 		{
 			Entity entity{entityID, m_Context.get()};
 			DrawEntityMode(entity);
+		}
+
+		// When mouse is hovering on the "Scene Hierarchy" window and click, clear context
+		if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
+		{
+			m_SelectionContext = {};
+		}
+
+		ImGui::End();
+
+		// If there is context, draw the properties
+		ImGui::Begin("Properties");
+		if (m_SelectionContext)
+		{
+			DrawComponent(m_SelectionContext);
 		}
 
 		ImGui::End();
@@ -70,6 +86,43 @@ namespace Mashenka
 			// and hierarchy are maintained.
 			// Close the Node rendering
 			ImGui::TreePop();
+		}
+	}
+
+	void SceneHierarchyPanel::DrawComponent(Entity entity)
+	{
+		// Check if it has tag component
+		if (entity.HasComponent<TagComponent>())
+		{
+			// get the tag string
+			auto& tag = entity.GetComponent<TagComponent>().Tag;
+
+			// dynamic allocate char vector for the string
+			std::vector<char> buffer(tag.begin(), tag.end());
+			buffer.resize(256, '\0'); // resize and set null terminator
+			if (ImGui::InputText("Tag", buffer.data(), buffer.size()))
+			{
+				tag = std::string(buffer.data()); // update component tag
+			}
+		}
+
+		// check if has transform component
+		if (entity.HasComponent<TransformComponent>())
+		{
+			// Create a Tree node
+			/* ImGui needs a unique id for manage the ui elements, the typeid() here returns type information for the type
+			 * while hash_Code() generates a unique hash value for that type, this ensures the uniqueness and consistency
+			 * with types, casting to void* as ImGui needs a void* as identifier
+			 */
+			if (ImGui::TreeNodeEx((void*)typeid(TransformComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Transform"))
+			{
+				// Get the transform ref
+				auto& transform = entity.GetComponent<TransformComponent>().Transform;
+				ImGui::DragFloat3("Position", glm::value_ptr(transform[3]), 0.1f); //setup ImGui DragFlot3 input
+
+				// close the node
+				ImGui::TreePop();
+			}
 		}
 	}
 }

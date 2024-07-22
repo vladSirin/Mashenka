@@ -17,6 +17,7 @@ namespace Mashenka
 
 	private:
 		void DrawEntityMode(Entity entity);
+		void DrawComponent(Entity entity);
 
 		Ref<Scene> m_Context; //it needs the scene ptr as context
 		Entity m_SelectionContext; //the entity that is selected
