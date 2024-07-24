@@ -76,7 +76,7 @@ namespace Mashenka
 			ImGuiDockNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
 			bool opened = ImGui::TreeNodeEx((void*)9817239, flags, tag.c_str());
 
-			if(opened)
+			if (opened)
 			{
 				ImGui::TreePop();
 			}
@@ -114,13 +114,109 @@ namespace Mashenka
 			 * while hash_Code() generates a unique hash value for that type, this ensures the uniqueness and consistency
 			 * with types, casting to void* as ImGui needs a void* as identifier
 			 */
-			if (ImGui::TreeNodeEx((void*)typeid(TransformComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Transform"))
+			if (ImGui::TreeNodeEx((void*)typeid(TransformComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen,
+			                      "Transform"))
 			{
 				// Get the transform ref
 				auto& transform = entity.GetComponent<TransformComponent>().Transform;
 				ImGui::DragFloat3("Position", glm::value_ptr(transform[3]), 0.1f); //setup ImGui DragFlot3 input
 
 				// close the node
+				ImGui::TreePop();
+			}
+		}
+
+		/* @brief Adding camera component UI for the property panel */
+		// Check if has camera component
+		if (entity.HasComponent<CameraComponent>())
+		{
+			// Draw Camera component on property ui
+			if (ImGui::TreeNodeEx((void*)typeid(CameraComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Camera"))
+			{
+				auto& cameraComponent = entity.GetComponent<CameraComponent>();
+				auto& camera = cameraComponent.Camera;
+
+				// ImGui Checkbox for set if primary camera
+				ImGui::Checkbox("Primary", &cameraComponent.Primary);
+
+				const char* projectionTypeString[] = {"Perspective", "Orthographic"};
+				const char* currentProjectionTypeString = projectionTypeString[(int)camera.GetProjectionType()];
+
+				// Dropdown menu for selecting the camera type
+				if (ImGui::BeginCombo("Projection", currentProjectionTypeString))
+				{
+					// loop over the projection types
+					for (int i = 0; i < 2; i++)
+					{
+						// Check if it current item is selected
+						bool isSelected = currentProjectionTypeString == projectionTypeString[i];
+
+						/* ImGui::Selectable uses "isSelected" to decide how to render it, it returns if the item is
+						 * clicked in the process
+						 */
+						// Check if the item is clicked, if so set it to be current item and update projection
+						if (ImGui::Selectable(projectionTypeString[i], isSelected))
+						{
+							currentProjectionTypeString = projectionTypeString[i];
+							camera.SetProjectionType((SceneCamera::ProjectionType)i);
+						}
+						
+						// If it is selected, then set it as the default item
+						if (isSelected)
+						{
+							ImGui::SetItemDefaultFocus();
+						}
+					}
+					ImGui::EndCombo();
+				}
+
+				
+				// DragFloat UIs for modify the perspective camera
+				if (camera.GetProjectionType() == SceneCamera::ProjectionType::Perspective)
+				{
+					float verticalFov = glm::degrees(camera.GetPerspectiveVerticalFOV());
+					if (ImGui::DragFloat("Vertical FOV", &verticalFov))
+					{
+						camera.SetPerspectiveVerticalFOV(glm::radians(verticalFov));
+					}
+
+					float orthoNear = camera.GetPerspectiveNearClip();
+					if (ImGui::DragFloat("Near", &orthoNear))
+					{
+						camera.SetPerspectiveNearClip(orthoNear);
+					}
+
+					float orthoFar = camera.GetPerspectiveFarClip();
+					if (ImGui::DragFloat("Far", &orthoFar))
+					{
+						camera.SetPerspectiveFarClip(orthoFar);
+					}
+				}
+
+				// DragFloat UIs for modify the orthographic camera
+				if (camera.GetProjectionType() == SceneCamera::ProjectionType::Orthographic)
+				{
+					float orthoSize = camera.GetOrthographicSize();
+					if (ImGui::DragFloat("Size", &orthoSize))
+					{
+						camera.SetOrthographicSize(orthoSize);
+					}
+
+					float orthoNear = camera.GetOrthographicNearClip();
+					if (ImGui::DragFloat("Near", &orthoNear))
+					{
+						camera.SetOrthographicNearClip(orthoNear);
+					}
+
+					float orthoFar = camera.GetOrthographicFarClip();
+					if (ImGui::DragFloat("Far", &orthoFar))
+					{
+						camera.SetOrthographicFarClip(orthoFar);
+					}
+
+					ImGui::Checkbox("Fixed Aspect Ratio", &cameraComponent.FixedAspectRatio);
+				}
+
 				ImGui::TreePop();
 			}
 		}
