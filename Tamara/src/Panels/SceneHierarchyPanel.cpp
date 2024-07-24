@@ -174,22 +174,22 @@ namespace Mashenka
 				// DragFloat UIs for modify the perspective camera
 				if (camera.GetProjectionType() == SceneCamera::ProjectionType::Perspective)
 				{
-					float verticalFov = glm::degrees(camera.GetPerspectiveVerticalFOV());
-					if (ImGui::DragFloat("Vertical FOV", &verticalFov))
+					float perspectiveVerticalFOV = glm::degrees(camera.GetPerspectiveVerticalFOV());
+					if (ImGui::DragFloat("Vertical FOV", &perspectiveVerticalFOV))
 					{
-						camera.SetPerspectiveVerticalFOV(glm::radians(verticalFov));
+						camera.SetPerspectiveVerticalFOV(glm::radians(perspectiveVerticalFOV));
 					}
 
-					float orthoNear = camera.GetPerspectiveNearClip();
-					if (ImGui::DragFloat("Near", &orthoNear))
+					float perspectiveNear = camera.GetPerspectiveNearClip();
+					if (ImGui::DragFloat("Near", &perspectiveNear))
 					{
-						camera.SetPerspectiveNearClip(orthoNear);
+						camera.SetPerspectiveNearClip(perspectiveNear);
 					}
 
-					float orthoFar = camera.GetPerspectiveFarClip();
-					if (ImGui::DragFloat("Far", &orthoFar))
+					float perspectiveFar = camera.GetPerspectiveFarClip();
+					if (ImGui::DragFloat("Far", &perspectiveFar))
 					{
-						camera.SetPerspectiveFarClip(orthoFar);
+						camera.SetPerspectiveFarClip(perspectiveFar);
 					}
 				}
 
