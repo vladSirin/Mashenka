@@ -1,9 +1,12 @@
 ﻿#pragma once
 #include "Mashenka/Core/Base.h"
+
+// This ignores all warnings raised inside external headers
+#pragma warning(push, 0)
 #include <spdlog/spdlog.h>
-#include <spdlog/fmt/ostr.h>
 // ReSharper disable once CppUnusedIncludeDirective
 #include "spdlog/fmt/ostr.h" // for operator overload
+#pragma warning(pop)
 
 /*
  * 1. **Introduction to SPDLOG**: SPDLOG is a fast, header-only/compiled, C++ logging library.
