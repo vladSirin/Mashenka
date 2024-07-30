@@ -220,5 +220,16 @@ namespace Mashenka
 				ImGui::TreePop();
 			}
 		}
+
+		// Draw sprite renderer coomponent with a color edit
+		if (entity.HasComponent<SpriteRenderComponent>())
+		{
+			if (ImGui::TreeNodeEx((void*)typeid(SpriteRenderComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Sprite Renderer"))
+			{
+				auto& src = entity.GetComponent<SpriteRenderComponent>();
+				ImGui::ColorEdit4("Color", glm::value_ptr(src.Color));
+				ImGui::TreePop();
+			}
+		}
 	}
 }

@@ -37,10 +37,10 @@ namespace Mashenka
         m_SquareEntity = square;
 
         // Creating main camera
-        m_CameraEntity = m_ActiveScene->CreateEntity("Camera Entity");
+        m_CameraEntity = m_ActiveScene->CreateEntity("Camera A");
         m_CameraEntity.AddComponent<CameraComponent>();
         // Clip Space second camera with normalized projection, use of UI etc.
-        m_SecondCamera = m_ActiveScene->CreateEntity("Clip-Space Entity");
+        m_SecondCamera = m_ActiveScene->CreateEntity("Camera B");
         auto& cc = m_SecondCamera.AddComponent<CameraComponent>();
         cc.Primary = false;
 
@@ -257,42 +257,6 @@ namespace Mashenka
                 ImGui::Text("Quads: %d", stats.QuadCount);
                 ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
                 ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
-
-                if (m_SquareEntity)
-                {
-                    // Getting the tag and display it in the Color picking ImGui window
-                    ImGui::Separator();
-                    auto& tag = m_SquareEntity.GetComponent<TagComponent>().Tag;
-                    ImGui::Text("%s", tag.c_str());
-
-                    auto& squareColor = m_SquareEntity.GetComponent<SpriteRenderComponent>().Color;
-                    ImGui::ColorEdit4("Square Color", glm::value_ptr(squareColor));
-                    ImGui::Separator();
-                }
-
-                //Adding drag float function for the camera and checkbox to select primary camera
-                ImGui::DragFloat3("Camera Transform",
-                                  glm::value_ptr(m_CameraEntity.GetComponent<TransformComponent>().Transform[3]));
-                if (ImGui::Checkbox
-                    ("Camera A", &m_PrimaryCamera))
-                {
-                    m_CameraEntity.GetComponent<CameraComponent>().Primary = m_PrimaryCamera;
-                    m_SecondCamera.GetComponent<CameraComponent>().Primary = !m_PrimaryCamera;
-                }
-
-                /* This routine get the camera ref and set size by imgui*/
-                {
-                    // Getting reference of the second cam
-                    auto& camera = m_SecondCamera.GetComponent<CameraComponent>().Camera;
-
-                    // define orthoSize from the cam size, use DragFloat which will be true if ref is changed
-                    float orthoSize = camera.GetOrthographicSize();
-                    if (ImGui::DragFloat("Second Camera Ortho Size", &orthoSize))
-                    {
-                        // modify the size by the new value
-                        camera.SetOrthographicSize(orthoSize);
-                    }
-                }
 
                 ImGui::End();
 
