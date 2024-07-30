@@ -2,6 +2,7 @@
 #include <memory>
 #include "Mashenka/Core/PlatformDetection.h"
 
+
 /*
  * 2. **Setting up the Mashenka Log Macros**:
  * The Mashenka Log Macros are set up to log messages to the console.
@@ -22,14 +23,8 @@
     #defined MK_DEBUGBREAK()
 #endif
 
-// TODO: make this marco able to take in arguments except condition
-#ifdef MK_ENABLE_ASSERTS
-#define MK_ASSERT(x, ...) {if (!(x)) {MK_ERROR("Assertion Failed: {0}", __VA_ARGS__); MK_DEBUGBREAK(); }}
-#define MK_CORE_ASSERT(x, ...) {if(!(x)) {MK_CORE_ERROR("Assertion Failed: {0}", __VA_ARGS__); MK_DEBUGBREAK(); }}
-#else
-#define MK_ASSERT(x, ...)
-#define MK_CORE_ASSERT(x, ...)
-#endif
+#define MK_EXPAND_MACRO(x) x
+#define MK_STRINGIFY_MACRO(x) #x
 
 /*
  * 3. **Setting up Scope/Ref instead of raw pointers**:
@@ -64,6 +59,8 @@ namespace Mashenka
     }
 }
 
+#include "Mashenka/Core/Log.h"
+#include "Mashenka/Core/Assert.h"
 
 /*
 * The macro BIT(x) is defined as (1 << (x)). This is a bit shift operation.
@@ -93,3 +90,5 @@ BIT(2) would be 4 (binary 0100), and so on.
  * [] is for capturing, empty means it captures nothing, [this] it is capturing current object members
  */ 
 #define MK_BIND_EVENT_FN(fn) [this](auto&&... args) -> decltype(auto) { return this->fn(std::forward<decltype(args)>(args)...); }
+
+

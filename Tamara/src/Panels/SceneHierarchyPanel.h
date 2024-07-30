@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include "Mashenka/Core/Base.h"
-#include "Mashenka/Core/Log.h"
 #include "Mashenka/Scene/Scene.h"
 #include "Mashenka/Scene/Entity.h"
 
