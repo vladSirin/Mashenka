@@ -35,6 +35,7 @@ namespace Mashenka
         stbi_uc* data = nullptr;
         {
             // Explanation: https://www.khronos.org/opengl/wiki/Common_Mistakes#Creating_a_complete_texture
+        	MK_PROFILE_SCOPE("stbi_load - OpenGLTexture2d::OpenGLTexture2D(const std::string&)");
             data = stbi_load(path.c_str(), &width, &height, &channels, 0);
         }
         MK_CORE_ASSERT(data, "Failed to load image!")

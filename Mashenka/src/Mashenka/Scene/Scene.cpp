@@ -147,7 +147,7 @@ namespace Mashenka
         // Render the scene based on the main Camera
         if (mainCamera)
         {
-            Renderer2D::BeginScene(mainCamera->GetProjectionMatrix(), *cameraTransform);
+            Renderer2D::BeginScene(*mainCamera, *cameraTransform);
 
             auto view = m_Registry.group<TransformComponent>(entt::get<SpriteRenderComponent>);
             for (auto entity:view)

@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "Mashenka/Core/Base.h"
 
 namespace Mashenka
 {
