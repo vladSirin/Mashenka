@@ -130,12 +130,7 @@ namespace Mashenka
         s_Data.TextureShader->Bind();
         s_Data.TextureShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
 
-        // reset index count and vertex buffer pointer
-        s_Data.QuadIndexCount = 0;
-        s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
-
-        // Setting the texture index back to 1 as 0 is white, binding will be restarted every drawcall
-        s_Data.TextureSlotIndex = 1;
+		StartBatch();
     }
 
     // Begin the scene rendering process with the given camera and transformation matrix
@@ -155,27 +150,13 @@ namespace Mashenka
         // The shader will use this matrix to transform vertex positions from world space to clip space
         s_Data.TextureShader->SetMat4("u_ViewProjection", viewProj);
 
-        // Reset the quad index count to zero
-        // This counter will track the number of quads rendered in the current scene
-        s_Data.QuadIndexCount = 0;
-
-        // Reset the quad vertex buffer pointer to the base of the vertex buffer
-        // This pointer will be used to store vertex data for rendering quads
-        s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
-
-        // Reset the texture slot index to 1
-        // Texture slot 0 is typically reserved for the default white texture
-        // Subsequent texture slots will be used for additional textures
-        s_Data.TextureSlotIndex = 1;
+		StartBatch();
     }
 
 
     void Renderer2D::EndScene()
     {
         MK_PROFILE_FUNCTION(); // Profiling
-
-        uint32_t dataSize = (uint32_t)((uintptr_t)s_Data.QuadVertexBufferPtr - (uintptr_t)s_Data.QuadVertexBufferBase);
-        s_Data.QuadVertexBuffer->SetData(s_Data.QuadVertexBufferBase, dataSize);
 
         Flush();
     }
@@ -186,25 +167,45 @@ namespace Mashenka
         if (s_Data.QuadIndexCount == 0)
             return;
 
+    	// calculate the size of the vertex data to upload to the GPU
+    	uint32_t dataSize = (uint32_t)((uintptr_t)s_Data.QuadVertexBufferPtr - (uintptr_t)s_Data.QuadVertexBufferBase);
+
+    	// upload the buffer data from cpu memory to GPU, SetData for data transfer
+    	s_Data.QuadVertexBuffer->SetData(s_Data.QuadVertexBufferBase, dataSize);
+    	
         // bind textures for render
         for (uint32_t i = 0; i < s_Data.TextureSlotIndex; ++i)
         {
             s_Data.TextureSlots[i]->Bind(i);
         }
+
+    	// issue the drawcall to render the quads
         RenderCommand::DrawIndexed(s_Data.QuadVertexArray, s_Data.QuadIndexCount);
         s_Data.Stats.DrawCalls++; //adding up drawcalls count every time
     }
 
 
     // This function is called when the max indices is reached for the current drawcall
-    void Renderer2D::FlushAndReset()
+    void Renderer2D::NextBatch()
     {
-        EndScene();
+        Flush();
+    	StartBatch();
+    }
 
-        s_Data.QuadIndexCount = 0;
-        s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
+    void Renderer2D::StartBatch()
+    {
+    	// Reset the quad index count to zero
+    	// This counter will track the number of quads rendered in the current scene
+    	s_Data.QuadIndexCount = 0;
 
-        s_Data.TextureSlotIndex = 1;
+    	// Reset the quad vertex buffer pointer to the base of the vertex buffer
+    	// This pointer will be used to store vertex data for rendering quads
+    	s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
+
+    	// Reset the texture slot index to 1
+    	// Texture slot 0 is typically reserved for the default white texture
+    	// Subsequent texture slots will be used for additional textures
+    	s_Data.TextureSlotIndex = 1;
     }
 
 
@@ -238,7 +239,7 @@ namespace Mashenka
         const glm::vec2 texCoord = {0.0f, 0.0f};
 
         if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
-            FlushAndReset();
+            NextBatch();
 
         SetupQaudVertexBuffer(transform, color, textureIndex, tilingFactor);
     }
@@ -273,7 +274,7 @@ namespace Mashenka
         MK_PROFILE_FUNCTION();
 
         if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
-            FlushAndReset();
+            NextBatch();
 
         const glm::vec4 color = tintColor;
         float textureIndex = 0.0f;

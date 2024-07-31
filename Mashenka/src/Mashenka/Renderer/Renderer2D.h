@@ -67,7 +67,11 @@ namespace Mashenka
         static Statistics GetStats();
 
     private:
-        static void FlushAndReset();
+    	// This function is called when the max quad indices is reached for the current drawcall
+        static void NextBatch();
+
+    	// Resetting index count, texture slot and buffer ptr to ensure batch start with a clean state
+    	static void StartBatch();
 
         // Submit data to Renderer2D data
         static void SetupQaudVertexBuffer(glm::mat4 transform, glm::vec4 color, float textureIndex = 0.0f,
