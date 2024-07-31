@@ -100,9 +100,12 @@ namespace Mashenka
             // Check if the event type matches the type of the event
             if (m_Event.GetEventType() == EventType::GetStaticType())
             {
-                // If so, call the function
-                // static_cast is used to convert the type of the event, which is Event, to the type of the event, which is EventType
-                m_Event.Handled = func(static_cast<EventType&>(m_Event)); // Call the function
+            	// Invoke the event handling function and update the 'Handled' status
+            	// This line calls the provided event handling function 'func' with the current event cast to 'EventType'.
+            	// The result of this function call is a boolean indicating whether the event was handled.
+            	// The 'Handled' status of the event (m_Event.Handled) is updated using the bitwise OR assignment operator '|='.
+            	// This ensures that if the event has been marked as handled by any function, it remains marked as handled to avoid trigger multiple times between layers
+                m_Event.Handled |= func(static_cast<EventType&>(m_Event)); // Call the function
                 return true;
             }
             return false;
