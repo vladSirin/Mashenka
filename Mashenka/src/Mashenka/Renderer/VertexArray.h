@@ -15,9 +15,7 @@ namespace Mashenka
     class VertexArray
     {
     public:
-        virtual ~VertexArray()
-        {
-        }
+        virtual ~VertexArray() = default;
 
         // Bind and Unbind the vertex array, which is the vertex buffer and index buffer
         // The vertex array is the vertex buffer and index buffer, which are the buffers that contain the vertices to be drawn by the GPU
