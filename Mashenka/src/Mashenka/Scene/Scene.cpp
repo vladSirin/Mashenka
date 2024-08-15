@@ -127,7 +127,7 @@ namespace Mashenka
 
         // Render 2D
         Camera* mainCamera = nullptr;
-        glm::mat4* cameraTransform = nullptr;
+        glm::mat4 cameraTransform;
         {
             // Iterate through transform and camera components to find primary and retrieve data
             auto view = m_Registry.view<TransformComponent, CameraComponent>();
@@ -137,7 +137,7 @@ namespace Mashenka
                 if (camera.Primary)
                 {
                     mainCamera = &camera.Camera;
-                    cameraTransform = &transform.Transform;
+                    cameraTransform = transform.GetTransform();
                     break;
                 }
             }
@@ -147,13 +147,13 @@ namespace Mashenka
         // Render the scene based on the main Camera
         if (mainCamera)
         {
-            Renderer2D::BeginScene(*mainCamera, *cameraTransform);
+            Renderer2D::BeginScene(*mainCamera, cameraTransform);
 
             auto view = m_Registry.group<TransformComponent>(entt::get<SpriteRenderComponent>);
             for (auto entity:view)
             {
                 auto&& [transform, sprite] = view.get<TransformComponent, SpriteRenderComponent>(entity);
-                Renderer2D::DrawQuad(transform, sprite.Color);
+                Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
             }
 
             Renderer2D::EndScene();

@@ -2,6 +2,7 @@
 #include <glm/glm.hpp>
 #include "SceneCamera.h"
 #include "ScriptEntity.h"
+#include "glm/gtx/transform.hpp"
 
 /* This is the component class for ECS system, utilizing ENTT module
  * Setup the basic components for transform and SpriteRender
@@ -24,7 +25,10 @@ namespace Mashenka
 
 	struct TransformComponent
 	{
-		glm::mat4 Transform{1.0f};
+		// Refactor the transform matrix into Translation, Rotation and Scale
+		glm::vec3 Translation = {0.0f, 0.0f, 0.0f};
+		glm::vec3 Rotation = {0.0f, 0.0f, 0.0f};
+		glm::vec3 Scale = {1.0f, 1.0f, 1.0f};
 
 		TransformComponent() = default;
 		TransformComponent(const TransformComponent&) = default; // Default copy constructor, shallow copy
@@ -34,15 +38,23 @@ namespace Mashenka
 		 * @Deep Copy: Copies all fields and creates copies of any referenced objects as well.
 		 * This way, the new object has its own copies of the objects that the original object referenced.*/
 
-		TransformComponent(const glm::mat4& transform)
-			: Transform(transform)
+		TransformComponent(const glm::vec3& translation, const glm::vec3& rotation, const glm::vec3& scale)
+			: Translation(translation), Rotation(rotation), Scale(scale)
 		{
 		}
 
-		// Conversion operators
-		// converts a transformComponent to a non-const reference to its Transform matrix
-		operator glm::mat4&() { return Transform; }
-		operator const glm::mat4&() const { return Transform; } // converts to a const reference
+		// Calculate and return the transform matrix by translate * rotation * scale
+		glm::mat4 GetTransform() const
+		{
+			// Consider encapsulating this logic
+			glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), Rotation.x, {1, 0, 0})
+				* glm::rotate(glm::mat4(1.0f), Rotation.y, {0, 1, 0})
+				* glm::rotate(glm::mat4(1.0f), Rotation.z, {0, 0, 1});
+
+			return glm::translate(glm::mat4(1.0f), Translation)
+				* rotation
+				* glm::scale(glm::mat4(1.0f), Scale);
+		}
 	};
 
 	struct SpriteRenderComponent

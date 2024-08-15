@@ -2,6 +2,7 @@
 #include <imgui/imgui.h>
 #include "Mashenka/Scene/Component.h"
 #include <glm/gtc/type_ptr.hpp>
+#include <imgui/imgui_internal.h>
 
 namespace Mashenka
 {
@@ -89,6 +90,90 @@ namespace Mashenka
 		}
 	}
 
+
+	// Draws a control interface for modifying a glm::vec3 with ImGui.
+	// This function displays a label and three controls (X, Y, Z) for a glm::vec3,
+	// allowing the user to adjust the vector's components via drag controls and reset buttons.
+	//
+	// Parameters:
+	// - label: The label to display next to the control. This is used as a unique identifier within ImGui.
+	// - values: A reference to the glm::vec3 variable that will be modified by the control.
+	// - resetValue: The value to reset each component (X, Y, Z) to when the corresponding reset button is clicked. Defaults to 0.0f.
+	// - columnWidth: The width of the first column where the label is displayed. Defaults to 100.0f.
+	static void DrawVec3Control(const std::string& label, glm::vec3& values, float resetValue = 0.0f,
+	                            float columnWidth = 100.0f)
+	{
+		// Push a unique ID to prevent ImGui ID collisions when using multiple controls with the same label
+		ImGui::PushID(label.c_str());
+
+		// Set up a two-column layout, with the first column width defined by columnWidth
+		ImGui::Columns(2);
+		ImGui::SetColumnWidth(0, columnWidth);
+		ImGui::Text(label.c_str()); // Display the label in the first column
+		ImGui::NextColumn();
+
+		// Setup the width for the next three items (X, Y, Z controls) and style for no item spacing
+		ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{0, 0}); // Remove spacing between controls
+
+		// Calculate the size of the buttons based on the current line height
+		float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
+		ImVec2 buttonSize = {lineHeight + 3.0f, lineHeight}; // Slightly larger than the line height for better UX
+
+		// Push styles for the 'X' button (red color)
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{0.8f, 0.1f, 0.15f, 1.0f});
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{0.9f, 0.2f, 0.2f, 1.0f});
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{0.8f, 0.1f, 0.15f, 1.0f});
+		if (ImGui::Button("X", buttonSize)) // Create a button labeled 'X'
+		{
+			values.x = resetValue; // Reset X value to the resetValue if the button is clicked
+		}
+		ImGui::PopStyleColor(3); // Pop the last 3 color styles applied
+
+		ImGui::SameLine(); // Keep the next item on the same line as the button
+		ImGui::DragFloat("##X", &values.x, 0.1f, 0.0f, 0.0f, "%.2f");
+		// Create a draggable float for X with fine-tuned control
+		ImGui::PopItemWidth(); // Pop width for this item
+		ImGui::SameLine();
+
+		// Push styles for the 'Y' button (green color)
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{0.2f, 0.7f, 0.2f, 1.0f});
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{0.3f, 0.8f, 0.3f, 1.0f});
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{0.2f, 0.7f, 0.2f, 1.0f});
+		if (ImGui::Button("Y", buttonSize)) // Create a button labeled 'Y'
+		{
+			values.y = resetValue; // Reset Y value to the resetValue if the button is clicked
+		}
+		ImGui::PopStyleColor(3); // Pop the last 3 color styles applied
+
+		ImGui::SameLine(); // Keep the next item on the same line as the button
+		ImGui::DragFloat("##Y", &values.y, 0.1f, 0.0f, 0.0f, "%.2f");
+		// Create a draggable float for Y with fine-tuned control
+		ImGui::PopItemWidth(); // Pop width for this item
+		ImGui::SameLine();
+
+		// Push styles for the 'Z' button (blue color)
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{0.1f, 0.25f, 0.8f, 1.0f});
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{0.2f, 0.35f, 0.9f, 1.0f});
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{0.1f, 0.25f, 0.8f, 1.0f});
+		if (ImGui::Button("Z", buttonSize)) // Create a button labeled 'Z'
+		{
+			values.z = resetValue; // Reset Z value to the resetValue if the button is clicked
+		}
+		ImGui::PopStyleColor(3); // Pop the last 3 color styles applied
+
+		ImGui::SameLine(); // Keep the next item on the same line as the button
+		ImGui::DragFloat("##Z", &values.z, 0.1f, 0.0f, 0.0f, "%.2f");
+		// Create a draggable float for Z with fine-tuned control
+		ImGui::PopItemWidth(); // Pop width for this item
+
+		ImGui::PopStyleVar(); // Pop the item spacing style
+		ImGui::Columns(1); // Restore to a single-column layout
+		ImGui::PopID(); // Pop the ID to restore the previous state and avoid ID collisions
+	}
+
+
+
 	void SceneHierarchyPanel::DrawComponent(Entity entity)
 	{
 		// Check if it has tag component
@@ -117,9 +202,15 @@ namespace Mashenka
 			if (ImGui::TreeNodeEx((void*)typeid(TransformComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen,
 			                      "Transform"))
 			{
-				// Get the transform ref
-				auto& transform = entity.GetComponent<TransformComponent>().Transform;
-				ImGui::DragFloat3("Position", glm::value_ptr(transform[3]), 0.1f); //setup ImGui DragFlot3 input
+				// Get and set the translation, rotation and scale values with UI
+				auto& tc = entity.GetComponent<TransformComponent>();
+				DrawVec3Control("Translation", tc.Translation);
+				
+				glm::vec3 rotation = glm::degrees(tc.Rotation);
+				DrawVec3Control("Rotation", rotation);
+				tc.Rotation = glm::radians(rotation);
+				
+				DrawVec3Control("Scale", tc.Scale, 1.0f);
 
 				// close the node
 				ImGui::TreePop();
@@ -160,7 +251,7 @@ namespace Mashenka
 							currentProjectionTypeString = projectionTypeString[i];
 							camera.SetProjectionType((SceneCamera::ProjectionType)i);
 						}
-						
+
 						// If it is selected, then set it as the default item
 						if (isSelected)
 						{
@@ -170,7 +261,7 @@ namespace Mashenka
 					ImGui::EndCombo();
 				}
 
-				
+
 				// DragFloat UIs for modify the perspective camera
 				if (camera.GetProjectionType() == SceneCamera::ProjectionType::Perspective)
 				{
@@ -224,7 +315,8 @@ namespace Mashenka
 		// Draw sprite renderer coomponent with a color edit
 		if (entity.HasComponent<SpriteRenderComponent>())
 		{
-			if (ImGui::TreeNodeEx((void*)typeid(SpriteRenderComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Sprite Renderer"))
+			if (ImGui::TreeNodeEx((void*)typeid(SpriteRenderComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen,
+			                      "Sprite Renderer"))
 			{
 				auto& src = entity.GetComponent<SpriteRenderComponent>();
 				ImGui::ColorEdit4("Color", glm::value_ptr(src.Color));
