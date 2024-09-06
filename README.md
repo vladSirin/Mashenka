@@ -1,6 +1,11 @@
 # Mashenka
 Mashenka Engine by Sirin
 
+## Status Update:
+I think this will be my last update on this for a very long time. Now is 2024 Sept. 7th midnight, I just came back from the Unreal Fest 2024 Shanghai.
+
+I felt so much energy in Unreal community China, so little in my work in office now, I must move on now. So I have to ditch this project and the AI courses for some time as I need to work on Unreal Engine in the coming years to ship at least a game all by my one. Or make it playable. This is vital for me to move on in the future. Thanks to this project and time spent with Cherno, it has been a fun ride and I am sure I am not a person for Engine or Low-level programming :-)
+
 ![Mashenka](/Resources/Branding/MashenkaLogo.png?raw=true "Mashenka")
 Mashenka is a game engine based on Hazel Engine by TheCherno. It is a work in progress and is not ready for use.
 
