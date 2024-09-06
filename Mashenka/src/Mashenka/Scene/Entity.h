@@ -53,7 +53,10 @@ namespace Mashenka
 		T& AddComponent(Args&&... args) // Args&& perfect forwarding
 		{
 			MK_CORE_ASSERT(!HasComponent<T>(), "Entity already has the component!");
-			return m_Scene->m_Registry.emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
+
+			T& component = m_Scene->m_Registry.emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
+			m_Scene->OnComponentAdded<T>(*this, component);
+			return component;
 		}
 
 		/**
@@ -137,6 +140,9 @@ namespace Mashenka
 		{
 			return !(*this == other);
 		}
+
+		// Conversion operator to entity
+		operator entt::entity() const { return m_EntityHandle; }
 
 	private:
 		entt::entity m_EntityHandle{entt::null}; /**< The EnTT entity handle. */

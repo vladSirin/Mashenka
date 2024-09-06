@@ -26,17 +26,43 @@ namespace Mashenka
 		// Get the storage of all the entities
 		const auto& storage = m_Context->m_Registry.storage<entt::entity>();
 
+		std::vector<Entity> entitiesToDelete;
+
 		// loop over all entities, create entity based on context and Draw them
 		for (auto entityID : storage)
 		{
 			Entity entity{entityID, m_Context.get()};
-			DrawEntityMode(entity);
+			if (entity)
+			{
+				DrawEntityNodeAndMarkDelete(entity, entitiesToDelete);
+			}
+		}
+
+		for (auto entity : entitiesToDelete)
+		{
+			m_Context->DestroyEntity(entity);
+
+			// clear selection if the deleted entity was selected
+			if (m_SelectionContext == entity)
+			{
+				m_SelectionContext = {};
+			}
 		}
 
 		// When mouse is hovering on the "Scene Hierarchy" window and click, clear context
 		if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
 		{
 			m_SelectionContext = {};
+		}
+
+		// Right Click on empty space
+		if (ImGui::BeginPopupContextWindow(0, 1 | ImGuiPopupFlags_NoOpenOverItems))
+		{
+			if (ImGui::MenuItem("Create Empty Entity"))
+			{
+				m_Context->CreateEntity("Empty Entity");
+			}
+			ImGui::EndPopup();
 		}
 
 		ImGui::End();
@@ -46,48 +72,87 @@ namespace Mashenka
 		if (m_SelectionContext)
 		{
 			DrawComponent(m_SelectionContext);
+
+			if (ImGui::Button("Add Component"))
+			{
+				ImGui::OpenPopup("Add Component");
+			}
+
+			if (ImGui::BeginPopup("Add Component"))
+			{
+				if (ImGui::MenuItem("Camera"))
+				{
+					m_SelectionContext.AddComponent<CameraComponent>();
+					ImGui::CloseCurrentPopup();
+				}
+
+				if (ImGui::MenuItem("Sprite Renderer"))
+				{
+					m_SelectionContext.AddComponent<SpriteRenderComponent>();
+					ImGui::CloseCurrentPopup();
+				}
+
+				ImGui::EndPopup();
+			}
 		}
 
 		ImGui::End();
 	}
 
 	// Draw the Entity Nodes with ImGui
-	void SceneHierarchyPanel::DrawEntityMode(Entity entity)
+	void SceneHierarchyPanel::DrawEntityNodeAndMarkDelete(Entity entity, std::vector<Entity>& entitiesToDelete)
 	{
 		// Getting tag from the component
-		auto& tag = entity.GetComponent<TagComponent>().Tag;
-
-		// Check if the entity is selected and set the flag, using bitwise operation as Flags are bitwise
-		ImGuiTreeNodeFlags flags = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) |
-			ImGuiTreeNodeFlags_OpenOnArrow;
-
-		// Create a tree node based on the entity and flags
-		// TreeNodeEX is a function to create nodes, return true if expaned, false if collpased
-		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity, flags, tag.c_str());
-
-		if (ImGui::IsItemClicked())
+		if (entity.HasComponent<TagComponent>())
 		{
-			m_SelectionContext = entity;
-		}
+			auto& tag = entity.GetComponent<TagComponent>().Tag;
+			// Check if the entity is selected and set the flag, using bitwise operation as Flags are bitwise
+			ImGuiTreeNodeFlags flags = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) |
+				ImGuiTreeNodeFlags_OpenOnArrow;
 
-		// if the tree node is opened, handle child nodes (if any)
-		if (opened)
-		{
-			// Example of handling child nodes
-			ImGuiDockNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
-			bool opened = ImGui::TreeNodeEx((void*)9817239, flags, tag.c_str());
-
-			if (opened)
+			// Create a tree node based on the entity and flags
+			// TreeNodeEX is a function to create nodes, return true if expaned, false if collpased
+			bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity, flags, tag.c_str());
+		
+			if (ImGui::IsItemClicked())
 			{
-				ImGui::TreePop();
+				m_SelectionContext = entity;
 			}
 
-			// Whe you call a TreeNodeEx you need to call the TreePop function to close the node, this works similar
-			// to HTML or brackets in a programming language. This is to ensure the stack is proper managed
-			// and hierarchy are maintained.
-			// Close the Node rendering
-			ImGui::TreePop();
+			if (ImGui::BeginPopupContextItem())
+			{
+				if (ImGui::MenuItem("Delete Entity"))
+				{
+					entitiesToDelete.push_back(entity);
+				}
+
+				ImGui::EndPopup();
+			}
+
+			// if the tree node is opened, handle child nodes (if any)
+			if (opened)
+			{
+				// Example of handling child nodes
+				ImGuiDockNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
+				bool opened = ImGui::TreeNodeEx((void*)9817239, flags, tag.c_str());
+
+				if (opened)
+				{
+					ImGui::TreePop();
+				}
+
+				// Whe you call a TreeNodeEx you need to call the TreePop function to close the node, this works similar
+				// to HTML or brackets in a programming language. This is to ensure the stack is proper managed
+				// and hierarchy are maintained.
+				// Close the Node rendering
+				ImGui::TreePop();
+			}
 		}
+		else
+		{
+			//ImGui::Text("Unnamed Entity");
+		}
+		
 	}
 
 
@@ -173,7 +238,6 @@ namespace Mashenka
 	}
 
 
-
 	void SceneHierarchyPanel::DrawComponent(Entity entity)
 	{
 		// Check if it has tag component
@@ -191,6 +255,8 @@ namespace Mashenka
 			}
 		}
 
+		const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowItemOverlap;
+
 		// check if has transform component
 		if (entity.HasComponent<TransformComponent>())
 		{
@@ -199,17 +265,17 @@ namespace Mashenka
 			 * while hash_Code() generates a unique hash value for that type, this ensures the uniqueness and consistency
 			 * with types, casting to void* as ImGui needs a void* as identifier
 			 */
-			if (ImGui::TreeNodeEx((void*)typeid(TransformComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen,
-			                      "Transform"))
+			bool open = ImGui::TreeNodeEx((void*)typeid(TransformComponent).hash_code(), treeNodeFlags, "Transform");
+			if (open)
 			{
 				// Get and set the translation, rotation and scale values with UI
 				auto& tc = entity.GetComponent<TransformComponent>();
 				DrawVec3Control("Translation", tc.Translation);
-				
+
 				glm::vec3 rotation = glm::degrees(tc.Rotation);
 				DrawVec3Control("Rotation", rotation);
 				tc.Rotation = glm::radians(rotation);
-				
+
 				DrawVec3Control("Scale", tc.Scale, 1.0f);
 
 				// close the node
@@ -222,7 +288,7 @@ namespace Mashenka
 		if (entity.HasComponent<CameraComponent>())
 		{
 			// Draw Camera component on property ui
-			if (ImGui::TreeNodeEx((void*)typeid(CameraComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Camera"))
+			if (ImGui::TreeNodeEx((void*)typeid(CameraComponent).hash_code(), treeNodeFlags, "Camera"))
 			{
 				auto& cameraComponent = entity.GetComponent<CameraComponent>();
 				auto& camera = cameraComponent.Camera;
@@ -315,12 +381,36 @@ namespace Mashenka
 		// Draw sprite renderer coomponent with a color edit
 		if (entity.HasComponent<SpriteRenderComponent>())
 		{
-			if (ImGui::TreeNodeEx((void*)typeid(SpriteRenderComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen,
-			                      "Sprite Renderer"))
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{4, 4});
+			bool open = ImGui::TreeNodeEx((void*)typeid(SpriteRenderComponent).hash_code(), treeNodeFlags,
+			                              "Sprite Renderer");
+			ImGui::SameLine(ImGui::GetWindowWidth() - 25.0f);
+			if (ImGui::Button("+", ImVec2{20, 20}))
+			{
+				ImGui::OpenPopup("ComponentSettings");
+			}
+			ImGui::PopStyleVar();
+
+			bool removeComponent = false;
+			if (ImGui::BeginPopup("ComponentSettings"))
+			{
+				if (ImGui::MenuItem("Remove Component"))
+				{
+					removeComponent = true;
+				}
+				ImGui::EndPopup();
+			}
+
+			if (open)
 			{
 				auto& src = entity.GetComponent<SpriteRenderComponent>();
 				ImGui::ColorEdit4("Color", glm::value_ptr(src.Color));
 				ImGui::TreePop();
+			}
+
+			if (removeComponent)
+			{
+				entity.RemoveComponent<SpriteRenderComponent>();
 			}
 		}
 	}

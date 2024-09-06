@@ -39,6 +39,8 @@ namespace Mashenka
          */
         Entity CreateEntity(const std::string& name = std::string());
 
+    	void DestroyEntity(Entity entity);
+
         /**
          * @brief Updates the scene based on the elapsed time.
          *
@@ -48,6 +50,10 @@ namespace Mashenka
         void OnUpdate(TimeStep ts);
 
         void OnViewportResize(uint32_t width, uint32_t height);
+
+    private:
+    	template<typename  T>
+    	void OnComponentAdded(Entity entity, T& component);
 
     private:
         entt::registry m_Registry; /**< The internal registry for managing entities and components. */

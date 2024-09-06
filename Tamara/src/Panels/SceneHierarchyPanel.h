@@ -15,7 +15,7 @@ namespace Mashenka
 		void OnImGuiRender();
 
 	private:
-		void DrawEntityMode(Entity entity);
+		void DrawEntityNodeAndMarkDelete(Entity entity, std::vector<Entity>& entitiesToDelete);
 		void DrawComponent(Entity entity);
 
 		Ref<Scene> m_Context; //it needs the scene ptr as context
